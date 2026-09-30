@@ -1,1 +1,10 @@
-<router-outlet />
+<nav class="navbar">
+  <a class="logo" routerLink="/home">🎬 Cine</a>
+  <a routerLink="/home" routerLinkActive="active">Cartelera</a>
+  <a routerLink="/login" routerLinkActive="active">Ingresar</a>
+  <a routerLink="/registro" routerLinkActive="active">Registrarse</a>
+</nav>
+
+<main>
+  <router-outlet />
+</main>
