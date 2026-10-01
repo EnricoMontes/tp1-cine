@@ -1,0 +1,33 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-width: 400px;
+}
+
+.form label {
+  margin-top: 0.6rem;
+  font-weight: bold;
+}
+
+.form input,
+.form select {
+  padding: 0.5rem;
+}
+
+.error {
+  color: #e94560;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.form button {
+  margin-top: 1rem;
+  padding: 0.6rem;
+  cursor: pointer;
+}
+
+.form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
