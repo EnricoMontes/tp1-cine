@@ -1,8 +1,14 @@
 <nav class="navbar">
   <a class="logo" routerLink="/home">🎬 Cine</a>
   <a routerLink="/home" routerLinkActive="active">Cartelera</a>
-  <a routerLink="/login" routerLinkActive="active">Ingresar</a>
-  <a routerLink="/registro" routerLinkActive="active">Registrarse</a>
+
+  @if (auth.usuario()) {
+    <span class="usuario">{{ auth.usuario()?.email }}</span>
+    <button class="salir" (click)="salir()">Salir</button>
+  } @else {
+    <a routerLink="/login" routerLinkActive="active">Ingresar</a>
+    <a routerLink="/registro" routerLinkActive="active">Registrarse</a>
+  }
 </nav>
 
 <main>

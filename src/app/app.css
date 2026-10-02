@@ -26,3 +26,16 @@
 main {
   padding: 2rem;
 }
+
+.navbar .usuario {
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+.navbar .salir {
+  background: none;
+  border: 1px solid #e94560;
+  color: #e94560;
+  padding: 0.3rem 0.8rem;
+  cursor: pointer;
+}
