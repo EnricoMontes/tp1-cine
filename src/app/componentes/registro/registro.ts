@@ -69,6 +69,7 @@ export class Registro {
       return;
     }
 
+    this.formRegistro.reset();
     this.router.navigate(['/home']);
   }
 

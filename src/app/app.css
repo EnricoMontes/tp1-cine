@@ -27,7 +27,7 @@ main {
   padding: 2rem;
 }
 
-.navbar .usuario {
+.navbar a.usuario {
   color: #aaa;
   font-size: 0.9rem;
 }

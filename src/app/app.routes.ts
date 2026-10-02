@@ -1,4 +1,8 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './guards/auth-guard';
+import { adminGuard } from './guards/admin-guard';
+import { empleadoGuard } from './guards/empleado-guard';
+import { formGuard } from './guards/form-guard';
 
 export const routes: Routes = [
   {
@@ -16,7 +20,23 @@ export const routes: Routes = [
   },
   {
     path: 'registro',
-    loadComponent: () => import('./componentes/registro/registro').then(m => m.Registro)
+    loadComponent: () => import('./componentes/registro/registro').then(m => m.Registro),
+    canDeactivate: [formGuard]
+  },
+  {
+    path: 'perfil',
+    loadComponent: () => import('./componentes/mi-perfil/mi-perfil').then(m => m.MiPerfil),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'admin',
+    loadComponent: () => import('./componentes/admin/admin').then(m => m.Admin),
+    canMatch: [adminGuard]
+  },
+  {
+    path: 'empleado',
+    loadComponent: () => import('./componentes/empleado/empleado').then(m => m.Empleado),
+    canMatch: [empleadoGuard]
   },
   {
     path: 'error',

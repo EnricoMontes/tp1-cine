@@ -3,7 +3,13 @@
   <a routerLink="/home" routerLinkActive="active">Cartelera</a>
 
   @if (auth.usuario()) {
-    <span class="usuario">Hola, {{ auth.perfil()?.nombre }}</span>
+    @if (auth.perfil()?.rol === 'admin') {
+      <a routerLink="/admin" routerLinkActive="active">Admin</a>
+    }
+    @if (auth.perfil()?.rol === 'empleado') {
+      <a routerLink="/empleado" routerLinkActive="active">Validar entradas</a>
+    }
+    <a class="usuario" routerLink="/perfil" routerLinkActive="active">Hola, {{ auth.perfil()?.nombre }}</a>
     @if (auth.perfil()?.rol === 'admin' || auth.perfil()?.rol === 'empleado') {
       <span class="rol">{{ auth.perfil()?.rol }}</span>
     }

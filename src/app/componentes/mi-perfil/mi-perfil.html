@@ -1,0 +1,10 @@
+<h1>Mi perfil</h1>
+
+@if (auth.perfil()) {
+  <p><strong>Nombre:</strong> {{ auth.perfil()?.nombre }} {{ auth.perfil()?.apellido }}</p>
+  <p><strong>Mail:</strong> {{ auth.perfil()?.email }}</p>
+  <p><strong>Rol:</strong> {{ auth.perfil()?.rol }}</p>
+  <p><strong>Puntos:</strong> {{ auth.perfil()?.puntos }}</p>
+} @else {
+  <p>Cargando...</p>
+}

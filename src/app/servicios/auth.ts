@@ -11,8 +11,10 @@ export class Auth {
 
   perfil = signal<Perfil | null>(null);
 
+  sesionCargada: Promise<void>;
+
   constructor() {
-    this.supabase.cliente.auth.getUser().then(({ data }) => this.guardarSesion(data.user));
+    this.sesionCargada = this.supabase.cliente.auth.getUser().then(({ data }) => this.guardarSesion(data.user));
   }
 
   async signUp(email: string, clave: string) {
