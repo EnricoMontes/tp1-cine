@@ -7,4 +7,7 @@ export interface Perfil {
   tipo_sangre: string;
   color_ojos: string;
   dias_vacaciones: number;
+  rol?: 'cliente' | 'empleado' | 'admin';
+  puntos?: number;
+  credito?: number;
 }

@@ -3,7 +3,10 @@
   <a routerLink="/home" routerLinkActive="active">Cartelera</a>
 
   @if (auth.usuario()) {
-    <span class="usuario">{{ auth.usuario()?.email }}</span>
+    <span class="usuario">Hola, {{ auth.perfil()?.nombre }}</span>
+    @if (auth.perfil()?.rol === 'admin' || auth.perfil()?.rol === 'empleado') {
+      <span class="rol">{{ auth.perfil()?.rol }}</span>
+    }
     <button class="salir" (click)="salir()">Salir</button>
   } @else {
     <a routerLink="/login" routerLinkActive="active">Ingresar</a>
