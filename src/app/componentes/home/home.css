@@ -4,38 +4,6 @@
   gap: 1.5rem;
 }
 
-.tarjeta {
-  background: #1f1f2e;
-  border-radius: 8px;
-  overflow: hidden;
-  padding-bottom: 0.75rem;
-}
-
-.tarjeta img {
-  width: 100%;
-  aspect-ratio: 2 / 3;
-  object-fit: cover;
-  display: block;
-}
-
-.tarjeta h2 {
-  font-size: 1.1rem;
-  margin: 0.75rem 0.75rem 0.25rem;
-}
-
-.tarjeta p {
-  margin: 0 0.75rem;
-}
-
-.generos span {
-  display: inline-block;
-  font-size: 0.75rem;
-  background: #2e2e44;
-  border-radius: 4px;
-  padding: 0.1rem 0.4rem;
-  margin: 0.25rem 0.25rem 0 0;
-}
-
 .error {
   color: #e94560;
 }

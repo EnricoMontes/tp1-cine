@@ -1,0 +1,24 @@
+<article class="tarjeta">
+  <img [src]="pelicula().imagen_url" [alt]="pelicula().nombre" />
+
+  <div class="cuerpo">
+    <h2>{{ pelicula().nombre }}</h2>
+
+    <p class="info">
+      {{ pelicula().duracion_min }} min ·
+      @if (pelicula().restriccion_edad) {
+        <span class="edad">+{{ pelicula().restriccion_edad }}</span>
+      } @else {
+        <span class="edad">ATP</span>
+      }
+    </p>
+
+    <p class="generos">
+      @for (genero of pelicula().generos; track genero.id) {
+        <span>{{ genero.nombre }}</span>
+      }
+    </p>
+
+    <button (click)="seleccionar()">Ver funciones</button>
+  </div>
+</article>

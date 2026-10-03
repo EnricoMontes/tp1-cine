@@ -1,9 +1,11 @@
 import { Component, OnInit, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { Peliculas } from '../../servicios/peliculas';
 import { Pelicula } from '../../modelos/pelicula';
+import { CardPelicula } from '../card-pelicula/card-pelicula';
 
 @Component({
-  imports: [],
+  imports: [CardPelicula],
   selector: 'app-home',
   styleUrl: './home.css',
   templateUrl: './home.html',
@@ -13,7 +15,7 @@ export class Home implements OnInit {
   cargando = signal(true);
   mensajeError = signal('');
 
-  constructor(private peliculasService: Peliculas) {}
+  constructor(private peliculasService: Peliculas, private router: Router) {}
 
   ngOnInit() {
     this.cargarCartelera();
@@ -27,5 +29,9 @@ export class Home implements OnInit {
       this.peliculas.set(data ?? []);
     }
     this.cargando.set(false);
+  }
+
+  verDetalle(pelicula: Pelicula) {
+    this.router.navigate(['/peliculas', pelicula.id]);
   }
 }
