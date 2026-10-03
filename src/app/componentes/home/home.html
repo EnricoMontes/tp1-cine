@@ -1,1 +1,24 @@
-<p>home works!</p>
+<h1>Cartelera</h1>
+
+@if (cargando()) {
+  <p>Cargando películas...</p>
+} @else if (mensajeError()) {
+  <p class="error">{{ mensajeError() }}</p>
+} @else {
+  <div class="cartelera">
+    @for (pelicula of peliculas(); track pelicula.id) {
+      <article class="tarjeta">
+        <img [src]="pelicula.imagen_url" [alt]="pelicula.nombre" />
+        <h2>{{ pelicula.nombre }}</h2>
+        <p>{{ pelicula.duracion_min }} min</p>
+        <p class="generos">
+          @for (genero of pelicula.generos; track genero.id) {
+            <span>{{ genero.nombre }}</span>
+          }
+        </p>
+      </article>
+    } @empty {
+      <p>No hay películas en cartelera.</p>
+    }
+  </div>
+}
