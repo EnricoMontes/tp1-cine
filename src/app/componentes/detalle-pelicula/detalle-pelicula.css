@@ -63,3 +63,25 @@
   padding: 0.7rem 1rem;
   border-radius: 6px;
 }
+
+.funciones {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.funciones li {
+  display: flex;
+  gap: 1rem;
+  padding: 0.6rem 0.9rem;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 6px;
+}
+
+.funciones .hora {
+  font-weight: 700;
+  color: var(--acento);
+}

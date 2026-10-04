@@ -46,6 +46,10 @@ export const routes: Routes = [
       {
         path: 'salas',
         loadComponent: () => import('./componentes/admin-salas/admin-salas').then(m => m.AdminSalas)
+      },
+      {
+        path: 'funciones',
+        loadComponent: () => import('./componentes/admin-funciones/admin-funciones').then(m => m.AdminFunciones)
       }
     ]
   },

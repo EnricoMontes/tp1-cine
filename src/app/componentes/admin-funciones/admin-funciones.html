@@ -1,0 +1,85 @@
+<h2>Funciones</h2>
+
+<form class="form" [formGroup]="formFuncion" (ngSubmit)="guardar()">
+  <h3>Nueva función</h3>
+  <p class="ayuda">La sala se asigna automáticamente: la primera libre del formato elegido.</p>
+
+  <label for="peliculaId">Película</label>
+  <select id="peliculaId" formControlName="peliculaId">
+    <option [ngValue]="null" disabled>Elegí una película</option>
+    @for (pelicula of peliculas(); track pelicula.id) {
+      <option [ngValue]="pelicula.id">{{ pelicula.nombre }} ({{ pelicula.duracion_min }} min)</option>
+    }
+  </select>
+
+  <div class="fila">
+    <div class="campo">
+      <label for="formato">Formato</label>
+      <select id="formato" formControlName="formato">
+        @for (formato of formatos; track formato) {
+          <option [ngValue]="formato">{{ formato }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="idioma">Idioma</label>
+      <select id="idioma" formControlName="idioma">
+        <option value="castellano">Castellano</option>
+        <option value="subtitulada">Subtitulada</option>
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="inicio">Fecha y hora</label>
+      <input type="datetime-local" id="inicio" formControlName="inicio">
+    </div>
+  </div>
+
+  @if (mensajeError()) {
+    <p class="error">{{ mensajeError() }}</p>
+  }
+
+  <div class="botones">
+    <button type="submit" [disabled]="formFuncion.invalid || cargando()">
+      {{ cargando() ? 'Buscando sala...' : 'Crear función' }}
+    </button>
+  </div>
+</form>
+
+@if (mensajeOk()) {
+  <p class="ok">{{ mensajeOk() }}</p>
+}
+
+@if (funciones().length === 0) {
+  <p class="ayuda">Todavía no hay funciones cargadas.</p>
+} @else {
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th>Película</th>
+        <th>Sala</th>
+        <th>Formato</th>
+        <th>Idioma</th>
+        <th>Inicio</th>
+        <th>Fin</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (funcion of funciones(); track funcion.id) {
+        <tr>
+          <td>{{ funcion.peliculas?.nombre }}</td>
+          <td>{{ funcion.salas?.nombre }}</td>
+          <td>{{ funcion.formato }}</td>
+          <td>{{ funcion.idioma }}</td>
+          <td>{{ funcion.inicio | date: 'dd/MM/yyyy HH:mm' }}</td>
+          <td>{{ funcion.fin | date: 'HH:mm' }}</td>
+          <td>
+            <button type="button" (click)="borrar(funcion)">Borrar</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

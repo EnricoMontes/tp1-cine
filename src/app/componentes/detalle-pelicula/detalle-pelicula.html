@@ -34,7 +34,18 @@
       }
 
       <h2>Funciones</h2>
-      <p>Todavía no hay funciones cargadas para esta película.</p>
+      @if (funciones().length === 0) {
+        <p>Todavía no hay funciones cargadas para esta película.</p>
+      } @else {
+        <ul class="funciones">
+          @for (funcion of funciones(); track funcion.id) {
+            <li>
+              <span class="hora">{{ funcion.inicio | date: 'dd/MM HH:mm' }}</span>
+              <span>{{ funcion.formato }} · {{ funcion.idioma }} · {{ funcion.salas?.nombre }}</span>
+            </li>
+          }
+        </ul>
+      }
     </div>
   </section>
 }

@@ -1,5 +1,6 @@
 import { inject, Service } from '@angular/core';
 import { Supabase } from './supabase';
+import { Formato } from '../modelos/sala';
 
 @Service()
 export class Salas {
@@ -9,6 +10,14 @@ export class Salas {
     return this.supabase.cliente
       .from('salas')
       .select('*')
+      .order('id');
+  }
+
+  traerPorFormato(formato: Formato) {
+    return this.supabase.cliente
+      .from('salas')
+      .select('*')
+      .eq('formato', formato)
       .order('id');
   }
 
