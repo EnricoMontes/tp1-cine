@@ -1,22 +1,22 @@
 .volver {
   display: inline-block;
-  margin-bottom: 1rem;
-  color: #e94560;
+  margin-bottom: 1.5rem;
   text-decoration: none;
 }
 
 .detalle {
   display: flex;
   flex-wrap: wrap;
-  gap: 2rem;
+  gap: 2.5rem;
 }
 
 .detalle img {
-  width: 280px;
+  width: 300px;
   max-width: 100%;
   aspect-ratio: 2 / 3;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 10px;
+  border: 1px solid var(--borde);
 }
 
 .info {
@@ -26,29 +26,40 @@
 
 .info h1 {
   margin-top: 0;
+  font-size: 2rem;
+}
+
+.info h2 {
+  font-size: 1.15rem;
+  margin-top: 1.75rem;
+}
+
+.datos {
+  color: var(--texto-suave);
 }
 
 .edad {
   font-weight: bold;
-  color: #f5c518;
+  color: var(--amarillo);
+}
+
+.generos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
 }
 
 .generos span {
-  display: inline-block;
   font-size: 0.8rem;
-  background: #2e2e44;
-  border-radius: 4px;
-  padding: 0.15rem 0.5rem;
-  margin: 0 0.3rem 0.3rem 0;
+  background: var(--superficie-2);
+  color: var(--texto-suave);
+  border-radius: 999px;
+  padding: 0.2rem 0.7rem;
 }
 
 .aviso {
-  background: #4a1d1d;
-  border-left: 4px solid #e94560;
-  padding: 0.6rem 0.8rem;
-  border-radius: 4px;
-}
-
-.error {
-  color: #e94560;
+  background: #3a1b22;
+  border-left: 4px solid var(--acento);
+  padding: 0.7rem 1rem;
+  border-radius: 6px;
 }

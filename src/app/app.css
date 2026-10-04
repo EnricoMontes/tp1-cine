@@ -1,15 +1,21 @@
 .navbar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 1.5rem;
-  padding: 1rem 2rem;
-  background-color: #1a1a2e;
+  padding: 0.9rem 2rem;
+  background: var(--superficie);
+  border-bottom: 1px solid var(--borde);
 }
 
 .navbar a {
-  color: #ddd;
+  color: var(--texto);
   text-decoration: none;
   cursor: pointer;
+}
+
+.navbar a:hover {
+  color: var(--acento);
 }
 
 .navbar .logo {
@@ -19,29 +25,35 @@
 }
 
 .navbar a.active {
-  color: #e94560;
-  border-bottom: 2px solid #e94560;
+  color: var(--acento);
+  border-bottom: 2px solid var(--acento);
 }
 
 main {
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 2rem;
 }
 
 .navbar a.usuario {
-  color: #aaa;
+  color: var(--texto-suave);
   font-size: 0.9rem;
 }
 
 .navbar .salir {
   background: none;
-  border: 1px solid #e94560;
-  color: #e94560;
+  border: 1px solid var(--acento);
+  color: var(--acento);
   padding: 0.3rem 0.8rem;
-  cursor: pointer;
+}
+
+.navbar .salir:hover {
+  background: var(--acento);
+  color: white;
 }
 
 .navbar .rol {
-  background-color: #e94560;
+  background: var(--acento);
   color: white;
   font-size: 0.75rem;
   padding: 0.15rem 0.5rem;

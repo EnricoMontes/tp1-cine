@@ -1,0 +1,6 @@
+p {
+  max-width: 520px;
+  margin: 0;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--borde);
+}
