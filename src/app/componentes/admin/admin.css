@@ -1,0 +1,19 @@
+.menu-admin {
+  display: flex;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--borde);
+}
+
+.menu-admin a {
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  background: var(--superficie);
+  color: var(--texto);
+  text-decoration: none;
+}
+
+.menu-admin a:hover {
+  background: var(--acento);
+}

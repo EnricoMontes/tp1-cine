@@ -3,8 +3,7 @@ export interface Genero {
   nombre: string;
 }
 
-export interface Pelicula {
-  id: number;
+export interface PeliculaDatos {
   nombre: string;
   sinopsis: string;
   duracion_min: number;
@@ -14,7 +13,11 @@ export interface Pelicula {
   estado: 'cartelera' | 'proximamente' | 'archivada';
   visible_en_home: boolean;
   precio_base: number;
-  preventa_activa: boolean;
-  precio_preventa: number | null;
+  preventa_activa?: boolean;
+  precio_preventa?: number | null;
+}
+
+export interface Pelicula extends PeliculaDatos {
+  id: number;
   generos?: Genero[];
 }
