@@ -1,15 +1,19 @@
 <h1>Cartelera</h1>
 
+<div class="filtros">
+  <input type="text" placeholder="Buscar por película o género..." [(ngModel)]="busqueda" />
+</div>
+
 @if (cargando()) {
   <p>Cargando películas...</p>
 } @else if (mensajeError()) {
   <p class="error">{{ mensajeError() }}</p>
 } @else {
   <div class="cartelera">
-    @for (pelicula of peliculas(); track pelicula.id) {
+    @for (pelicula of peliculas() | filtroPeliculas: busqueda(); track pelicula.id) {
       <app-card-pelicula [pelicula]="pelicula" (seleccionada)="verDetalle($event)" />
     } @empty {
-      <p>No hay películas en cartelera.</p>
+      <p>No se encontraron películas.</p>
     }
   </div>
 }
