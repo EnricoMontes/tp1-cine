@@ -1,0 +1,40 @@
+<a routerLink="/home" class="volver">← Volver a la cartelera</a>
+
+@if (cargando()) {
+  <p>Cargando película...</p>
+} @else if (mensajeError()) {
+  <p class="error">{{ mensajeError() }}</p>
+} @else if (pelicula()) {
+  <section class="detalle">
+    <img [src]="pelicula()?.imagen_url" [alt]="pelicula()?.nombre" />
+
+    <div class="info">
+      <h1>{{ pelicula()?.nombre }}</h1>
+
+      <p class="datos">
+        {{ pelicula()?.duracion_min }} min ·
+        @if (pelicula()?.restriccion_edad) {
+          <span class="edad">+{{ pelicula()?.restriccion_edad }}</span>
+        } @else {
+          <span class="edad">ATP</span>
+        }
+      </p>
+
+      <p class="generos">
+        @for (genero of pelicula()?.generos; track genero.id) {
+          <span>{{ genero.nombre }}</span>
+        }
+      </p>
+
+      <h2>Sinopsis</h2>
+      <p>{{ pelicula()?.sinopsis }}</p>
+
+      @if (pelicula()?.restriccion_edad === 18) {
+        <p class="aviso">⚠️ Película para mayores de 18 años.</p>
+      }
+
+      <h2>Funciones</h2>
+      <p>Todavía no hay funciones cargadas para esta película.</p>
+    </div>
+  </section>
+}

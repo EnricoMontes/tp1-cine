@@ -13,4 +13,11 @@ export class Peliculas {
       .eq('visible_en_home', true)
       .order('nombre');
   }
+
+  traerPorId(id: number) {
+    return this.supabase.cliente
+      .from('peliculas')
+      .select('*, generos(*)')
+      .eq('id', id);
+  }
 }

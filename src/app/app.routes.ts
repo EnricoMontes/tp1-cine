@@ -15,6 +15,10 @@ export const routes: Routes = [
     loadComponent: () => import('./componentes/home/home').then(m => m.Home)
   },
   {
+    path: 'peliculas/:id',
+    loadComponent: () => import('./componentes/detalle-pelicula/detalle-pelicula').then(m => m.DetallePelicula)
+  },
+  {
     path: 'login',
     loadComponent: () => import('./componentes/login/login').then(m => m.Login)
   },
