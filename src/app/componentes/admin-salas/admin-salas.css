@@ -17,15 +17,6 @@
   font-size: 0.85rem;
 }
 
-select {
-  font: inherit;
-  padding: 0.3rem 0.5rem;
-  background: var(--superficie-2);
-  color: var(--texto);
-  border: 1px solid var(--borde);
-  border-radius: 6px;
-}
-
 button.secundario {
   background: var(--superficie-2);
 }
@@ -49,8 +40,4 @@ button.secundario:hover {
 .ayuda {
   font-size: 0.9rem;
   color: var(--texto-suave);
-}
-
-.ok {
-  color: #4caf50;
 }

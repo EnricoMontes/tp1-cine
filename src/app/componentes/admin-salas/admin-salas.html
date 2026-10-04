@@ -3,9 +3,6 @@
 @if (mensajeError()) {
   <p class="error">{{ mensajeError() }}</p>
 }
-@if (mensajeOk()) {
-  <p class="ok">{{ mensajeOk() }}</p>
-}
 
 <table class="tabla">
   <thead>
@@ -19,13 +16,7 @@
     @for (sala of salas(); track sala.id) {
       <tr>
         <td>{{ sala.nombre }}</td>
-        <td>
-          <select (change)="cambiarFormato(sala, $event)">
-            @for (formato of formatos; track formato) {
-              <option [value]="formato" [selected]="formato === sala.formato">{{ formato }}</option>
-            }
-          </select>
-        </td>
+        <td>{{ sala.formato }}</td>
         <td>
           <button type="button" class="secundario" (click)="verButacas(sala)">Ver butacas</button>
         </td>
