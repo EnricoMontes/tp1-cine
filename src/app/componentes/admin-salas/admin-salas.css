@@ -1,0 +1,56 @@
+.tabla {
+  width: 100%;
+  max-width: 600px;
+  border-collapse: collapse;
+  background: var(--superficie);
+}
+
+.tabla th,
+.tabla td {
+  padding: 0.6rem;
+  text-align: left;
+  border-bottom: 1px solid var(--borde);
+}
+
+.tabla th {
+  color: var(--texto-suave);
+  font-size: 0.85rem;
+}
+
+select {
+  font: inherit;
+  padding: 0.3rem 0.5rem;
+  background: var(--superficie-2);
+  color: var(--texto);
+  border: 1px solid var(--borde);
+  border-radius: 6px;
+}
+
+button.secundario {
+  background: var(--superficie-2);
+}
+
+button.secundario:hover {
+  background: var(--borde);
+}
+
+.detalle {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+}
+
+.detalle h3 {
+  margin-top: 0;
+}
+
+.ayuda {
+  font-size: 0.9rem;
+  color: var(--texto-suave);
+}
+
+.ok {
+  color: #4caf50;
+}

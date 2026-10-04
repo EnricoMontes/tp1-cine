@@ -1,0 +1,47 @@
+<h2>Salas</h2>
+
+@if (mensajeError()) {
+  <p class="error">{{ mensajeError() }}</p>
+}
+@if (mensajeOk()) {
+  <p class="ok">{{ mensajeOk() }}</p>
+}
+
+<table class="tabla">
+  <thead>
+    <tr>
+      <th>Sala</th>
+      <th>Formato</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (sala of salas(); track sala.id) {
+      <tr>
+        <td>{{ sala.nombre }}</td>
+        <td>
+          <select (change)="cambiarFormato(sala, $event)">
+            @for (formato of formatos; track formato) {
+              <option [value]="formato" [selected]="formato === sala.formato">{{ formato }}</option>
+            }
+          </select>
+        </td>
+        <td>
+          <button type="button" class="secundario" (click)="verButacas(sala)">Ver butacas</button>
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>
+
+@if (salaSeleccionada()) {
+  <section class="detalle">
+    <h3>{{ salaSeleccionada()?.nombre }} · {{ salaSeleccionada()?.formato }}</h3>
+    <p class="ayuda">
+      {{ butacas().length }} butacas: {{ contar('normal') }} normales,
+      {{ contar('accesible') }} accesibles (filas J y K) y {{ contar('vip') }} VIP (filas R, S y T).
+    </p>
+
+    <app-mapa-butacas [butacas]="butacas()" />
+  </section>
+}

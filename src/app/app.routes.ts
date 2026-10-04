@@ -42,6 +42,10 @@ export const routes: Routes = [
       {
         path: 'peliculas',
         loadComponent: () => import('./componentes/admin-peliculas/admin-peliculas').then(m => m.AdminPeliculas)
+      },
+      {
+        path: 'salas',
+        loadComponent: () => import('./componentes/admin-salas/admin-salas').then(m => m.AdminSalas)
       }
     ]
   },

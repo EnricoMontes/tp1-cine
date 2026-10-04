@@ -1,0 +1,30 @@
+<div class="mapa">
+  <div class="pantalla">PANTALLA</div>
+
+  @for (fila of filas(); track fila.letra) {
+    <div class="fila">
+      <span class="letra">{{ fila.letra }}</span>
+
+      @for (bloque of fila.bloques; track $index) {
+        <div class="bloque">
+          @for (butaca of bloque; track butaca.id) {
+            <span
+              class="butaca"
+              [class.accesible]="butaca.tipo === 'accesible'"
+              [class.vip]="butaca.tipo === 'vip'"
+              [title]="butaca.fila + butaca.numero"
+            ></span>
+          }
+        </div>
+      }
+
+      <span class="letra">{{ fila.letra }}</span>
+    </div>
+  }
+
+  <div class="referencias">
+    <span><span class="butaca"></span> Normal</span>
+    <span><span class="butaca accesible"></span> Accesible</span>
+    <span><span class="butaca vip"></span> VIP</span>
+  </div>
+</div>
