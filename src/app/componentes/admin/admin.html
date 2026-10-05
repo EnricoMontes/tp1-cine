@@ -1,9 +1,14 @@
-<h1>Panel de administración</h1>
+<header class="cabecera">
+  <h1>Panel de administración</h1>
+  <p class="ayuda">Cargá películas, mirá las salas y programá funciones.</p>
+</header>
 
-<nav class="menu-admin">
-  <a routerLink="peliculas">Películas</a>
-  <a routerLink="salas">Salas</a>
-  <a routerLink="funciones">Funciones</a>
+<nav class="pestanias">
+  <a routerLink="peliculas" routerLinkActive="activa">Películas</a>
+  <a routerLink="salas" routerLinkActive="activa">Salas</a>
+  <a routerLink="funciones" routerLinkActive="activa">Funciones</a>
 </nav>
 
-<router-outlet />
+<section class="contenido">
+  <router-outlet />
+</section>

@@ -2,11 +2,12 @@
   <p>Cargando...</p>
 } @else if (mensajeError()) {
   <p class="error">{{ mensajeError() }}</p>
-  <a routerLink="/home">← Volver a la cartelera</a>
 } @else {
-  <a [routerLink]="['/peliculas', funcion()?.pelicula_id]" class="volver">← Volver a la película</a>
+  <a [routerLink]="['/peliculas', funcion()?.pelicula_id]" class="volver">Volver a la película</a>
 
-  <section class="tarjeta">
+  <app-pasos-compra [actual]="1" />
+
+  <section class="panel tarjeta">
     <h1>{{ funcion()?.peliculas?.nombre }}</h1>
     <p class="ayuda">
       {{ funcion()?.inicio | date: 'dd/MM/yyyy HH:mm' }} · {{ funcion()?.formato }} ·
@@ -22,13 +23,32 @@
     <div class="entrada">
       <div>
         <strong>General</strong>
-        <p class="ayuda">Butacas comunes y accesibles</p>
+        <p class="ayuda">Butacas comunes</p>
+        <p class="quedan" [class.pocas]="libres().general > 0 && libres().general <= 10" [class.agotadas]="libres().general === 0">
+          {{ libres().general === 0 ? 'Agotadas' : 'Quedan ' + libres().general }}
+        </p>
       </div>
       <span class="precio">{{ precioGeneral() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</span>
       <div class="contador">
         <button type="button" (click)="restar('general')" [disabled]="general() === 0">−</button>
         <span>{{ general() }}</span>
-        <button type="button" (click)="sumar('general')" [disabled]="cantidad() >= maximo">+</button>
+        <button type="button" (click)="sumar('general')" [disabled]="!puedeSumar('general')">+</button>
+      </div>
+    </div>
+
+    <div class="entrada">
+      <div>
+        <strong class="accesible">Accesible</strong>
+        <p class="ayuda">Para personas con discapacidad · filas J y K</p>
+        <p class="quedan" [class.pocas]="libres().accesible > 0 && libres().accesible <= 10" [class.agotadas]="libres().accesible === 0">
+          {{ libres().accesible === 0 ? 'Agotadas' : 'Quedan ' + libres().accesible }}
+        </p>
+      </div>
+      <span class="precio">{{ precioGeneral() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</span>
+      <div class="contador">
+        <button type="button" (click)="restar('accesible')" [disabled]="accesible() === 0">−</button>
+        <span>{{ accesible() }}</span>
+        <button type="button" (click)="sumar('accesible')" [disabled]="!puedeSumar('accesible')">+</button>
       </div>
     </div>
 
@@ -36,12 +56,15 @@
       <div>
         <strong class="vip">VIP</strong>
         <p class="ayuda">Filas R, S y T · +50%</p>
+        <p class="quedan" [class.pocas]="libres().vip > 0 && libres().vip <= 10" [class.agotadas]="libres().vip === 0">
+          {{ libres().vip === 0 ? 'Agotadas' : 'Quedan ' + libres().vip }}
+        </p>
       </div>
       <span class="precio">{{ precioVip() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</span>
       <div class="contador">
         <button type="button" (click)="restar('vip')" [disabled]="vip() === 0">−</button>
         <span>{{ vip() }}</span>
-        <button type="button" (click)="sumar('vip')" [disabled]="cantidad() >= maximo">+</button>
+        <button type="button" (click)="sumar('vip')" [disabled]="!puedeSumar('vip')">+</button>
       </div>
     </div>
 

@@ -52,6 +52,11 @@ export const routes: Routes = [
     canActivateChild: [adminChildGuard],
     children: [
       {
+        path: '',
+        redirectTo: 'peliculas',
+        pathMatch: 'full'
+      },
+      {
         path: 'peliculas',
         loadComponent: () => import('./componentes/admin-peliculas/admin-peliculas').then(m => m.AdminPeliculas)
       },

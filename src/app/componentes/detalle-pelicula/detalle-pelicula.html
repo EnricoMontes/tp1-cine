@@ -1,4 +1,4 @@
-<a routerLink="/home" class="volver">← Volver a la cartelera</a>
+<a routerLink="/home" class="volver">Volver a la cartelera</a>
 
 @if (cargando()) {
   <p>Cargando película...</p>
@@ -6,49 +6,59 @@
   <p class="error">{{ mensajeError() }}</p>
 } @else if (pelicula()) {
   <section class="detalle">
-    <img [src]="pelicula()?.imagen_url" [alt]="pelicula()?.nombre" />
+    <div class="fondo" [style.background-image]="'url(' + pelicula()?.imagen_url + ')'"></div>
+
+    <img class="poster" [src]="pelicula()?.imagen_url" [alt]="pelicula()?.nombre" />
 
     <div class="info">
       <h1>{{ pelicula()?.nombre }}</h1>
 
       <p class="datos">
-        {{ pelicula()?.duracion_min }} min ·
-        @if (pelicula()?.restriccion_edad) {
-          <span class="edad">+{{ pelicula()?.restriccion_edad }}</span>
-        } @else {
-          <span class="edad">ATP</span>
-        }
-      </p>
+        <span>{{ pelicula()?.duracion_min }} min</span>
 
-      <p class="generos">
+        <span class="etiqueta amarilla">{{ pelicula()?.restriccion_edad ? '+' + pelicula()?.restriccion_edad : 'ATP' }}</span>
         @for (genero of pelicula()?.generos; track genero.id) {
-          <span>{{ genero.nombre }}</span>
+          <span class="etiqueta">{{ genero.nombre }}</span>
         }
       </p>
 
-      <h2>Sinopsis</h2>
-      <p>{{ pelicula()?.sinopsis }}</p>
+      <p class="sinopsis">{{ pelicula()?.sinopsis }}</p>
 
       @if (pelicula()?.restriccion_edad === 18) {
         <p class="aviso">⚠️ Película para mayores de 18 años.</p>
       }
-
-      <h2>Funciones</h2>
-
-      @if (funciones().length === 0) {
-        <p>Todavía no hay funciones cargadas para esta película.</p>
-      } @else {
-        <ul class="funciones">
-          @for (funcion of funciones(); track funcion.id) {
-            <li>
-              <span class="hora">{{ funcion.inicio | date: 'dd/MM HH:mm' }}</span>
-              <span>{{ funcion.formato }} · {{ funcion.idioma }} · {{ funcion.salas?.nombre }}</span>
-
-              <a class="comprar" [routerLink]="['/funciones', funcion.id, 'entradas']">Comprar</a>
-            </li>
-          }
-        </ul>
-      }
     </div>
+  </section>
+
+  <section class="seccion-funciones">
+    <h2>Funciones</h2>
+
+    @if (pelicula()?.estado === 'proximamente') {
+      <div class="proximamente">
+        <span>Próximamente</span>
+        @if (pelicula()?.fecha_estreno) {
+          <p class="ayuda">Estreno: {{ pelicula()?.fecha_estreno + 'T00:00' | date: 'dd/MM/yyyy' }}</p>
+        }
+      </div>
+    } @else if (funciones().length === 0) {
+      <p class="ayuda">Todavía no hay funciones cargadas para esta película.</p>
+    } @else {
+      <div class="funciones">
+        @for (funcion of funciones(); track funcion.id) {
+          <article class="funcion">
+            <div class="cuando">
+              <span class="dia">{{ funcion.inicio | date: 'dd/MM' }}</span>
+              <span class="hora">{{ funcion.inicio | date: 'HH:mm' }}</span>
+            </div>
+            <div class="datos-funcion">
+              <span class="etiqueta azul">{{ funcion.formato }}</span>
+              <span class="ayuda">{{ funcion.idioma === 'castellano' ? 'Castellano' : 'Subtitulada' }} · {{ funcion.salas?.nombre }}</span>
+            </div>
+
+            <a class="boton" [routerLink]="['/funciones', funcion.id, 'entradas']">Comprar</a>
+          </article>
+        }
+      </div>
+    }
   </section>
 }

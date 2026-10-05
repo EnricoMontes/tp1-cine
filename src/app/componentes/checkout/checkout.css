@@ -8,19 +8,10 @@
 .tarjeta {
   flex: 1;
   min-width: 280px;
-  padding: 1.5rem;
-  background: var(--superficie);
-  border: 1px solid var(--borde);
-  border-radius: 10px;
 }
 
 .tarjeta h2 {
   margin-top: 0;
-}
-
-.ayuda {
-  color: var(--texto-suave);
-  font-size: 0.9rem;
 }
 
 .detalle {
@@ -59,60 +50,27 @@
   font-weight: 700;
 }
 
-.aviso {
-  padding: 0.7rem 1rem;
-  border-radius: 6px;
-  background: var(--superficie-2);
-  border-left: 4px solid var(--amarillo);
-}
-
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
 .form h2 {
   margin: 0;
 }
 
-.form label {
-  margin-top: 0.6rem;
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.form .error {
-  font-size: 0.85rem;
-  margin: 0;
-}
-
-.fila {
-  display: flex;
-  gap: 1rem;
-}
-
-.campo {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  flex: 1;
-}
-
-.check {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: normal !important;
-}
-
 .form button {
-  margin-top: 1rem;
+  margin-top: 1.25rem;
+  padding: 0.8rem;
+}
+
+h1 {
+  margin-top: 0;
 }
 
 .confirmacion {
   max-width: 600px;
   margin: 0 auto;
+  text-align: center;
+}
+
+.confirmacion h1 {
+  margin-top: 0;
 }
 
 .codigo {

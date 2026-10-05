@@ -1,6 +1,4 @@
-<h2>Funciones</h2>
-
-<form class="form" [formGroup]="formFuncion" (ngSubmit)="guardar()">
+<form class="form panel" [formGroup]="formFuncion" (ngSubmit)="guardar()">
   <h3>Nueva función</h3>
   <p class="ayuda">La sala se asigna automáticamente: la primera libre del formato elegido.</p>
 
@@ -51,35 +49,46 @@
   <p class="ok">{{ mensajeOk() }}</p>
 }
 
+<div class="encabezado-seccion">
+  <h2>Funciones programadas</h2>
+  <span class="ayuda">{{ funciones().length }} en total</span>
+</div>
+
 @if (funciones().length === 0) {
   <p class="ayuda">Todavía no hay funciones cargadas.</p>
 } @else {
-  <table class="tabla">
-    <thead>
-      <tr>
-        <th>Película</th>
-        <th>Sala</th>
-        <th>Formato</th>
-        <th>Idioma</th>
-        <th>Inicio</th>
-        <th>Fin</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (funcion of funciones(); track funcion.id) {
+  <div class="tabla-contenedor">
+    <table class="tabla">
+      <thead>
         <tr>
-          <td>{{ funcion.peliculas?.nombre }}</td>
-          <td>{{ funcion.salas?.nombre }}</td>
-          <td>{{ funcion.formato }}</td>
-          <td>{{ funcion.idioma }}</td>
-          <td>{{ funcion.inicio | date: 'dd/MM/yyyy HH:mm' }}</td>
-          <td>{{ funcion.fin | date: 'HH:mm' }}</td>
-          <td>
-            <button type="button" (click)="borrar(funcion)">Borrar</button>
-          </td>
+          <th>Película</th>
+          <th>Cuándo</th>
+          <th>Sala</th>
+          <th>Formato</th>
+          <th>Idioma</th>
+          <th></th>
         </tr>
-      }
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        @for (funcion of funciones(); track funcion.id) {
+          <tr>
+            <td><strong>{{ funcion.peliculas?.nombre }}</strong></td>
+
+            <td>
+              {{ funcion.inicio | date: 'dd/MM/yyyy' }}
+              <span class="ayuda">{{ funcion.inicio | date: 'HH:mm' }} a {{ funcion.fin | date: 'HH:mm' }}</span>
+            </td>
+            <td>{{ funcion.salas?.nombre }}</td>
+            <td><span class="etiqueta azul">{{ funcion.formato }}</span></td>
+            <td><span class="etiqueta">{{ funcion.idioma === 'castellano' ? 'Castellano' : 'Subtitulada' }}</span></td>
+            <td>
+              <div class="acciones">
+                <button type="button" class="peligro chico" (click)="borrar(funcion)">Borrar</button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 }

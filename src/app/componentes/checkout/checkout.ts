@@ -6,9 +6,10 @@ import { Carrito } from '../../servicios/carrito';
 import { Compras } from '../../servicios/compras';
 import { Auth } from '../../servicios/auth';
 import { vencimientoValidator } from '../../validadores/pago.validadores';
+import { PasosCompra } from '../pasos-compra/pasos-compra';
 
 @Component({
-  imports: [ReactiveFormsModule, RouterLink, CurrencyPipe, DatePipe],
+  imports: [ReactiveFormsModule, RouterLink, CurrencyPipe, DatePipe, PasosCompra],
   selector: 'app-checkout',
   styleUrl: './checkout.css',
   templateUrl: './checkout.html',
@@ -86,6 +87,13 @@ export class Checkout implements OnInit, OnDestroy {
       return;
     }
     this.compraId.set(data);
+  }
+
+  formatearVencimiento(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const numeros = input.value.replace(/\D/g, '').slice(0, 4);
+    const conBarra = numeros.length > 2 ? `${numeros.slice(0, 2)}/${numeros.slice(2)}` : numeros;
+    this.formPago.controls.vencimiento.setValue(conBarra);
   }
 
   private edad(fechaNacimiento: string) {

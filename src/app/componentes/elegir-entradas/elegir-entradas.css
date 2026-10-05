@@ -1,15 +1,6 @@
-.volver {
-  display: inline-block;
-  margin-bottom: 1rem;
-}
-
 .tarjeta {
   max-width: 600px;
   margin: 0 auto;
-  padding: 1.5rem;
-  background: var(--superficie);
-  border: 1px solid var(--borde);
-  border-radius: 10px;
 }
 
 .tarjeta h1 {
@@ -20,13 +11,6 @@
   margin: 0.2rem 0;
   color: var(--texto-suave);
   font-size: 0.9rem;
-}
-
-.aviso {
-  padding: 0.7rem 1rem;
-  border-radius: 6px;
-  background: var(--superficie-2);
-  border-left: 4px solid var(--amarillo);
 }
 
 .entrada {
@@ -47,6 +31,22 @@
 
 .vip {
   color: var(--amarillo);
+}
+
+.accesible {
+  color: #3b82f6;
+}
+
+.contador button {
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid var(--borde);
+  color: var(--texto);
+}
+
+.contador button:hover:not(:disabled) {
+  border-color: var(--acento);
+  background: var(--superficie-2);
 }
 
 .contador {
@@ -77,4 +77,20 @@
 
 .continuar {
   width: 100%;
+  padding: 0.8rem;
+}
+
+.quedan {
+  margin: 0.15rem 0 0;
+  color: var(--texto-suave);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.quedan.pocas {
+  color: var(--amarillo);
+}
+
+.quedan.agotadas {
+  color: var(--error);
 }

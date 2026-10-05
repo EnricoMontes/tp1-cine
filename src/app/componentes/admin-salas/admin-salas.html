@@ -1,38 +1,42 @@
-<h2>Salas</h2>
-
 @if (mensajeError()) {
   <p class="error">{{ mensajeError() }}</p>
 }
 
-<table class="tabla">
-  <thead>
-    <tr>
-      <th>Sala</th>
-      <th>Formato</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    @for (sala of salas(); track sala.id) {
-      <tr>
-        <td>{{ sala.nombre }}</td>
-        <td>{{ sala.formato }}</td>
-        <td>
-          <button type="button" class="secundario" (click)="verButacas(sala)">Ver butacas</button>
-        </td>
-      </tr>
-    }
-  </tbody>
-</table>
+<div class="encabezado-seccion">
+  <h2>Salas</h2>
+  <span class="ayuda">Cada sala tiene un formato fijo · 532 butacas por sala</span>
+</div>
+
+<div class="salas">
+  @for (sala of salas(); track sala.id) {
+    <button
+      type="button"
+      class="sala"
+      [class.elegida]="salaSeleccionada()?.id === sala.id"
+      (click)="verButacas(sala)"
+    >
+      <span class="formato">{{ sala.formato }}</span>
+      <span class="nombre">{{ sala.nombre }}</span>
+      <span class="ver">Ver butacas</span>
+    </button>
+  }
+</div>
 
 @if (salaSeleccionada()) {
-  <section class="detalle">
-    <h3>{{ salaSeleccionada()?.nombre }} · {{ salaSeleccionada()?.formato }}</h3>
-    <p class="ayuda">
-      {{ butacas().length }} butacas: {{ contar('normal') }} normales,
-      {{ contar('accesible') }} accesibles (filas J y K) y {{ contar('vip') }} VIP (filas R, S y T).
-    </p>
+  <section class="panel detalle">
+    <div class="encabezado-seccion">
+      <h2>{{ salaSeleccionada()?.nombre }} · {{ salaSeleccionada()?.formato }}</h2>
+      <span class="ayuda">{{ butacas().length }} butacas</span>
+    </div>
+
+    <div class="resumen">
+      <span class="etiqueta">{{ contar('normal') }} normales</span>
+      <span class="etiqueta azul">{{ contar('accesible') }} accesibles · filas J y K</span>
+      <span class="etiqueta amarilla">{{ contar('vip') }} VIP · filas R, S y T</span>
+    </div>
 
     <app-mapa-butacas [butacas]="butacas()" />
   </section>
+} @else {
+  <p class="ayuda vacio">Elegí una sala para ver su mapa de butacas.</p>
 }

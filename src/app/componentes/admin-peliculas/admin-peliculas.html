@@ -1,6 +1,4 @@
-<h2>Películas</h2>
-
-<form class="form" [formGroup]="formPelicula" (ngSubmit)="guardar()">
+<form class="form panel" [formGroup]="formPelicula" (ngSubmit)="guardar()">
   <h3>{{ editandoId() === null ? 'Nueva película' : 'Modificar película' }}</h3>
 
   <label for="nombre">Nombre</label>
@@ -102,36 +100,57 @@
   <p class="ok">{{ mensajeOk() }}</p>
 }
 
-<table class="tabla">
-  <thead>
-    <tr>
-      <th>Nombre</th>
-      <th>Duración</th>
-      <th>Edad</th>
-      <th>Géneros</th>
-      <th>Estado</th>
-      <th>Home</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    @for (pelicula of peliculas(); track pelicula.id) {
+<div class="encabezado-seccion">
+  <h2>Películas cargadas</h2>
+  <span class="ayuda">{{ peliculas().length }} en total</span>
+</div>
+
+<div class="tabla-contenedor">
+  <table class="tabla">
+    <thead>
       <tr>
-        <td>{{ pelicula.nombre }}</td>
-        <td>{{ pelicula.duracion_min }} min</td>
-        <td>{{ pelicula.restriccion_edad ? '+' + pelicula.restriccion_edad : 'ATP' }}</td>
-        <td>{{ nombresGeneros(pelicula) }}</td>
-        <td>{{ pelicula.estado }}</td>
-        <td>{{ pelicula.visible_en_home ? 'Sí' : 'No' }}</td>
-        <td class="acciones">
-          <button type="button" class="secundario" (click)="editar(pelicula)">Editar</button>
-          <button type="button" (click)="borrar(pelicula)">Borrar</button>
-        </td>
+        <th>Película</th>
+        <th>Edad</th>
+        <th>Géneros</th>
+        <th>Estado</th>
+        <th>Home</th>
+        <th></th>
       </tr>
-    } @empty {
-      <tr>
-        <td colspan="7">No hay películas cargadas.</td>
-      </tr>
-    }
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      @for (pelicula of peliculas(); track pelicula.id) {
+        <tr>
+          <td>
+            <div class="pelicula">
+              <img [src]="pelicula.imagen_url" [alt]="pelicula.nombre">
+              <div>
+                <strong>{{ pelicula.nombre }}</strong>
+                <span class="ayuda">{{ pelicula.duracion_min }} min · {{ pelicula.precio_base | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</span>
+              </div>
+            </div>
+          </td>
+          <td><span class="etiqueta amarilla">{{ pelicula.restriccion_edad ? '+' + pelicula.restriccion_edad : 'ATP' }}</span></td>
+          <td class="ayuda">{{ nombresGeneros(pelicula) }}</td>
+          <td>
+            <span class="etiqueta" [class.verde]="pelicula.estado === 'cartelera'" [class.azul]="pelicula.estado === 'proximamente'">
+              {{ pelicula.estado === 'cartelera' ? 'En cartelera' : pelicula.estado === 'proximamente' ? 'Próximamente' : 'Archivada' }}
+            </span>
+          </td>
+          <td>
+            <span class="etiqueta" [class.verde]="pelicula.visible_en_home">{{ pelicula.visible_en_home ? 'Visible' : 'Oculta' }}</span>
+          </td>
+          <td>
+            <div class="acciones">
+              <button type="button" class="secundario chico" (click)="editar(pelicula)">Editar</button>
+              <button type="button" class="peligro chico" (click)="borrar(pelicula)">Borrar</button>
+            </div>
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="6" class="ayuda">No hay películas cargadas.</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

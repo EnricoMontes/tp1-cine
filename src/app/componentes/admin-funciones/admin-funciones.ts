@@ -53,7 +53,7 @@ export class AdminFunciones implements OnInit {
 
   private async cargarPeliculas() {
     const { data } = await this.peliculasService.traerTodas();
-    this.peliculas.set((data ?? []).filter(p => p.estado !== 'archivada'));
+    this.peliculas.set((data ?? []).filter(p => p.estado === 'cartelera'));
   }
 
   async guardar() {

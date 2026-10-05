@@ -1,0 +1,13 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 4rem 0;
+  text-align: center;
+}
+
+p {
+  color: var(--texto-suave);
+  margin: 0 0 1rem;
+}

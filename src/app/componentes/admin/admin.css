@@ -1,19 +1,44 @@
-.menu-admin {
-  display: flex;
-  gap: 1rem;
-  padding-bottom: 1rem;
+.cabecera {
+  text-align: center;
   margin-bottom: 1.5rem;
-  border-bottom: 1px solid var(--borde);
 }
 
-.menu-admin a {
-  padding: 0.4rem 0.9rem;
-  border-radius: 6px;
+.cabecera h1 {
+  margin: 0 0 0.4rem;
+}
+
+.pestanias {
+  display: flex;
+  justify-content: center;
+  gap: 0.25rem;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto 2rem;
+  padding: 0.3rem;
   background: var(--superficie);
-  color: var(--texto);
-  text-decoration: none;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
 }
 
-.menu-admin a:hover {
+.pestanias a {
+  padding: 0.5rem 1.4rem;
+  border-radius: 999px;
+  color: var(--texto-suave);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+
+.pestanias a:hover {
+  color: var(--texto);
+}
+
+.pestanias a.activa {
   background: var(--acento);
+  color: white;
+}
+
+.contenido {
+  max-width: 1000px;
+  margin: 0 auto;
 }

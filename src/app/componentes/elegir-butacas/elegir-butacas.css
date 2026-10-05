@@ -1,8 +1,3 @@
-.volver {
-  display: inline-block;
-  margin-bottom: 1rem;
-}
-
 .encabezado h1 {
   margin: 0;
 }
@@ -12,20 +7,9 @@
   color: var(--texto-suave);
 }
 
-.aviso {
-  padding: 0.7rem 1rem;
-  border-radius: 6px;
-  background: var(--superficie);
-  border-left: 4px solid var(--amarillo);
-}
-
 .resumen {
   max-width: 600px;
   margin: 1.5rem auto 0;
-  padding: 1.5rem;
-  background: var(--superficie);
-  border: 1px solid var(--borde);
-  border-radius: 10px;
 }
 
 .resumen h2 {
@@ -54,13 +38,38 @@
 
 .consigna {
   font-size: 1.05rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.consigna .vip {
+.cupo {
+  padding: 0.15rem 0.65rem;
+  border-radius: 999px;
+  background: var(--superficie-2);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.cupo.vip {
   color: var(--amarillo);
 }
 
-.resumen > a {
+.cupo.accesible {
+  color: #3b82f6;
+}
+
+.resumen button {
+  width: 100%;
+  padding: 0.8rem;
+}
+
+app-mapa-butacas {
   display: block;
-  margin-bottom: 1rem;
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
 }

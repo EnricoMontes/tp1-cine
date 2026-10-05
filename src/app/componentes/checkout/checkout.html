@@ -1,5 +1,5 @@
 @if (compraId()) {
-  <section class="tarjeta confirmacion">
+  <section class="panel confirmacion">
     <h1>¡Compra confirmada! 🎬</h1>
     <p>Te enviamos las entradas a <strong>{{ formPago.controls.email.value }}</strong>.</p>
     <p class="ayuda">Código de compra (lo vas a necesitar en la entrada):</p>
@@ -21,13 +21,17 @@
       <p class="aviso">⚠️ Película +{{ restriccion() }}: los menores deben asistir acompañados de un adulto.</p>
     }
 
-    <a routerLink="/home">Volver a la cartelera</a>
+    <a class="boton" routerLink="/home">Ver más películas</a>
   </section>
 } @else {
+  <a [routerLink]="['/funciones', carrito.funcion()?.id, 'butacas']" class="volver">Volver a las butacas</a>
+
+  <app-pasos-compra [actual]="3" />
+
   <h1>Finalizar compra</h1>
 
   <div class="columnas">
-    <section class="tarjeta">
+    <section class="panel tarjeta">
       <h2>{{ carrito.funcion()?.peliculas?.nombre }}</h2>
       <p class="ayuda">
         {{ carrito.funcion()?.inicio | date: 'dd/MM/yyyy HH:mm' }} · {{ carrito.funcion()?.formato }} ·
@@ -39,8 +43,10 @@
           <tr>
             <td>
               Butaca {{ butaca.fila }}{{ butaca.numero }}
+
               @if (butaca.tipo === 'vip') { <span class="chip vip">VIP +50%</span> }
             </td>
+
             <td class="precio">{{ carrito.precioDe(butaca) | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
           </tr>
         }
@@ -53,10 +59,9 @@
       @if (restriccion()) {
         <p class="aviso">⚠️ Película para mayores de {{ restriccion() }} años.</p>
       }
-      <a [routerLink]="['/funciones', carrito.funcion()?.id, 'butacas']">← Cambiar butacas</a>
     </section>
 
-    <section class="tarjeta">
+    <section class="panel tarjeta">
       @if (menorBloqueado()) {
         <p class="error">
           Según tu fecha de nacimiento no tenés la edad mínima (+{{ restriccion() }}) para ver esta película.
@@ -87,7 +92,8 @@
           <div class="fila">
             <div class="campo">
               <label for="vencimiento">Vencimiento</label>
-              <input type="text" id="vencimiento" formControlName="vencimiento" maxlength="5" placeholder="MM/AA">
+
+              <input type="text" id="vencimiento" formControlName="vencimiento" maxlength="5" placeholder="MM/AA" inputmode="numeric" (input)="formatearVencimiento($event)">
               @if (formPago.controls.vencimiento.touched && formPago.controls.vencimiento.hasError('vencida')) {
                 <p class="error">La tarjeta está vencida</p>
               } @else if (formPago.controls.vencimiento.touched && formPago.controls.vencimiento.invalid) {

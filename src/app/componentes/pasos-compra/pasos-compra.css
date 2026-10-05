@@ -1,0 +1,43 @@
+.pasos {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 2rem;
+  margin: 0 0 2rem;
+  padding: 0;
+  list-style: none;
+}
+
+.pasos li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.numero {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid var(--borde);
+  border-radius: 50%;
+  font-size: 0.8rem;
+}
+
+.pasos li.actual {
+  color: var(--texto);
+}
+
+.pasos li.actual .numero {
+  background: var(--acento);
+  border-color: var(--acento);
+  color: white;
+}
+
+.pasos li.hecho .numero {
+  border-color: var(--acento);
+  color: var(--acento);
+}

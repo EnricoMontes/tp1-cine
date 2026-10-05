@@ -2,9 +2,10 @@
   <p>Cargando butacas...</p>
 } @else if (mensajeError()) {
   <p class="error">{{ mensajeError() }}</p>
-  <a routerLink="/home">← Volver a la cartelera</a>
 } @else {
-  <a [routerLink]="['/funciones', funcion()?.id, 'entradas']" class="volver">← Volver a las entradas</a>
+  <a [routerLink]="['/funciones', funcion()?.id, 'entradas']" class="volver">Volver a las entradas</a>
+
+  <app-pasos-compra [actual]="2" />
 
   <header class="encabezado">
     <h1>{{ funcion()?.peliculas?.nombre }}</h1>
@@ -19,15 +20,13 @@
   }
 
   <p class="consigna">
-    Marcá
-    @if (carrito.cantidadGeneral()) {
-      <strong>{{ carrito.cantidadGeneral() }} general{{ carrito.cantidadGeneral() > 1 ? 'es' : '' }}</strong>
-      ({{ generalesElegidas() }}/{{ carrito.cantidadGeneral() }})
-    }
-    @if (carrito.cantidadGeneral() && carrito.cantidadVip()) { y }
-    @if (carrito.cantidadVip()) {
-      <strong class="vip">{{ carrito.cantidadVip() }} VIP</strong>
-      ({{ vipElegidas() }}/{{ carrito.cantidadVip() }})
+    Marcá tus butacas:
+    @for (t of tipos; track t.tipo) {
+      @if (cupo(t.tipo)) {
+        <span class="cupo" [class.vip]="t.tipo === 'vip'" [class.accesible]="t.tipo === 'accesible'">
+          {{ elegidas(t.tipo) }}/{{ cupo(t.tipo) }} {{ t.nombre }}
+        </span>
+      }
     }
   </p>
   <p class="ayuda">Las butacas ocupadas se actualizan en tiempo real.</p>
@@ -44,7 +43,7 @@
     <p class="aviso">{{ aviso() }}</p>
   }
 
-  <section class="resumen">
+  <section class="panel resumen">
     <h2>Tus butacas</h2>
     @if (seleccionadas().length === 0) {
       <p class="ayuda">Todavía no elegiste ninguna.</p>
@@ -59,7 +58,6 @@
         }
       </ul>
     }
-    <a [routerLink]="['/funciones', funcion()?.id, 'entradas']">← Cambiar cantidad de entradas</a>
     <button type="button" [disabled]="!completo()" (click)="continuar()">Continuar</button>
   </section>
 }

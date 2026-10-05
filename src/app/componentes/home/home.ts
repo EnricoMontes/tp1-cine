@@ -14,6 +14,7 @@ import { FiltroPeliculasPipe } from '../../pipes/filtro-peliculas-pipe';
 })
 export class Home implements OnInit {
   peliculas = signal<Pelicula[]>([]);
+  proximas = signal<Pelicula[]>([]);
   cargando = signal(true);
   mensajeError = signal('');
 
@@ -23,6 +24,7 @@ export class Home implements OnInit {
 
   ngOnInit() {
     this.cargarCartelera();
+    this.cargarProximamente();
   }
 
   private async cargarCartelera() {
@@ -33,6 +35,11 @@ export class Home implements OnInit {
       this.peliculas.set(data ?? []);
     }
     this.cargando.set(false);
+  }
+
+  private async cargarProximamente() {
+    const { data } = await this.peliculasService.traerProximamente();
+    this.proximas.set(data ?? []);
   }
 
   verDetalle(pelicula: Pelicula) {

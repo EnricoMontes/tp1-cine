@@ -1,0 +1,8 @@
+<ol class="pasos">
+  @for (paso of pasos; track paso) {
+    <li [class.actual]="$index + 1 === actual()" [class.hecho]="$index + 1 < actual()">
+      <span class="numero">{{ $index + 1 }}</span>
+      {{ paso }}
+    </li>
+  }
+</ol>

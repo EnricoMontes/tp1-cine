@@ -1,4 +1,4 @@
-<h1>Cartelera</h1>
+<h1>En cartelera</h1>
 
 <div class="filtros">
   <input type="text" placeholder="Buscar por película o género..." [(ngModel)]="busqueda" />
@@ -14,6 +14,15 @@
       <app-card-pelicula [pelicula]="pelicula" (seleccionada)="verDetalle($event)" />
     } @empty {
       <p>No se encontraron películas.</p>
+    }
+  </div>
+}
+
+@if (proximas().length) {
+  <h2 class="titulo-seccion">Próximamente</h2>
+  <div class="cartelera">
+    @for (pelicula of proximas(); track pelicula.id) {
+      <app-card-pelicula [pelicula]="pelicula" (seleccionada)="verDetalle($event)" />
     }
   </div>
 }

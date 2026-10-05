@@ -9,9 +9,10 @@ import { Carrito } from '../../servicios/carrito';
 import { Funcion } from '../../modelos/funcion';
 import { Butaca } from '../../modelos/sala';
 import { MapaButacas } from '../mapa-butacas/mapa-butacas';
+import { PasosCompra } from '../pasos-compra/pasos-compra';
 
 @Component({
-  imports: [RouterLink, DatePipe, MapaButacas],
+  imports: [RouterLink, DatePipe, MapaButacas, PasosCompra],
   selector: 'app-elegir-butacas',
   styleUrl: './elegir-butacas.css',
   templateUrl: './elegir-butacas.html',
@@ -47,16 +48,25 @@ export class ElegirButacas implements OnInit, OnDestroy {
     this.cargar(id);
   }
 
-  generalesElegidas() {
-    return this.seleccionadas().filter(b => b.tipo !== 'vip').length;
+  tipos: { tipo: Butaca['tipo']; nombre: string }[] = [
+    { tipo: 'normal', nombre: 'generales' },
+    { tipo: 'accesible', nombre: 'accesibles' },
+    { tipo: 'vip', nombre: 'VIP' },
+  ];
+
+  elegidas(tipo: Butaca['tipo']) {
+    return this.seleccionadas().filter(b => b.tipo === tipo).length;
   }
 
-  vipElegidas() {
-    return this.seleccionadas().filter(b => b.tipo === 'vip').length;
+  cupo(tipo: Butaca['tipo']) {
+    if (tipo === 'accesible') {
+      return this.carrito.cantidadAccesible();
+    }
+    return tipo === 'vip' ? this.carrito.cantidadVip() : this.carrito.cantidadGeneral();
   }
 
   completo() {
-    return this.generalesElegidas() === this.carrito.cantidadGeneral() && this.vipElegidas() === this.carrito.cantidadVip();
+    return this.tipos.every(t => this.elegidas(t.tipo) === this.cupo(t.tipo));
   }
 
   ngOnDestroy() {
@@ -116,17 +126,12 @@ export class ElegirButacas implements OnInit, OnDestroy {
       this.seleccionadas.update(lista => lista.filter(b => b.id !== butaca.id));
       return;
     }
-    if (butaca.tipo === 'vip') {
-      if (this.vipElegidas() >= this.carrito.cantidadVip()) {
-        this.aviso.set(this.carrito.cantidadVip() === 0
-          ? 'No elegiste entradas VIP. Volvé al paso anterior si querés una.'
-          : `Ya marcaste tus ${this.carrito.cantidadVip()} butacas VIP. Desmarcá una para cambiarla.`);
-        return;
-      }
-    } else if (this.generalesElegidas() >= this.carrito.cantidadGeneral()) {
-      this.aviso.set(this.carrito.cantidadGeneral() === 0
-        ? 'No elegiste entradas generales. Volvé al paso anterior si querés una.'
-        : `Ya marcaste tus ${this.carrito.cantidadGeneral()} butacas generales. Desmarcá una para cambiarla.`);
+    const cupo = this.cupo(butaca.tipo);
+    if (this.elegidas(butaca.tipo) >= cupo) {
+      const nombre = this.tipos.find(t => t.tipo === butaca.tipo)!.nombre;
+      this.aviso.set(cupo === 0
+        ? `No sacaste entradas ${nombre}. Volvé a las entradas si querés una.`
+        : `Ya marcaste tus ${cupo} butacas ${nombre}. Desmarcá una para cambiarla.`);
       return;
     }
     this.seleccionadas.update(lista => [...lista, butaca]);

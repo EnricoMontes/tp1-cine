@@ -2,11 +2,14 @@ import { Component, computed, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Funciones } from '../../servicios/funciones';
+import { Salas } from '../../servicios/salas';
+import { Compras } from '../../servicios/compras';
 import { Carrito, MAXIMO_ENTRADAS, RECARGO_VIP } from '../../servicios/carrito';
 import { Funcion } from '../../modelos/funcion';
+import { PasosCompra } from '../pasos-compra/pasos-compra';
 
 @Component({
-  imports: [RouterLink, CurrencyPipe, DatePipe],
+  imports: [RouterLink, CurrencyPipe, DatePipe, PasosCompra],
   selector: 'app-elegir-entradas',
   styleUrl: './elegir-entradas.css',
   templateUrl: './elegir-entradas.html',
@@ -17,19 +20,24 @@ export class ElegirEntradas implements OnInit {
   mensajeError = signal('');
 
   general = signal(0);
+  accesible = signal(0);
   vip = signal(0);
 
   maximo = MAXIMO_ENTRADAS;
 
+  libres = signal({ general: 0, accesible: 0, vip: 0 });
+
   precioGeneral = computed(() => this.funcion()?.peliculas?.precio_base ?? 0);
   precioVip = computed(() => this.precioGeneral() * RECARGO_VIP);
-  cantidad = computed(() => this.general() + this.vip());
-  total = computed(() => this.general() * this.precioGeneral() + this.vip() * this.precioVip());
+  cantidad = computed(() => this.general() + this.accesible() + this.vip());
+  total = computed(() => (this.general() + this.accesible()) * this.precioGeneral() + this.vip() * this.precioVip());
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private funcionesService: Funciones,
+    private salasService: Salas,
+    private comprasService: Compras,
     private carrito: Carrito,
   ) {}
 
@@ -58,20 +66,43 @@ export class ElegirEntradas implements OnInit {
       return;
     }
     this.funcion.set(funcion);
+
+    const butacas = await this.salasService.traerButacas(funcion.sala_id);
+    const ocupadas = await this.comprasService.traerOcupadas(id);
+    if (butacas.error || ocupadas.error) {
+      this.terminarConError('No se pudo ver la disponibilidad de butacas.');
+      return;
+    }
+    const idsOcupadas = (ocupadas.data ?? []).map(e => e.butaca_id);
+    const libres = (butacas.data ?? []).filter(b => !idsOcupadas.includes(b.id));
+    this.libres.set({
+      general: libres.filter(b => b.tipo === 'normal').length,
+      accesible: libres.filter(b => b.tipo === 'accesible').length,
+      vip: libres.filter(b => b.tipo === 'vip').length,
+    });
     this.cargando.set(false);
   }
 
-  sumar(tipo: 'general' | 'vip') {
-    if (this.cantidad() >= MAXIMO_ENTRADAS) {
-      return;
-    }
-    const contador = tipo === 'general' ? this.general : this.vip;
-    contador.update(n => n + 1);
+  puedeSumar(tipo: 'general' | 'accesible' | 'vip') {
+    return this.cantidad() < MAXIMO_ENTRADAS && this.contador(tipo)() < this.libres()[tipo];
   }
 
-  restar(tipo: 'general' | 'vip') {
-    const contador = tipo === 'general' ? this.general : this.vip;
-    contador.update(n => Math.max(0, n - 1));
+  sumar(tipo: 'general' | 'accesible' | 'vip') {
+    if (!this.puedeSumar(tipo)) {
+      return;
+    }
+    this.contador(tipo).update(n => n + 1);
+  }
+
+  restar(tipo: 'general' | 'accesible' | 'vip') {
+    this.contador(tipo).update(n => Math.max(0, n - 1));
+  }
+
+  private contador(tipo: 'general' | 'accesible' | 'vip') {
+    if (tipo === 'accesible') {
+      return this.accesible;
+    }
+    return tipo === 'vip' ? this.vip : this.general;
   }
 
   continuar() {
@@ -79,7 +110,7 @@ export class ElegirEntradas implements OnInit {
     if (!funcion || this.cantidad() === 0) {
       return;
     }
-    this.carrito.iniciar(funcion, this.general(), this.vip());
+    this.carrito.iniciar(funcion, this.general(), this.accesible(), this.vip());
     this.router.navigate(['/funciones', funcion.id, 'butacas']);
   }
 

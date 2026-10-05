@@ -1,4 +1,4 @@
-<article class="tarjeta">
+<article class="tarjeta" [appResaltar]="1.04">
   <img [src]="pelicula().imagen_url" [alt]="pelicula().nombre" />
 
   <div class="cuerpo">
@@ -19,6 +19,8 @@
       }
     </p>
 
-    <button (click)="seleccionar()">Ver funciones</button>
+    <button (click)="seleccionar()" [class.secundario]="pelicula().estado === 'proximamente'">
+      {{ pelicula().estado === 'proximamente' ? 'Próximamente' : 'Ver funciones' }}
+    </button>
   </div>
 </article>

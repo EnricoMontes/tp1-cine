@@ -1,13 +1,16 @@
 :root {
-  --fondo: #12121c;
-  --superficie: #1e1e2d;
-  --superficie-2: #2a2a3d;
-  --borde: #35354a;
-  --texto: #ececf3;
-  --texto-suave: #a3a3b8;
-  --acento: #e94560;
-  --acento-hover: #c73650;
+  --fondo: #131a26;
+  --superficie: #1a2232;
+  --superficie-2: #232d40;
+  --borde: #2e3a52;
+  --texto: #ffffff;
+  --texto-suave: #9aa6bd;
+  --acento: #1f6feb;
+  --acento-hover: #1858c4;
   --amarillo: #f5c518;
+  --error: #ff6b6b;
+  --fuente-titulo: 'Audiowide', 'Exo 2', sans-serif;
+  --fuente-texto: 'Exo 2', system-ui, sans-serif;
 }
 
 *,
@@ -20,12 +23,23 @@ body {
   margin: 0;
   background: var(--fondo);
   color: var(--texto);
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--fuente-texto);
   line-height: 1.5;
 }
 
 h1, h2, h3 {
   line-height: 1.2;
+}
+
+h1 {
+  font-family: var(--fuente-titulo);
+  font-weight: normal;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+h2, h3 {
+  font-weight: 600;
 }
 
 a {
@@ -58,11 +72,14 @@ select:focus {
 }
 
 button {
-  padding: 0.55rem 1rem;
+  padding: 0.55rem 1.1rem;
   background: var(--acento);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
   cursor: pointer;
 }
 
@@ -76,5 +93,269 @@ button:disabled {
 }
 
 .error {
-  color: var(--acento);
+  color: var(--error);
+}
+
+input,
+select,
+textarea {
+  border-radius: 8px;
+  transition: border-color 0.15s;
+}
+
+textarea {
+  font: inherit;
+  padding: 0.55rem 0.75rem;
+  background: var(--superficie-2);
+  color: var(--texto);
+  border: 1px solid var(--borde);
+  resize: vertical;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: var(--acento);
+}
+
+button,
+.boton {
+  border-radius: 8px;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.boton {
+  display: inline-block;
+  padding: 0.55rem 1.1rem;
+  background: var(--acento);
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+}
+
+.boton:hover {
+  background: var(--acento-hover);
+}
+
+button.secundario {
+  background: transparent;
+  color: var(--texto);
+  border: 1px solid var(--borde);
+}
+
+button.secundario:hover {
+  background: var(--superficie-2);
+  border-color: var(--texto-suave);
+}
+
+button.peligro {
+  background: transparent;
+  color: var(--error);
+  border: 1px solid var(--borde);
+}
+
+button.peligro:hover {
+  background: var(--error);
+  border-color: var(--error);
+  color: white;
+}
+
+button.chico {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.75rem;
+}
+
+.volver {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 1.5rem;
+  padding: 0.5rem 1rem 0.5rem 0.85rem;
+  background: var(--acento);
+  border-radius: 8px;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.volver::before {
+  content: '';
+  width: 0.45rem;
+  height: 0.45rem;
+  border-left: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+}
+
+.volver:hover {
+  background: var(--acento-hover);
+}
+
+.panel {
+  padding: 1.5rem;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+}
+
+.panel > h2:first-child,
+.panel > h3:first-child {
+  margin-top: 0;
+}
+
+.ayuda {
+  margin: 0;
+  color: var(--texto-suave);
+  font-size: 0.85rem;
+}
+
+.ok {
+  color: #4ade80;
+}
+
+.aviso {
+  padding: 0.7rem 1rem;
+  background: rgba(245, 197, 24, 0.08);
+  border: 1px solid rgba(245, 197, 24, 0.35);
+  border-radius: 8px;
+}
+
+.etiqueta {
+  display: inline-block;
+  padding: 0.12rem 0.55rem;
+  border-radius: 999px;
+  background: var(--superficie-2);
+  color: var(--texto-suave);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.etiqueta.azul {
+  background: rgba(31, 111, 235, 0.18);
+  color: #79a8ff;
+}
+
+.etiqueta.verde {
+  background: rgba(74, 222, 128, 0.15);
+  color: #4ade80;
+}
+
+.etiqueta.amarilla {
+  background: rgba(245, 197, 24, 0.15);
+  color: var(--amarillo);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form label {
+  margin-top: 0.75rem;
+  color: var(--texto-suave);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.form .error {
+  margin: 0;
+  font-size: 0.8rem;
+}
+
+.fila {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.campo {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 150px;
+}
+
+.form label.check,
+label.check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--texto);
+  font-size: 0.9rem;
+  font-weight: normal;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.botones {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.tabla-contenedor {
+  overflow-x: auto;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla th,
+.tabla td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--borde);
+  vertical-align: middle;
+}
+
+.tabla th {
+  background: var(--superficie-2);
+  color: var(--texto-suave);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.tabla tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.tabla tbody tr:hover {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.tabla .acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.encabezado-seccion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.encabezado-seccion h2 {
+  margin: 0;
+  font-size: 1.4rem;
 }

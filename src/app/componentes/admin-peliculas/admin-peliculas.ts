@@ -1,11 +1,12 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CurrencyPipe } from '@angular/common';
 import { Peliculas } from '../../servicios/peliculas';
 import { Genero, Pelicula, PeliculaDatos } from '../../modelos/pelicula';
 import { enteroValidator } from '../../validadores/registro.validadores';
 
 @Component({
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CurrencyPipe],
   selector: 'app-admin-peliculas',
   styleUrl: './admin-peliculas.css',
   templateUrl: './admin-peliculas.html',

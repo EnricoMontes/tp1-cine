@@ -15,6 +15,15 @@ export class Peliculas {
       .order('nombre');
   }
 
+  traerProximamente() {
+    return this.supabase.cliente
+      .from('peliculas')
+      .select('*, generos(*)')
+      .eq('estado', 'proximamente')
+      .eq('visible_en_home', true)
+      .order('fecha_estreno');
+  }
+
   traerPorId(id: number) {
     return this.supabase.cliente
       .from('peliculas')
