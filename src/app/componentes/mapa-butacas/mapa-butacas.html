@@ -6,14 +6,20 @@
       <span class="letra">{{ fila.letra }}</span>
 
       @for (bloque of fila.bloques; track $index) {
-        <div class="bloque">
+        <div class="bloque" [class.centro]="$index === 1">
           @for (butaca of bloque; track butaca.id) {
-            <span
+            <button
+              type="button"
               class="butaca"
               [class.accesible]="butaca.tipo === 'accesible'"
               [class.vip]="butaca.tipo === 'vip'"
+              [class.ocupada]="estaOcupada(butaca)"
+              [class.seleccionada]="estaSeleccionada(butaca)"
+              [class.clickeable]="seleccionable()"
+              [disabled]="!seleccionable() || estaOcupada(butaca)"
               [title]="butaca.fila + butaca.numero"
-            ></span>
+              (click)="elegir(butaca)"
+            ></button>
           }
         </div>
       }
@@ -26,5 +32,9 @@
     <span><span class="butaca"></span> Normal</span>
     <span><span class="butaca accesible"></span> Accesible</span>
     <span><span class="butaca vip"></span> VIP</span>
+    @if (seleccionable()) {
+      <span><span class="butaca seleccionada"></span> Tu elección</span>
+      <span><span class="butaca ocupada"></span> Ocupada</span>
+    }
   </div>
 </div>

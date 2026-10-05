@@ -31,6 +31,13 @@ export class Funciones {
       .gt('fin', inicioMenos30);
   }
 
+  traerPorId(id: number) {
+    return this.supabase.cliente
+      .from('funciones')
+      .select('*, peliculas(*), salas(*)')
+      .eq('id', id);
+  }
+
   crear(funcion: FuncionDatos) {
     return this.supabase.cliente
       .from('funciones')

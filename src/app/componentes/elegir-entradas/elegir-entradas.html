@@ -1,0 +1,59 @@
+@if (cargando()) {
+  <p>Cargando...</p>
+} @else if (mensajeError()) {
+  <p class="error">{{ mensajeError() }}</p>
+  <a routerLink="/home">← Volver a la cartelera</a>
+} @else {
+  <a [routerLink]="['/peliculas', funcion()?.pelicula_id]" class="volver">← Volver a la película</a>
+
+  <section class="tarjeta">
+    <h1>{{ funcion()?.peliculas?.nombre }}</h1>
+    <p class="ayuda">
+      {{ funcion()?.inicio | date: 'dd/MM/yyyy HH:mm' }} · {{ funcion()?.formato }} ·
+      {{ funcion()?.idioma }} · {{ funcion()?.salas?.nombre }}
+    </p>
+
+    @if (funcion()?.peliculas?.restriccion_edad) {
+      <p class="aviso">⚠️ Película para mayores de {{ funcion()?.peliculas?.restriccion_edad }} años.</p>
+    }
+
+    <h2>Elegí tus entradas</h2>
+
+    <div class="entrada">
+      <div>
+        <strong>General</strong>
+        <p class="ayuda">Butacas comunes y accesibles</p>
+      </div>
+      <span class="precio">{{ precioGeneral() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</span>
+      <div class="contador">
+        <button type="button" (click)="restar('general')" [disabled]="general() === 0">−</button>
+        <span>{{ general() }}</span>
+        <button type="button" (click)="sumar('general')" [disabled]="cantidad() >= maximo">+</button>
+      </div>
+    </div>
+
+    <div class="entrada">
+      <div>
+        <strong class="vip">VIP</strong>
+        <p class="ayuda">Filas R, S y T · +50%</p>
+      </div>
+      <span class="precio">{{ precioVip() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</span>
+      <div class="contador">
+        <button type="button" (click)="restar('vip')" [disabled]="vip() === 0">−</button>
+        <span>{{ vip() }}</span>
+        <button type="button" (click)="sumar('vip')" [disabled]="cantidad() >= maximo">+</button>
+      </div>
+    </div>
+
+    <p class="ayuda">Máximo {{ maximo }} entradas por compra.</p>
+
+    <div class="total">
+      <span>Total</span>
+      <strong>{{ total() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong>
+    </div>
+
+    <button type="button" class="continuar" [disabled]="cantidad() === 0" (click)="continuar()">
+      Elegir butacas
+    </button>
+  </section>
+}

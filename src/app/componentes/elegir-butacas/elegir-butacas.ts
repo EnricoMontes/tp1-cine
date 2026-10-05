@@ -1,0 +1,151 @@
+import { Component, OnDestroy, OnInit, signal } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { DatePipe } from '@angular/common';
+import { RealtimeChannel } from '@supabase/supabase-js';
+import { Funciones } from '../../servicios/funciones';
+import { Salas } from '../../servicios/salas';
+import { Compras } from '../../servicios/compras';
+import { Carrito } from '../../servicios/carrito';
+import { Funcion } from '../../modelos/funcion';
+import { Butaca } from '../../modelos/sala';
+import { MapaButacas } from '../mapa-butacas/mapa-butacas';
+
+@Component({
+  imports: [RouterLink, DatePipe, MapaButacas],
+  selector: 'app-elegir-butacas',
+  styleUrl: './elegir-butacas.css',
+  templateUrl: './elegir-butacas.html',
+})
+export class ElegirButacas implements OnInit, OnDestroy {
+  funcion = signal<Funcion | null>(null);
+  butacas = signal<Butaca[]>([]);
+  ocupadas = signal<number[]>([]);
+  seleccionadas = signal<Butaca[]>([]);
+
+  cargando = signal(true);
+  mensajeError = signal('');
+  aviso = signal('');
+
+  private canal: RealtimeChannel | null = null;
+
+  constructor(
+    private route: ActivatedRoute,
+    private funcionesService: Funciones,
+    private salasService: Salas,
+    private comprasService: Compras,
+    public carrito: Carrito,
+    private router: Router,
+  ) {}
+
+  ngOnInit() {
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    if (this.carrito.funcion()?.id !== id) {
+      this.router.navigate(['/funciones', id, 'entradas']);
+      return;
+    }
+    this.seleccionadas.set(this.carrito.butacas());
+    this.cargar(id);
+  }
+
+  generalesElegidas() {
+    return this.seleccionadas().filter(b => b.tipo !== 'vip').length;
+  }
+
+  vipElegidas() {
+    return this.seleccionadas().filter(b => b.tipo === 'vip').length;
+  }
+
+  completo() {
+    return this.generalesElegidas() === this.carrito.cantidadGeneral() && this.vipElegidas() === this.carrito.cantidadVip();
+  }
+
+  ngOnDestroy() {
+    if (this.canal) {
+      this.comprasService.dejarDeEscuchar(this.canal);
+    }
+  }
+
+  private async cargar(id: number) {
+    if (!Number.isInteger(id)) {
+      this.terminarConError('Función no encontrada.');
+      return;
+    }
+
+    const { data, error } = await this.funcionesService.traerPorId(id);
+    if (error) {
+      this.terminarConError('No se pudo cargar la función.');
+      return;
+    }
+    if (!data?.length) {
+      this.terminarConError('Función no encontrada.');
+      return;
+    }
+    const funcion: Funcion = data[0];
+    if (new Date(funcion.inicio) <= new Date()) {
+      this.terminarConError('Esta función ya empezó: no se pueden comprar entradas.');
+      return;
+    }
+    this.funcion.set(funcion);
+
+    const butacas = await this.salasService.traerButacas(funcion.sala_id);
+    const ocupadas = await this.comprasService.traerOcupadas(id);
+    if (butacas.error || ocupadas.error) {
+      this.terminarConError('No se pudieron cargar las butacas.');
+      return;
+    }
+    this.butacas.set(butacas.data ?? []);
+    this.ocupadas.set((ocupadas.data ?? []).map(e => e.butaca_id));
+
+    this.canal = this.comprasService.escucharVentas(id, butacaId => this.marcarVendida(butacaId));
+    this.cargando.set(false);
+  }
+
+  private marcarVendida(butacaId: number) {
+    this.ocupadas.update(lista => [...lista, butacaId]);
+
+    const perdida = this.seleccionadas().find(b => b.id === butacaId);
+    if (perdida) {
+      this.seleccionadas.update(lista => lista.filter(b => b.id !== butacaId));
+      this.aviso.set(`La butaca ${perdida.fila}${perdida.numero} la acaba de comprar otra persona.`);
+    }
+  }
+
+  alternar(butaca: Butaca) {
+    this.aviso.set('');
+    if (this.seleccionadas().some(b => b.id === butaca.id)) {
+      this.seleccionadas.update(lista => lista.filter(b => b.id !== butaca.id));
+      return;
+    }
+    if (butaca.tipo === 'vip') {
+      if (this.vipElegidas() >= this.carrito.cantidadVip()) {
+        this.aviso.set(this.carrito.cantidadVip() === 0
+          ? 'No elegiste entradas VIP. Volvé al paso anterior si querés una.'
+          : `Ya marcaste tus ${this.carrito.cantidadVip()} butacas VIP. Desmarcá una para cambiarla.`);
+        return;
+      }
+    } else if (this.generalesElegidas() >= this.carrito.cantidadGeneral()) {
+      this.aviso.set(this.carrito.cantidadGeneral() === 0
+        ? 'No elegiste entradas generales. Volvé al paso anterior si querés una.'
+        : `Ya marcaste tus ${this.carrito.cantidadGeneral()} butacas generales. Desmarcá una para cambiarla.`);
+      return;
+    }
+    this.seleccionadas.update(lista => [...lista, butaca]);
+  }
+
+  continuar() {
+    if (!this.completo()) {
+      return;
+    }
+    this.carrito.elegirButacas(this.seleccionadas());
+    this.router.navigate(['/checkout']);
+  }
+
+  idsSeleccionadas() {
+    return this.seleccionadas().map(b => b.id);
+  }
+
+  private terminarConError(mensaje: string) {
+    this.mensajeError.set(mensaje);
+    this.cargando.set(false);
+  }
+}

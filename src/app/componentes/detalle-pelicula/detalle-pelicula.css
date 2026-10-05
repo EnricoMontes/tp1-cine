@@ -85,3 +85,8 @@
   font-weight: 700;
   color: var(--acento);
 }
+
+.funciones .comprar {
+  margin-left: auto;
+  font-weight: 600;
+}

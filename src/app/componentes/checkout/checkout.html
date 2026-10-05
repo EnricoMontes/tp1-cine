@@ -1,0 +1,124 @@
+@if (compraId()) {
+  <section class="tarjeta confirmacion">
+    <h1>¡Compra confirmada! 🎬</h1>
+    <p>Te enviamos las entradas a <strong>{{ formPago.controls.email.value }}</strong>.</p>
+    <p class="ayuda">Código de compra (lo vas a necesitar en la entrada):</p>
+    <p class="codigo">{{ compraId() }}</p>
+
+    <p>
+      <strong>{{ carrito.funcion()?.peliculas?.nombre }}</strong> ·
+      {{ carrito.funcion()?.inicio | date: 'dd/MM/yyyy HH:mm' }} · {{ carrito.funcion()?.salas?.nombre }}
+    </p>
+    <p>
+      Butacas:
+      @for (butaca of carrito.butacas(); track butaca.id) {
+        <span class="chip" [class.vip]="butaca.tipo === 'vip'">{{ butaca.fila }}{{ butaca.numero }}</span>
+      }
+    </p>
+    <p>Total pagado: <strong>{{ carrito.total() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong></p>
+
+    @if (restriccion()) {
+      <p class="aviso">⚠️ Película +{{ restriccion() }}: los menores deben asistir acompañados de un adulto.</p>
+    }
+
+    <a routerLink="/home">Volver a la cartelera</a>
+  </section>
+} @else {
+  <h1>Finalizar compra</h1>
+
+  <div class="columnas">
+    <section class="tarjeta">
+      <h2>{{ carrito.funcion()?.peliculas?.nombre }}</h2>
+      <p class="ayuda">
+        {{ carrito.funcion()?.inicio | date: 'dd/MM/yyyy HH:mm' }} · {{ carrito.funcion()?.formato }} ·
+        {{ carrito.funcion()?.idioma }} · {{ carrito.funcion()?.salas?.nombre }}
+      </p>
+
+      <table class="detalle">
+        @for (butaca of carrito.butacas(); track butaca.id) {
+          <tr>
+            <td>
+              Butaca {{ butaca.fila }}{{ butaca.numero }}
+              @if (butaca.tipo === 'vip') { <span class="chip vip">VIP +50%</span> }
+            </td>
+            <td class="precio">{{ carrito.precioDe(butaca) | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
+          </tr>
+        }
+        <tr class="total">
+          <td>Total</td>
+          <td class="precio">{{ carrito.total() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
+        </tr>
+      </table>
+
+      @if (restriccion()) {
+        <p class="aviso">⚠️ Película para mayores de {{ restriccion() }} años.</p>
+      }
+      <a [routerLink]="['/funciones', carrito.funcion()?.id, 'butacas']">← Cambiar butacas</a>
+    </section>
+
+    <section class="tarjeta">
+      @if (menorBloqueado()) {
+        <p class="error">
+          Según tu fecha de nacimiento no tenés la edad mínima (+{{ restriccion() }}) para ver esta película.
+        </p>
+      } @else {
+        <form class="form" [formGroup]="formPago" (ngSubmit)="pagar()">
+          <h2>Pago</h2>
+          <p class="ayuda">Pago simulado: no se cobra nada.</p>
+
+          <label for="email">Mail para recibir las entradas</label>
+          <input type="email" id="email" formControlName="email">
+          @if (formPago.controls.email.touched && formPago.controls.email.invalid) {
+            <p class="error">Ingresá un mail válido</p>
+          }
+
+          <label for="titular">Titular de la tarjeta</label>
+          <input type="text" id="titular" formControlName="titular">
+          @if (formPago.controls.titular.touched && formPago.controls.titular.invalid) {
+            <p class="error">Ingresá el nombre como figura en la tarjeta</p>
+          }
+
+          <label for="numeroTarjeta">Número de tarjeta</label>
+          <input type="text" id="numeroTarjeta" formControlName="numeroTarjeta" maxlength="16" placeholder="16 números">
+          @if (formPago.controls.numeroTarjeta.touched && formPago.controls.numeroTarjeta.invalid) {
+            <p class="error">Tienen que ser 16 números, sin espacios</p>
+          }
+
+          <div class="fila">
+            <div class="campo">
+              <label for="vencimiento">Vencimiento</label>
+              <input type="text" id="vencimiento" formControlName="vencimiento" maxlength="5" placeholder="MM/AA">
+              @if (formPago.controls.vencimiento.touched && formPago.controls.vencimiento.hasError('vencida')) {
+                <p class="error">La tarjeta está vencida</p>
+              } @else if (formPago.controls.vencimiento.touched && formPago.controls.vencimiento.invalid) {
+                <p class="error">Formato MM/AA</p>
+              }
+            </div>
+            <div class="campo">
+              <label for="cvv">CVV</label>
+              <input type="password" id="cvv" formControlName="cvv" maxlength="3">
+              @if (formPago.controls.cvv.touched && formPago.controls.cvv.invalid) {
+                <p class="error">3 números</p>
+              }
+            </div>
+          </div>
+
+          @if (necesitaDeclaracion()) {
+            <label class="check">
+              <input type="checkbox" formControlName="declaracion">
+              Declaro ser mayor de {{ restriccion() }} años o asistir acompañado de un adulto.
+            </label>
+          }
+
+          @if (mensajeError()) {
+            <p class="error">{{ mensajeError() }}</p>
+          }
+
+          <button type="submit" [disabled]="formPago.invalid || cargando()">
+            {{ cargando() ? 'Procesando...' : 'Pagar' }}
+          </button>
+        </form>
+      }
+    </section>
+  </div>
+}

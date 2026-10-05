@@ -1,4 +1,5 @@
-import { Formato } from './sala';
+import { Formato, Sala } from './sala';
+import { Pelicula } from './pelicula';
 
 export interface FuncionDatos {
   pelicula_id: number;
@@ -11,6 +12,6 @@ export interface FuncionDatos {
 
 export interface Funcion extends FuncionDatos {
   id: number;
-  peliculas?: { nombre: string };
-  salas?: { nombre: string };
+  peliculas?: Pelicula;
+  salas?: Sala;
 }

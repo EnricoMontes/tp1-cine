@@ -1,0 +1,65 @@
+@if (cargando()) {
+  <p>Cargando butacas...</p>
+} @else if (mensajeError()) {
+  <p class="error">{{ mensajeError() }}</p>
+  <a routerLink="/home">← Volver a la cartelera</a>
+} @else {
+  <a [routerLink]="['/funciones', funcion()?.id, 'entradas']" class="volver">← Volver a las entradas</a>
+
+  <header class="encabezado">
+    <h1>{{ funcion()?.peliculas?.nombre }}</h1>
+    <p class="datos">
+      {{ funcion()?.inicio | date: 'dd/MM/yyyy HH:mm' }} ·
+      {{ funcion()?.formato }} · {{ funcion()?.idioma }} · {{ funcion()?.salas?.nombre }}
+    </p>
+  </header>
+
+  @if (funcion()?.peliculas?.restriccion_edad) {
+    <p class="aviso">⚠️ Película para mayores de {{ funcion()?.peliculas?.restriccion_edad }} años.</p>
+  }
+
+  <p class="consigna">
+    Marcá
+    @if (carrito.cantidadGeneral()) {
+      <strong>{{ carrito.cantidadGeneral() }} general{{ carrito.cantidadGeneral() > 1 ? 'es' : '' }}</strong>
+      ({{ generalesElegidas() }}/{{ carrito.cantidadGeneral() }})
+    }
+    @if (carrito.cantidadGeneral() && carrito.cantidadVip()) { y }
+    @if (carrito.cantidadVip()) {
+      <strong class="vip">{{ carrito.cantidadVip() }} VIP</strong>
+      ({{ vipElegidas() }}/{{ carrito.cantidadVip() }})
+    }
+  </p>
+  <p class="ayuda">Las butacas ocupadas se actualizan en tiempo real.</p>
+
+  <app-mapa-butacas
+    [butacas]="butacas()"
+    [ocupadas]="ocupadas()"
+    [seleccionadas]="idsSeleccionadas()"
+    [seleccionable]="true"
+    (elegida)="alternar($event)"
+  />
+
+  @if (aviso()) {
+    <p class="aviso">{{ aviso() }}</p>
+  }
+
+  <section class="resumen">
+    <h2>Tus butacas</h2>
+    @if (seleccionadas().length === 0) {
+      <p class="ayuda">Todavía no elegiste ninguna.</p>
+    } @else {
+      <ul class="elegidas">
+        @for (butaca of seleccionadas(); track butaca.id) {
+          <li [class.vip]="butaca.tipo === 'vip'">
+            {{ butaca.fila }}{{ butaca.numero }}
+            @if (butaca.tipo === 'vip') { · VIP }
+            @if (butaca.tipo === 'accesible') { · Accesible }
+          </li>
+        }
+      </ul>
+    }
+    <a [routerLink]="['/funciones', funcion()?.id, 'entradas']">← Cambiar cantidad de entradas</a>
+    <button type="button" [disabled]="!completo()" (click)="continuar()">Continuar</button>
+  </section>
+}

@@ -1,0 +1,125 @@
+.columnas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.tarjeta {
+  flex: 1;
+  min-width: 280px;
+  padding: 1.5rem;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+}
+
+.tarjeta h2 {
+  margin-top: 0;
+}
+
+.ayuda {
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+}
+
+.detalle {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+.detalle td {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--borde);
+}
+
+.detalle .precio {
+  text-align: right;
+}
+
+.detalle .total td {
+  font-weight: 700;
+  font-size: 1.1rem;
+  border-bottom: none;
+}
+
+.chip {
+  display: inline-block;
+  margin: 0 0.2rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 6px;
+  background: var(--superficie-2);
+  font-size: 0.85rem;
+}
+
+.chip.vip {
+  background: var(--amarillo);
+  color: #000;
+  font-weight: 700;
+}
+
+.aviso {
+  padding: 0.7rem 1rem;
+  border-radius: 6px;
+  background: var(--superficie-2);
+  border-left: 4px solid var(--amarillo);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form h2 {
+  margin: 0;
+}
+
+.form label {
+  margin-top: 0.6rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.form .error {
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.fila {
+  display: flex;
+  gap: 1rem;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: normal !important;
+}
+
+.form button {
+  margin-top: 1rem;
+}
+
+.confirmacion {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.codigo {
+  font-family: monospace;
+  font-size: 1.1rem;
+  padding: 0.5rem;
+  background: var(--superficie-2);
+  border-radius: 6px;
+  word-break: break-all;
+}

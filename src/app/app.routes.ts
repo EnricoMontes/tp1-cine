@@ -20,6 +20,18 @@ export const routes: Routes = [
     loadComponent: () => import('./componentes/detalle-pelicula/detalle-pelicula').then(m => m.DetallePelicula)
   },
   {
+    path: 'funciones/:id/entradas',
+    loadComponent: () => import('./componentes/elegir-entradas/elegir-entradas').then(m => m.ElegirEntradas)
+  },
+  {
+    path: 'funciones/:id/butacas',
+    loadComponent: () => import('./componentes/elegir-butacas/elegir-butacas').then(m => m.ElegirButacas)
+  },
+  {
+    path: 'checkout',
+    loadComponent: () => import('./componentes/checkout/checkout').then(m => m.Checkout)
+  },
+  {
     path: 'login',
     loadComponent: () => import('./componentes/login/login').then(m => m.Login)
   },
