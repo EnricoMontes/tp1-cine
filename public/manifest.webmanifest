@@ -1,8 +1,8 @@
 {
-  "name": "Cine",
-  "short_name": "Cine",
-  "theme_color": "#e94560",
-  "background_color": "#12121c",
+  "name": "SignalCine",
+  "short_name": "SignalCine",
+  "theme_color": "#131a26",
+  "background_color": "#131a26",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",

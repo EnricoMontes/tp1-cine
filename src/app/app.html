@@ -1,5 +1,6 @@
 <nav class="navbar">
-  <a class="logo" routerLink="/home">Cine</a>
+
+  <a class="logo" routerLink="/home"><img src="img/logo-horizontal.svg" alt="SignalCine" height="34"></a>
   <a routerLink="/home" routerLinkActive="active">Cartelera</a>
 
   @if (auth.usuario()) {
@@ -24,5 +25,6 @@
 </nav>
 
 <main>
+
   <router-outlet />
 </main>
