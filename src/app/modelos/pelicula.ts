@@ -19,5 +19,6 @@ export interface PeliculaDatos {
 
 export interface Pelicula extends PeliculaDatos {
   id: number;
+  entradas_vendidas: number;
   generos?: Genero[];
 }

@@ -20,30 +20,18 @@ export class Home implements OnInit {
 
   busqueda = signal('');
 
-  ranking = signal<{ pelicula_id: number; entradas_vendidas: number }[]>([]);
-
-  masVendidas = computed(() => {
-    const top: { pelicula: Pelicula; vendidas: number }[] = [];
-    for (const fila of this.ranking()) {
-      const pelicula = this.peliculas().find(p => p.id === fila.pelicula_id);
-      if (pelicula && top.length < 3) {
-        top.push({ pelicula: pelicula, vendidas: fila.entradas_vendidas });
-      }
-    }
-    return top;
-  });
+  masVendidas = computed(() =>
+    this.peliculas()
+      .filter(p => p.entradas_vendidas > 0)
+      .sort((a, b) => b.entradas_vendidas - a.entradas_vendidas)
+      .slice(0, 3)
+  );
 
   constructor(private peliculasService: Peliculas, private router: Router) {}
 
   ngOnInit() {
     this.cargarCartelera();
     this.cargarProximamente();
-    this.cargarMasVendidas();
-  }
-
-  private async cargarMasVendidas() {
-    const { data } = await this.peliculasService.traerMasVendidas();
-    this.ranking.set(data ?? []);
   }
 
   private async cargarCartelera() {

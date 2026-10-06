@@ -1,13 +1,13 @@
 @if (masVendidas().length) {
   <h1>Las más vendidas</h1>
   <div class="mas-vendidas">
-    @for (item of masVendidas(); track item.pelicula.id) {
-      <div class="vendida" (click)="verDetalle(item.pelicula)">
-        <img [src]="item.pelicula.imagen_url" [alt]="item.pelicula.nombre" />
+    @for (pelicula of masVendidas(); track pelicula.id) {
+      <div class="vendida" (click)="verDetalle(pelicula)">
+        <img [src]="pelicula.imagen_url" [alt]="pelicula.nombre" />
         <div class="vendida-datos">
-          <span class="puesto">#{{ masVendidas().indexOf(item) + 1 }}</span>
-          <strong>{{ item.pelicula.nombre }}</strong>
-          <span class="cantidad">{{ item.vendidas }} entradas vendidas</span>
+          <span class="puesto">#{{ masVendidas().indexOf(pelicula) + 1 }}</span>
+          <strong>{{ pelicula.nombre }}</strong>
+          <span class="cantidad">{{ pelicula.entradas_vendidas }} entradas vendidas</span>
         </div>
       </div>
     }
