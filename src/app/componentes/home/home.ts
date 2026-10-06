@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, computed, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Peliculas } from '../../servicios/peliculas';
@@ -20,11 +20,30 @@ export class Home implements OnInit {
 
   busqueda = signal('');
 
+  ranking = signal<{ pelicula_id: number; entradas_vendidas: number }[]>([]);
+
+  masVendidas = computed(() => {
+    const top: { pelicula: Pelicula; vendidas: number }[] = [];
+    for (const fila of this.ranking()) {
+      const pelicula = this.peliculas().find(p => p.id === fila.pelicula_id);
+      if (pelicula && top.length < 3) {
+        top.push({ pelicula: pelicula, vendidas: fila.entradas_vendidas });
+      }
+    }
+    return top;
+  });
+
   constructor(private peliculasService: Peliculas, private router: Router) {}
 
   ngOnInit() {
     this.cargarCartelera();
     this.cargarProximamente();
+    this.cargarMasVendidas();
+  }
+
+  private async cargarMasVendidas() {
+    const { data } = await this.peliculasService.traerMasVendidas();
+    this.ranking.set(data ?? []);
   }
 
   private async cargarCartelera() {

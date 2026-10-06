@@ -24,6 +24,13 @@ export class Peliculas {
       .order('fecha_estreno');
   }
 
+  traerMasVendidas() {
+    return this.supabase.cliente
+      .from('peliculas_mas_vendidas')
+      .select('pelicula_id, entradas_vendidas')
+      .order('entradas_vendidas', { ascending: false });
+  }
+
   traerPorId(id: number) {
     return this.supabase.cliente
       .from('peliculas')
