@@ -52,6 +52,13 @@ export class Auth {
     }
   }
 
+  async recargarPerfil() {
+    const usuario = this.usuario();
+    if (usuario) {
+      await this.cargarPerfil(usuario.id);
+    }
+  }
+
   private async cargarPerfil(id: string) {
     const { data } = await this.supabase.cliente.from('perfiles').select('*').eq('id', id);
     this.perfil.set(data?.[0] ?? null);

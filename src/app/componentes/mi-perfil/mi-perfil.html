@@ -5,6 +5,10 @@
   <p><strong>Mail:</strong> {{ auth.perfil()?.email }}</p>
   <p><strong>Rol:</strong> {{ auth.perfil()?.rol }}</p>
   <p><strong>Puntos:</strong> {{ auth.perfil()?.puntos }}</p>
+  <p>
+    <strong>Cupón de bienvenida:</strong>
+    {{ auth.perfil()?.cupon_bienvenida_usado ? 'ya usado' : 'disponible: se aplica solo en tu primera compra' }}
+  </p>
 } @else {
   <p>Cargando...</p>
 }

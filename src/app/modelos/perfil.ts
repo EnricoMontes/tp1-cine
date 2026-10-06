@@ -10,4 +10,5 @@ export interface Perfil {
   rol?: 'cliente' | 'empleado' | 'admin';
   puntos?: number;
   credito?: number;
+  cupon_bienvenida_usado?: boolean;
 }

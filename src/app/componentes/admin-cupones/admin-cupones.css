@@ -1,0 +1,21 @@
+.form {
+  margin-bottom: 2rem;
+}
+
+.form h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.automaticos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 720px) {
+  .automaticos {
+    grid-template-columns: 1fr;
+  }
+}

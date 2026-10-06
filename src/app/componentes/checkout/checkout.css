@@ -81,3 +81,24 @@ h1 {
   border-radius: 6px;
   word-break: break-all;
 }
+
+.detalle .descuento td {
+  color: #3fb950;
+}
+
+.cupon {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.cupon input {
+  flex: 1;
+}
+
+.cupones {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+}

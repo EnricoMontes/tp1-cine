@@ -1,0 +1,109 @@
+@if (mensajeError()) {
+  <p class="error">{{ mensajeError() }}</p>
+}
+@if (mensajeOk()) {
+  <p class="ok">{{ mensajeOk() }}</p>
+}
+
+<div class="automaticos">
+  <section class="form panel">
+    <h3>Cupón de bienvenida</h3>
+    <p class="ayuda">Se aplica solo en la primera compra de cada usuario registrado.</p>
+    <label for="porcentajeBienvenida">Porcentaje de descuento</label>
+    <input type="number" id="porcentajeBienvenida" min="1" max="100" [formControl]="porcentajeBienvenida">
+    @if (porcentajeBienvenida.invalid) {
+      <p class="error">Tiene que ser un número entre 1 y 100</p>
+    }
+    <p>Estado: <span class="etiqueta" [class.azul]="bienvenida()?.activo">{{ bienvenida()?.activo ? 'Activo' : 'Inactivo' }}</span></p>
+    <div class="botones">
+      <button type="button" [disabled]="porcentajeBienvenida.invalid" (click)="guardarBienvenida()">Guardar</button>
+      @if (bienvenida()) {
+        <button type="button" class="secundario" (click)="cambiarActivo(bienvenida()!)">
+          {{ bienvenida()?.activo ? 'Desactivar' : 'Activar' }}
+        </button>
+      }
+    </div>
+  </section>
+
+  <section class="form panel">
+    <h3>Cupón para mayores de 50</h3>
+    <p class="ayuda">Se aplica solo a los usuarios de 50 años o más.</p>
+    <label for="porcentajeMayores50">Porcentaje de descuento</label>
+    <input type="number" id="porcentajeMayores50" min="1" max="100" [formControl]="porcentajeMayores50">
+    @if (porcentajeMayores50.invalid) {
+      <p class="error">Tiene que ser un número entre 1 y 100</p>
+    }
+    <p>Estado: <span class="etiqueta" [class.azul]="mayores50()?.activo">{{ mayores50()?.activo ? 'Activo' : 'Inactivo' }}</span></p>
+    <div class="botones">
+      <button type="button" [disabled]="porcentajeMayores50.invalid" (click)="guardarMayores50()">Guardar</button>
+      @if (mayores50()) {
+        <button type="button" class="secundario" (click)="cambiarActivo(mayores50()!)">
+          {{ mayores50()?.activo ? 'Desactivar' : 'Activar' }}
+        </button>
+      }
+    </div>
+  </section>
+</div>
+
+<form class="form panel" [formGroup]="formCupon" (ngSubmit)="crear()">
+  <h3>Nuevo cupón con código</h3>
+  <p class="ayuda">Lo puede usar cualquiera que escriba el código. En una compra se usa un solo cupón (el cliente elige).</p>
+  <div class="fila">
+    <div class="campo">
+      <label for="codigo">Código</label>
+      <input type="text" id="codigo" formControlName="codigo" placeholder="PROMO10" (input)="pasarAMayusculas()">
+      @if (formCupon.controls.codigo.touched && formCupon.controls.codigo.invalid) {
+        <p class="error">De 4 a 20 letras o números, sin espacios</p>
+      }
+    </div>
+    <div class="campo">
+      <label for="porcentaje">Porcentaje</label>
+      <input type="number" id="porcentaje" formControlName="porcentaje" min="1" max="100">
+      @if (formCupon.controls.porcentaje.touched && formCupon.controls.porcentaje.invalid) {
+        <p class="error">Entre 1 y 100</p>
+      }
+    </div>
+  </div>
+  <div class="botones">
+    <button type="submit" [disabled]="formCupon.invalid">Crear cupón</button>
+  </div>
+</form>
+
+<div class="encabezado-seccion">
+  <h2>Cupones con código</h2>
+  <span class="ayuda">{{ conCodigo().length }} en total</span>
+</div>
+
+@if (conCodigo().length === 0) {
+  <p class="ayuda">Todavía no hay cupones con código.</p>
+} @else {
+  <div class="tabla-contenedor">
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Descuento</th>
+          <th>Estado</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (cupon of conCodigo(); track cupon.id) {
+          <tr>
+            <td><strong>{{ cupon.codigo }}</strong></td>
+            <td>{{ cupon.porcentaje }}%</td>
+            <td><span class="etiqueta" [class.azul]="cupon.activo">{{ cupon.activo ? 'Activo' : 'Inactivo' }}</span></td>
+            <td>
+              <div class="acciones">
+                <button type="button" class="secundario chico" (click)="cambiarActivo(cupon)">
+                  {{ cupon.activo ? 'Desactivar' : 'Activar' }}
+                </button>
+                <button type="button" class="peligro chico" (click)="borrar(cupon)">Borrar</button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

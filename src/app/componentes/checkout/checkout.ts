@@ -7,6 +7,8 @@ import { Compras } from '../../servicios/compras';
 import { Auth } from '../../servicios/auth';
 import { vencimientoValidator } from '../../validadores/pago.validadores';
 import { PasosCompra } from '../pasos-compra/pasos-compra';
+import { Cupones } from '../../servicios/cupones';
+import { Cupon } from '../../modelos/cupon';
 
 @Component({
   imports: [ReactiveFormsModule, RouterLink, CurrencyPipe, DatePipe, PasosCompra],
@@ -27,6 +29,53 @@ export class Checkout implements OnInit, OnDestroy {
   });
   necesitaDeclaracion = computed(() => !!this.restriccion() && !this.auth.usuario());
 
+  cuponesAutomaticos = signal<Cupon[]>([]);
+  cuponIngresado = signal<Cupon | null>(null);
+  cuponElegidoId = signal<number | null>(null);
+  mensajeCupon = signal('');
+  codigoCupon = new FormControl('', { nonNullable: true });
+
+  opcionesCupon = computed(() => {
+    const perfil = this.auth.perfil();
+    const opciones: Cupon[] = [];
+    for (const cupon of this.cuponesAutomaticos()) {
+      if (cupon.tipo === 'bienvenida' && perfil && !perfil.cupon_bienvenida_usado) {
+        opciones.push(cupon);
+      }
+      if (cupon.tipo === 'mayores_50' && perfil && this.edad(perfil.fecha_nacimiento) >= 50) {
+        opciones.push(cupon);
+      }
+    }
+    const ingresado = this.cuponIngresado();
+    if (ingresado) {
+      opciones.push(ingresado);
+    }
+    return opciones;
+  });
+
+  cuponAplicado = computed(() => {
+    const opciones = this.opcionesCupon();
+    const elegido = opciones.find(c => c.id === this.cuponElegidoId());
+    if (elegido) {
+      return elegido;
+    }
+    let mejor: Cupon | null = null;
+    for (const cupon of opciones) {
+      if (!mejor || cupon.porcentaje > mejor.porcentaje) {
+        mejor = cupon;
+      }
+    }
+    return mejor;
+  });
+
+  porcentajeBienvenida = computed(() => this.cuponesAutomaticos().find(c => c.tipo === 'bienvenida')?.porcentaje ?? null);
+
+  descuento = computed(() => {
+    const cupon = this.cuponAplicado();
+    return cupon ? Math.round(this.carrito.total() * cupon.porcentaje) / 100 : 0;
+  });
+  totalAPagar = computed(() => this.carrito.total() - this.descuento());
+
   formPago = new FormGroup({
     email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
     titular: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(3)] }),
@@ -42,8 +91,9 @@ export class Checkout implements OnInit, OnDestroy {
   constructor(
     public carrito: Carrito,
     private comprasService: Compras,
-    private auth: Auth,
+    public auth: Auth,
     private router: Router,
+    private cuponesService: Cupones,
   ) {}
 
   ngOnInit() {
@@ -52,11 +102,51 @@ export class Checkout implements OnInit, OnDestroy {
       return;
     }
     this.formPago.controls.email.setValue(this.auth.usuario()?.email ?? '');
+    this.cargarCupones();
+  }
+
+  private async cargarCupones() {
+    const { data } = await this.cuponesService.traerAutomaticos();
+    this.cuponesAutomaticos.set(data ?? []);
+  }
+
+  nombreCupon(cupon: Cupon) {
+    if (cupon.tipo === 'bienvenida') {
+      return 'Bienvenida (primera compra)';
+    }
+    if (cupon.tipo === 'mayores_50') {
+      return 'Mayores de 50';
+    }
+    return `Código ${cupon.codigo}`;
+  }
+
+  async aplicarCupon() {
+    this.mensajeCupon.set('');
+    const codigo = this.codigoCupon.value.trim();
+    if (!codigo) {
+      return;
+    }
+    const { data } = await this.cuponesService.traerPorCodigo(codigo);
+    const cupon: Cupon | undefined = data?.[0];
+    if (!cupon) {
+      this.mensajeCupon.set('El cupón no existe o no está activo.');
+      return;
+    }
+    this.cuponIngresado.set(cupon);
+    this.cuponElegidoId.set(cupon.id);
+  }
+
+  quitarCupon() {
+    this.cuponIngresado.set(null);
+    this.cuponElegidoId.set(null);
+    this.codigoCupon.setValue('');
+    this.mensajeCupon.set('');
   }
 
   ngOnDestroy() {
     if (this.compraId()) {
       this.carrito.vaciar();
+      this.auth.recargarPerfil();
     }
   }
 
@@ -73,7 +163,8 @@ export class Checkout implements OnInit, OnDestroy {
     this.cargando.set(true);
     const funcion = this.carrito.funcion()!;
     const ids = this.carrito.butacas().map(b => b.id);
-    const { data, error } = await this.comprasService.comprar(funcion.id, ids, this.formPago.controls.email.value.trim());
+    const cuponId = this.cuponAplicado()?.id ?? null;
+    const { data, error } = await this.comprasService.comprar(funcion.id, ids, this.formPago.controls.email.value.trim(), cuponId);
     this.cargando.set(false);
 
     if (error) {

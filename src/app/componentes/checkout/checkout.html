@@ -15,7 +15,10 @@
         <span class="chip" [class.vip]="butaca.tipo === 'vip'">{{ butaca.fila }}{{ butaca.numero }}</span>
       }
     </p>
-    <p>Total pagado: <strong>{{ carrito.total() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong></p>
+    @if (descuento()) {
+      <p class="ayuda">Descuento de {{ cuponAplicado()?.porcentaje }}% aplicado: −{{ descuento() | currency: 'ARS' : 'symbol-narrow' : '1.0-2' }}</p>
+    }
+    <p>Total pagado: <strong>{{ totalAPagar() | currency: 'ARS' : 'symbol-narrow' : '1.0-2' }}</strong></p>
 
     @if (restriccion()) {
       <p class="aviso">⚠️ Película +{{ restriccion() }}: los menores deben asistir acompañados de un adulto.</p>
@@ -43,18 +46,54 @@
           <tr>
             <td>
               Butaca {{ butaca.fila }}{{ butaca.numero }}
-
               @if (butaca.tipo === 'vip') { <span class="chip vip">VIP +50%</span> }
             </td>
-
             <td class="precio">{{ carrito.precioDe(butaca) | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
+          </tr>
+        }
+        @if (cuponAplicado()) {
+          <tr>
+            <td>Subtotal</td>
+            <td class="precio">{{ carrito.total() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
+          </tr>
+          <tr class="descuento">
+            <td>
+              Cupón {{ nombreCupon(cuponAplicado()!) }} ({{ cuponAplicado()?.porcentaje }}%)
+            </td>
+            <td class="precio">−{{ descuento() | currency: 'ARS' : 'symbol-narrow' : '1.0-2' }}</td>
           </tr>
         }
         <tr class="total">
           <td>Total</td>
-          <td class="precio">{{ carrito.total() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
+          <td class="precio">{{ totalAPagar() | currency: 'ARS' : 'symbol-narrow' : '1.0-2' }}</td>
         </tr>
       </table>
+
+      @if (opcionesCupon().length) {
+        <div class="cupones">
+          <p class="ayuda">Elegí tu descuento (no son acumulables):</p>
+          @for (cupon of opcionesCupon(); track cupon.id) {
+            <label class="check">
+              <input type="radio" name="cupon" [checked]="cuponAplicado()?.id === cupon.id" (change)="cuponElegidoId.set(cupon.id)">
+              {{ nombreCupon(cupon) }}: {{ cupon.porcentaje }}% de descuento
+            </label>
+          }
+        </div>
+      } @else if (porcentajeBienvenida() && !auth.usuario()) {
+        <p class="ayuda">¿Primera vez? Registrate y tenés {{ porcentajeBienvenida() }}% de descuento en tu primera compra.</p>
+      }
+
+      <div class="cupon">
+        <input type="text" placeholder="¿Tenés un código de descuento?" [formControl]="codigoCupon" />
+        @if (cuponIngresado()) {
+          <button type="button" class="secundario chico" (click)="quitarCupon()">Quitar</button>
+        } @else {
+          <button type="button" class="chico" (click)="aplicarCupon()">Aplicar</button>
+        }
+      </div>
+      @if (mensajeCupon()) {
+        <p class="error">{{ mensajeCupon() }}</p>
+      }
 
       @if (restriccion()) {
         <p class="aviso">⚠️ Película para mayores de {{ restriccion() }} años.</p>
@@ -92,7 +131,6 @@
           <div class="fila">
             <div class="campo">
               <label for="vencimiento">Vencimiento</label>
-
               <input type="text" id="vencimiento" formControlName="vencimiento" maxlength="5" placeholder="MM/AA" inputmode="numeric" (input)="formatearVencimiento($event)">
               @if (formPago.controls.vencimiento.touched && formPago.controls.vencimiento.hasError('vencida')) {
                 <p class="error">La tarjeta está vencida</p>

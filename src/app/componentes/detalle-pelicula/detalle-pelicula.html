@@ -15,7 +15,6 @@
 
       <p class="datos">
         <span>{{ pelicula()?.duracion_min }} min</span>
-
         <span class="etiqueta amarilla">{{ pelicula()?.restriccion_edad ? '+' + pelicula()?.restriccion_edad : 'ATP' }}</span>
         @for (genero of pelicula()?.generos; track genero.id) {
           <span class="etiqueta">{{ genero.nombre }}</span>
@@ -24,15 +23,14 @@
 
       <p class="sinopsis">{{ pelicula()?.sinopsis }}</p>
 
-      @if (pelicula()?.restriccion_edad === 18) {
-        <p class="aviso">⚠️ Película para mayores de 18 años.</p>
+      @if (pelicula()?.restriccion_edad) {
+        <p class="aviso">⚠️ Película para mayores de {{ pelicula()?.restriccion_edad }} años.</p>
       }
     </div>
   </section>
 
   <section class="seccion-funciones">
     <h2>Funciones</h2>
-
     @if (pelicula()?.estado === 'proximamente') {
       <div class="proximamente">
         <span>Próximamente</span>
@@ -54,7 +52,6 @@
               <span class="etiqueta azul">{{ funcion.formato }}</span>
               <span class="ayuda">{{ funcion.idioma === 'castellano' ? 'Castellano' : 'Subtitulada' }} · {{ funcion.salas?.nombre }}</span>
             </div>
-
             <a class="boton" [routerLink]="['/funciones', funcion.id, 'entradas']">Comprar</a>
           </article>
         }

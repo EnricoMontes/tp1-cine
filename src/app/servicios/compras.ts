@@ -13,11 +13,12 @@ export class Compras {
       .eq('funcion_id', funcionId);
   }
 
-  comprar(funcionId: number, butacaIds: number[], email: string) {
+  comprar(funcionId: number, butacaIds: number[], email: string, cuponId: number | null) {
     return this.supabase.cliente.rpc('comprar_entradas', {
       p_funcion_id: funcionId,
       p_butaca_ids: butacaIds,
       p_email: email,
+      p_cupon_id: cuponId,
     });
   }
 
