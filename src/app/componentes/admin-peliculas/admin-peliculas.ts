@@ -3,6 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { CurrencyPipe } from '@angular/common';
 import { Peliculas } from '../../servicios/peliculas';
 import { Genero, Pelicula, PeliculaDatos } from '../../modelos/pelicula';
+import { Actividades } from '../../servicios/actividades';
 import { enteroValidator } from '../../validadores/registro.validadores';
 import { aFechaBase, aFechaPantalla, fechaValidator, ponerBarras } from '../../validadores/fecha.validadores';
 
@@ -40,7 +41,7 @@ export class AdminPeliculas implements OnInit {
     precioBase: new FormControl<number | null>(null, { validators: [Validators.required, Validators.min(0)] }),
   });
 
-  constructor(private peliculasService: Peliculas) {}
+  constructor(private peliculasService: Peliculas, private actividades: Actividades) {}
 
   ngOnInit() {
     this.cargarPeliculas();
@@ -160,11 +161,18 @@ export class AdminPeliculas implements OnInit {
         return;
       }
       id = data[0].id;
+      await this.actividades.registrar(`Creó la película ${datos.nombre} (precio $${datos.precio_base})`);
     } else {
       const { error } = await this.peliculasService.modificar(id, datos);
       if (error) {
         this.terminarConError('No se pudo modificar la película.');
         return;
+      }
+      const antes = this.peliculas().find(p => p.id === id);
+      if (antes && antes.precio_base !== datos.precio_base) {
+        await this.actividades.registrar(`Cambió el precio de ${datos.nombre} de $${antes.precio_base} a $${datos.precio_base}`);
+      } else {
+        await this.actividades.registrar(`Modificó la película ${datos.nombre}`);
       }
     }
 
@@ -189,6 +197,7 @@ export class AdminPeliculas implements OnInit {
       this.mensajeError.set('No se pudo borrar la película.');
       return;
     }
+    await this.actividades.registrar(`Borró la película ${pelicula.nombre}`);
     this.mensajeOk.set('Película borrada.');
     if (this.editandoId() === pelicula.id) {
       this.limpiarFormulario();

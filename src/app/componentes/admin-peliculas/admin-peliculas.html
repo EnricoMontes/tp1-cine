@@ -71,17 +71,17 @@
   <label>Géneros</label>
   <div class="generos">
     @for (genero of generos(); track genero.id) {
-      <label class="check">
-        <input type="checkbox" [checked]="generosElegidos().includes(genero.id)" (change)="alternarGenero(genero.id)">
-        {{ genero.nombre }}
-      </label>
+      <button type="button" class="secundario chico" [class.elegida]="generosElegidos().includes(genero.id)"
+              (click)="alternarGenero(genero.id)">{{ genero.nombre }}</button>
     }
   </div>
 
-  <label class="check">
-    <input type="checkbox" formControlName="visibleEnHome">
-    Mostrar en el home
-  </label>
+  <div>
+    <button type="button" class="secundario chico" [class.elegida]="formPelicula.controls.visibleEnHome.value"
+            (click)="formPelicula.controls.visibleEnHome.setValue(!formPelicula.controls.visibleEnHome.value)">
+      {{ formPelicula.controls.visibleEnHome.value ? '✓ Se muestra en el home' : 'No se muestra en el home' }}
+    </button>
+  </div>
 
   @if (mensajeError()) {
     <p class="error">{{ mensajeError() }}</p>

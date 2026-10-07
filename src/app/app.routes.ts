@@ -71,6 +71,10 @@ export const routes: Routes = [
       {
         path: 'cupones',
         loadComponent: () => import('./componentes/admin-cupones/admin-cupones').then(m => m.AdminCupones)
+      },
+      {
+        path: 'actividad',
+        loadComponent: () => import('./componentes/admin-actividad/admin-actividad').then(m => m.AdminActividad)
       }
     ]
   },

@@ -5,6 +5,7 @@ import { Funciones } from '../../servicios/funciones';
 import { Peliculas } from '../../servicios/peliculas';
 import { Salas } from '../../servicios/salas';
 import { Funcion } from '../../modelos/funcion';
+import { Actividades } from '../../servicios/actividades';
 import { Pelicula } from '../../modelos/pelicula';
 import { Formato } from '../../modelos/sala';
 import { aFechaBase, fechaValidator, horaValidator, ponerBarras, ponerDosPuntos } from '../../validadores/fecha.validadores';
@@ -67,6 +68,7 @@ export class AdminFunciones implements OnInit {
     private funcionesService: Funciones,
     private peliculasService: Peliculas,
     private salasService: Salas,
+    private actividades: Actividades,
   ) {}
 
   ngOnInit() {
@@ -209,7 +211,17 @@ export class AdminFunciones implements OnInit {
       formato,
       idioma,
     });
-    return error ? null : salaLibre.nombre;
+    if (error) {
+      return null;
+    }
+    await this.actividades.registrar(
+      `Creó la función de ${pelicula.nombre} el ${this.textoFecha(inicio)} en ${salaLibre.nombre} (${formato}, ${idioma})`
+    );
+    return salaLibre.nombre;
+  }
+
+  private textoFecha(fecha: string) {
+    return `${fecha.slice(8, 10)}/${fecha.slice(5, 7)}/${fecha.slice(0, 4)} ${fecha.slice(11, 16)}`;
   }
 
   async borrar(funcion: Funcion) {
@@ -221,6 +233,9 @@ export class AdminFunciones implements OnInit {
       this.mensajeError.set('No se pudo borrar la función.');
       return;
     }
+    await this.actividades.registrar(
+      `Borró la función de ${funcion.peliculas?.nombre} del ${this.textoFecha(funcion.inicio)} (${funcion.salas?.nombre})`
+    );
     await this.cargarFunciones();
   }
 

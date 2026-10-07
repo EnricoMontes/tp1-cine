@@ -15,7 +15,13 @@
 .generos {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 1.25rem;
+  gap: 0.4rem;
+}
+
+button.secundario.elegida {
+  background: var(--acento);
+  border-color: var(--acento);
+  color: white;
 }
 
 .pelicula {

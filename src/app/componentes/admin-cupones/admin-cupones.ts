@@ -2,6 +2,7 @@ import { Component, computed, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Cupones } from '../../servicios/cupones';
 import { Cupon } from '../../modelos/cupon';
+import { Actividades } from '../../servicios/actividades';
 
 @Component({
   imports: [ReactiveFormsModule],
@@ -37,7 +38,7 @@ export class AdminCupones implements OnInit {
     }),
   });
 
-  constructor(private cuponesService: Cupones) {}
+  constructor(private cuponesService: Cupones, private actividades: Actividades) {}
 
   ngOnInit() {
     this.cargar();
@@ -76,6 +77,7 @@ export class AdminCupones implements OnInit {
       this.mensajeError.set('No se pudo guardar el cupón.');
       return;
     }
+    await this.actividades.registrar(`Creó el cupón de mayores de 50 (${this.porcentajeMayores50.value}%)`);
     this.mensajeOk.set('Cambio guardado.');
     this.cargar();
   }
@@ -89,6 +91,7 @@ export class AdminCupones implements OnInit {
       this.mensajeError.set(error.code === '23505' ? 'Ya existe un cupón con ese código.' : 'No se pudo crear el cupón.');
       return;
     }
+    await this.actividades.registrar(`Creó el cupón ${codigo} (${porcentaje}%)`);
     this.mensajeOk.set(`Cupón ${codigo} creado.`);
     this.formCupon.reset();
     this.cargar();
@@ -107,6 +110,7 @@ export class AdminCupones implements OnInit {
       this.mensajeError.set('No se pudo borrar el cupón.');
       return;
     }
+    await this.actividades.registrar(`Borró el cupón ${this.nombreCupon(cupon)}`);
     this.cargar();
   }
 
@@ -123,7 +127,22 @@ export class AdminCupones implements OnInit {
       this.mensajeError.set('No se pudo guardar el cambio.');
       return;
     }
+    if (cambios.porcentaje !== undefined) {
+      await this.actividades.registrar(`Cambió el cupón ${this.nombreCupon(cupon)} de ${cupon.porcentaje}% a ${cambios.porcentaje}%`);
+    } else {
+      await this.actividades.registrar(`${cambios.activo ? 'Activó' : 'Desactivó'} el cupón ${this.nombreCupon(cupon)}`);
+    }
     this.mensajeOk.set('Cambio guardado.');
     this.cargar();
+  }
+
+  private nombreCupon(cupon: Cupon) {
+    if (cupon.tipo === 'bienvenida') {
+      return 'de bienvenida';
+    }
+    if (cupon.tipo === 'mayores_50') {
+      return 'de mayores de 50';
+    }
+    return cupon.codigo ?? '';
   }
 }
