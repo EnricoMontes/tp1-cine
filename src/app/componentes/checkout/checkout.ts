@@ -10,6 +10,8 @@ import { PasosCompra } from '../pasos-compra/pasos-compra';
 import { Cupones } from '../../servicios/cupones';
 import { Cupon } from '../../modelos/cupon';
 import { EntradaPdf } from '../../servicios/entrada-pdf';
+import { Candy } from '../../servicios/candy';
+import { ItemProducto } from '../../modelos/producto';
 
 @Component({
   imports: [ReactiveFormsModule, RouterLink, CurrencyPipe, DatePipe, PasosCompra],
@@ -72,11 +74,32 @@ export class Checkout implements OnInit, OnDestroy {
 
   porcentajeBienvenida = computed(() => this.cuponesAutomaticos().find(c => c.tipo === 'bienvenida')?.porcentaje ?? null);
 
+  puntosEntrada = signal(0);
+  canjeEntradas = signal(0);
+  canjeProductos = signal<ItemProducto[]>([]);
+  maxEntradasCanje = computed(() => this.carrito.cantidadGeneral() + this.carrito.cantidadAccesible() + this.carrito.cantidadCombos());
+  puntosUsados = computed(() => {
+    let suma = this.canjeEntradas() * this.puntosEntrada();
+    for (const item of this.canjeProductos()) {
+      suma += item.cantidad * (item.producto.puntos ?? 0);
+    }
+    return suma;
+  });
+  puntosDisponibles = computed(() => this.auth.perfil()?.puntos ?? 0);
+  descuentoCanje = computed(() => {
+    let suma = this.canjeEntradas() * this.carrito.precioGeneral();
+    for (const item of this.canjeProductos()) {
+      suma += item.cantidad * item.producto.precio;
+    }
+    return suma;
+  });
+  subtotal = computed(() => this.carrito.total() - this.descuentoCanje());
+
   descuento = computed(() => {
     const cupon = this.cuponAplicado();
-    return cupon ? Math.round(this.carrito.total() * cupon.porcentaje) / 100 : 0;
+    return cupon ? Math.round(this.subtotal() * cupon.porcentaje) / 100 : 0;
   });
-  totalAPagar = computed(() => this.carrito.total() - this.descuento());
+  totalAPagar = computed(() => this.subtotal() - this.descuento());
   puntosAGanar = computed(() => Math.floor(this.totalAPagar()));
 
   formPago = new FormGroup({
@@ -98,6 +121,7 @@ export class Checkout implements OnInit, OnDestroy {
     private router: Router,
     private cuponesService: Cupones,
     private entradaPdf: EntradaPdf,
+    private candyService: Candy,
   ) {}
 
   ngOnInit() {
@@ -107,6 +131,51 @@ export class Checkout implements OnInit, OnDestroy {
     }
     this.formPago.controls.email.setValue(this.auth.usuario()?.email ?? '');
     this.cargarCupones();
+    this.cargarCanje();
+  }
+
+  private async cargarCanje() {
+    const { data } = await this.candyService.traerPuntosEntrada();
+    this.puntosEntrada.set(data?.[0]?.puntos_entrada ?? 0);
+    this.canjeProductos.set(
+      this.carrito.productos().filter(item => item.producto.puntos).map(item => ({ producto: item.producto, cantidad: 0 }))
+    );
+  }
+
+  alcanza(costo: number) {
+    return this.puntosUsados() + costo <= this.puntosDisponibles();
+  }
+
+  cambiarCanjeEntradas(cambio: number) {
+    const nuevo = this.canjeEntradas() + cambio;
+    if (nuevo < 0 || nuevo > this.maxEntradasCanje() || (cambio > 0 && !this.alcanza(this.puntosEntrada()))) {
+      return;
+    }
+    this.canjeEntradas.set(nuevo);
+  }
+
+  cambiarCanjeProducto(id: number, cambio: number) {
+    this.canjeProductos.update(lista => lista.map(item => {
+      if (item.producto.id !== id) {
+        return item;
+      }
+      const comprados = this.carrito.productos().find(p => p.producto.id === id)?.cantidad ?? 0;
+      const nuevo = item.cantidad + cambio;
+      if (nuevo < 0 || nuevo > comprados || (cambio > 0 && !this.alcanza(item.producto.puntos ?? 0))) {
+        return item;
+      }
+      return { ...item, cantidad: nuevo };
+    }));
+  }
+
+  private canjeProductoIds() {
+    const ids: number[] = [];
+    for (const item of this.canjeProductos()) {
+      for (let i = 0; i < item.cantidad; i++) {
+        ids.push(item.producto.id);
+      }
+    }
+    return ids;
   }
 
   private async cargarCupones() {
@@ -171,6 +240,7 @@ export class Checkout implements OnInit, OnDestroy {
     const { data, error } = await this.comprasService.comprar(
       funcion.id, ids, this.formPago.controls.email.value.trim(), cuponId,
       this.carrito.productoIds(), this.carrito.comboIds(),
+      this.canjeEntradas(), this.canjeProductoIds(),
     );
     this.cargando.set(false);
 

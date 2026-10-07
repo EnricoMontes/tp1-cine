@@ -15,7 +15,15 @@
     <section class="panel puntos">
       <span class="etiqueta">Mis puntos</span>
       <p class="cantidad">{{ auth.perfil()?.puntos ?? 0 }}</p>
-      <p class="ayuda">Sumás 1 punto por cada peso que pagás.</p>
+      <p class="ayuda">Sumás 1 punto por cada peso que pagás y los canjeás al comprar.</p>
+      @if (canjes().length) {
+        <div class="historial">
+          <p class="ayuda"><strong>Historial de canjes</strong></p>
+          @for (canje of canjes(); track canje.id) {
+            <p class="ayuda">{{ canje.creado_en | date: 'dd/MM/yyyy' }} · {{ canje.descripcion }} · −{{ canje.puntos }} pts</p>
+          }
+        </div>
+      }
     </section>
   </div>
 

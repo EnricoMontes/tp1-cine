@@ -45,4 +45,12 @@ export class Candy {
   borrarCombo(id: number) {
     return this.supabase.cliente.from('combos').delete().eq('id', id);
   }
+
+  traerPuntosEntrada() {
+    return this.supabase.cliente.from('configuracion').select('puntos_entrada').eq('id', 1);
+  }
+
+  guardarPuntosEntrada(puntos: number) {
+    return this.supabase.cliente.from('configuracion').update({ puntos_entrada: puntos }).eq('id', 1);
+  }
 }

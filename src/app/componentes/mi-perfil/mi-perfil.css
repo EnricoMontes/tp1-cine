@@ -106,3 +106,20 @@
   font-size: 0.75rem;
   text-align: center;
 }
+
+.historial {
+  width: 100%;
+  margin-top: 0.8rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--borde);
+  text-align: left;
+}
+
+.historial p {
+  margin: 0.2rem 0;
+}
+
+.vista .calificar,
+.vista .estrellas-chicas {
+  margin-top: auto;
+}

@@ -6,6 +6,7 @@ import { Compra } from '../../modelos/compra';
 import { EntradaPdf } from '../../servicios/entrada-pdf';
 import { Resenias } from '../../servicios/resenias';
 import { Resenia } from '../../modelos/resenia';
+import { Canje } from '../../modelos/producto';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -28,6 +29,7 @@ export class MiPerfil implements OnInit {
 
   peliculasVistas = computed(() => this.compras().filter(c => c.validada_en));
   misResenias = signal<Resenia[]>([]);
+  canjes = signal<Canje[]>([]);
   numeros = [1, 2, 3, 4, 5];
 
   constructor(
@@ -45,6 +47,8 @@ export class MiPerfil implements OnInit {
       this.compras.set((data ?? []).filter(c => c.compra_entradas.length > 0));
       const resenias = await this.reseniasService.traerDeUsuario(usuario.id);
       this.misResenias.set(resenias.data ?? []);
+      const canjes = await this.comprasService.traerMisCanjes(usuario.id);
+      this.canjes.set(canjes.data ?? []);
     }
     this.cargandoCompras.set(false);
   }

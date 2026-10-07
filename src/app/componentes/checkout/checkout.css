@@ -111,3 +111,28 @@ h1 {
   background: #fff;
   border-radius: 8px;
 }
+
+.canje {
+  margin: 1rem 0;
+  padding: 0.8rem;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+}
+
+.canje p {
+  margin: 0 0 0.5rem;
+}
+
+.fila-canje {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.3rem 0;
+}
+
+.fila-canje .contador {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}

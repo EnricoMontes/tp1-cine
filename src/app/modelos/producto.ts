@@ -5,6 +5,7 @@ export interface ProductoDatos {
   categoria: Categoria;
   precio: number;
   activo: boolean;
+  puntos?: number | null;
 }
 
 export interface Producto extends ProductoDatos {
@@ -32,4 +33,11 @@ export interface ItemProducto {
 export interface ItemCombo {
   combo: Combo;
   cantidad: number;
+}
+
+export interface Canje {
+  id: number;
+  descripcion: string;
+  puntos: number;
+  creado_en: string;
 }

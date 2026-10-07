@@ -24,7 +24,12 @@ export class AdminCandy implements OnInit {
     nombre: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     categoria: new FormControl<Categoria>('Pochoclos', { nonNullable: true }),
     precio: new FormControl<number | null>(null, { validators: [Validators.required, Validators.min(0)] }),
+    puntos: new FormControl<number | null>(null, { validators: [Validators.min(1)] }),
   });
+
+  puntosEntrada = new FormControl<number | null>(null, { validators: [Validators.required, Validators.min(1)] });
+  puntosEntradaGuardados = signal<number | null>(null);
+  mensajeCanje = signal('');
 
   editandoComboId = signal<number | null>(null);
   formCombo = new FormGroup({
@@ -44,6 +49,25 @@ export class AdminCandy implements OnInit {
     const combos = await this.candyService.traerCombos(false);
     this.productos.set(productos.data ?? []);
     this.combos.set(combos.data ?? []);
+    const config = await this.candyService.traerPuntosEntrada();
+    this.puntosEntradaGuardados.set(config.data?.[0]?.puntos_entrada ?? null);
+    this.puntosEntrada.setValue(this.puntosEntradaGuardados());
+  }
+
+  async guardarPuntosEntrada() {
+    const nuevo = this.puntosEntrada.value!;
+    if (nuevo === this.puntosEntradaGuardados()) {
+      this.mensajeCanje.set('No hubo cambios.');
+      return;
+    }
+    const { error } = await this.candyService.guardarPuntosEntrada(nuevo);
+    if (error) {
+      this.mensajeCanje.set('No se pudo guardar.');
+      return;
+    }
+    await this.actividades.registrar(`Cambió los puntos de la entrada gratis de ${this.puntosEntradaGuardados()} a ${nuevo}`);
+    this.mensajeCanje.set(`✓ Guardado: la entrada gratis cuesta ${nuevo} puntos.`);
+    this.cargar();
   }
 
   private limpiarMensajes() {
@@ -53,7 +77,7 @@ export class AdminCandy implements OnInit {
 
   editarProducto(producto: Producto) {
     this.editandoProductoId.set(producto.id);
-    this.formProducto.setValue({ nombre: producto.nombre, categoria: producto.categoria, precio: producto.precio });
+    this.formProducto.setValue({ nombre: producto.nombre, categoria: producto.categoria, precio: producto.precio, puntos: producto.puntos ?? null });
   }
 
   cancelarProducto() {
@@ -64,7 +88,7 @@ export class AdminCandy implements OnInit {
   async guardarProducto() {
     this.limpiarMensajes();
     const valores = this.formProducto.getRawValue();
-    const datos = { nombre: valores.nombre.trim(), categoria: valores.categoria, precio: valores.precio! };
+    const datos = { nombre: valores.nombre.trim(), categoria: valores.categoria, precio: valores.precio!, puntos: valores.puntos || null };
     const id = this.editandoProductoId();
 
     if (id === null) {

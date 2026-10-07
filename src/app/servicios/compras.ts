@@ -14,13 +14,15 @@ export class Compras {
   }
 
   comprar(funcionId: number, butacaIds: number[], email: string, cuponId: number | null,
-          productoIds: number[], comboIds: number[]) {
+          productoIds: number[], comboIds: number[], canjeEntradas: number, canjeProductoIds: number[]) {
     return this.supabase.cliente.rpc('comprar_entradas', {
       p_funcion_id: funcionId,
       p_butaca_ids: butacaIds,
       p_email: email,
       p_producto_ids: productoIds,
       p_combo_ids: comboIds,
+      p_canje_entradas: canjeEntradas,
+      p_canje_producto_ids: canjeProductoIds,
       p_cupon_id: cuponId,
     });
   }
@@ -28,7 +30,15 @@ export class Compras {
   traerMisCompras(usuarioId: string) {
     return this.supabase.cliente
       .from('compras')
-      .select('*, compra_entradas(id, precio, butacas(*), funciones(*, peliculas(nombre, imagen_url, restriccion_edad), salas(nombre)), compra_productos(cantidad, productos(nombre)), compra_combos(cantidad, combos(nombre)))')
+      .select('*, compra_entradas(id, precio, butacas(*), funciones(*, peliculas(nombre, imagen_url, restriccion_edad), salas(nombre))), compra_productos(cantidad, productos(nombre)), compra_combos(cantidad, combos(nombre))')
+      .eq('usuario_id', usuarioId)
+      .order('creado_en', { ascending: false });
+  }
+
+  traerMisCanjes(usuarioId: string) {
+    return this.supabase.cliente
+      .from('canjes')
+      .select('*')
       .eq('usuario_id', usuarioId)
       .order('creado_en', { ascending: false });
   }

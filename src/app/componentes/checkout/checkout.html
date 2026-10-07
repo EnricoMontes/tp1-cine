@@ -65,10 +65,16 @@
             <td class="precio">{{ linea.monto | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
           </tr>
         }
+        @if (descuentoCanje()) {
+          <tr class="descuento">
+            <td>Canje de puntos ({{ puntosUsados() }} pts)</td>
+            <td class="precio">−{{ descuentoCanje() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
+          </tr>
+        }
         @if (cuponAplicado()) {
           <tr>
             <td>Subtotal</td>
-            <td class="precio">{{ carrito.total() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
+            <td class="precio">{{ subtotal() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
           </tr>
           <tr class="descuento">
             <td>
@@ -82,6 +88,32 @@
           <td class="precio">{{ totalAPagar() | currency: 'ARS' : 'symbol-narrow' : '1.0-2' }}</td>
         </tr>
       </table>
+
+      @if (auth.usuario() && puntosDisponibles() > 0 && (maxEntradasCanje() > 0 || canjeProductos().length)) {
+        <div class="canje">
+          <p><strong>Canjear puntos</strong> <span class="ayuda">· tenés {{ puntosDisponibles() - puntosUsados() }} disponibles</span></p>
+          @if (maxEntradasCanje() > 0 && puntosEntrada()) {
+            <div class="fila-canje">
+              <span>Entrada general gratis <span class="ayuda">({{ puntosEntrada() }} pts)</span></span>
+              <div class="contador">
+                <button type="button" class="secundario chico" (click)="cambiarCanjeEntradas(-1)" [disabled]="canjeEntradas() === 0">−</button>
+                <span>{{ canjeEntradas() }}</span>
+                <button type="button" class="secundario chico" (click)="cambiarCanjeEntradas(1)">+</button>
+              </div>
+            </div>
+          }
+          @for (item of canjeProductos(); track item.producto.id) {
+            <div class="fila-canje">
+              <span>{{ item.producto.nombre }} gratis <span class="ayuda">({{ item.producto.puntos }} pts)</span></span>
+              <div class="contador">
+                <button type="button" class="secundario chico" (click)="cambiarCanjeProducto(item.producto.id, -1)" [disabled]="item.cantidad === 0">−</button>
+                <span>{{ item.cantidad }}</span>
+                <button type="button" class="secundario chico" (click)="cambiarCanjeProducto(item.producto.id, 1)">+</button>
+              </div>
+            </div>
+          }
+        </div>
+      }
 
       @if (opcionesCupon().length) {
         <div class="cupones">
