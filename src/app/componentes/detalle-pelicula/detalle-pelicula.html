@@ -41,6 +41,13 @@
         @if (pelicula()?.fecha_estreno) {
           <p class="ayuda">Estreno: {{ pelicula()?.fecha_estreno + 'T00:00' | date: 'dd/MM/yyyy' }}</p>
         }
+        @if (auth.usuario()) {
+          <button type="button" class="secundario chico" [class.elegida]="alerta()" (click)="cambiarAlerta()">
+            {{ alerta() ? '🔔 Te vamos a avisar (tocá para quitar)' : '🔔 Avisarme cuando salgan las entradas' }}
+          </button>
+        } @else {
+          <p class="ayuda"><a routerLink="/login">Iniciá sesión</a> para que te avisemos cuando salgan las entradas.</p>
+        }
         @if (pelicula()?.preventa_activa && apertura()) {
           <p class="ok">🎟 Preventa desde el {{ apertura() | date: 'dd/MM/yyyy' }} a {{ pelicula()?.precio_preventa | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</p>
         }

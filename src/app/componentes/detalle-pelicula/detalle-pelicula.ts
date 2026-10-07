@@ -9,6 +9,7 @@ import { Funcion } from '../../modelos/funcion';
 import { Resenias } from '../../servicios/resenias';
 import { Resenia } from '../../modelos/resenia';
 import { Auth } from '../../servicios/auth';
+import { Alerta, Alertas } from '../../servicios/alertas';
 import { aperturaPreventa, enPreventa, ventaAbierta } from '../../servicios/carrito';
 
 @Component({
@@ -22,6 +23,8 @@ export class DetallePelicula implements OnInit {
   cargando = signal(true);
   mensajeError = signal('');
   funciones = signal<Funcion[]>([]);
+
+  alerta = signal<Alerta | null>(null);
 
   abierta = computed(() => !!this.pelicula() && ventaAbierta(this.pelicula()!));
   preventa = computed(() => !!this.pelicula() && enPreventa(this.pelicula()!));
@@ -53,6 +56,7 @@ export class DetallePelicula implements OnInit {
     private peliculasService: Peliculas,
     private funcionesService: Funciones,
     private reseniasService: Resenias,
+    private alertasService: Alertas,
     public auth: Auth,
   ) {}
 
@@ -77,6 +81,7 @@ export class DetallePelicula implements OnInit {
       this.pelicula.set(data[0]);
       await this.cargarFunciones(id);
       await this.cargarResenias(id);
+      await this.cargarAlerta(id);
     }
     this.cargando.set(false);
 
@@ -91,6 +96,27 @@ export class DetallePelicula implements OnInit {
     const desde = ahora.toISOString().slice(0, 16);
     const { data } = await this.funcionesService.traerPorPelicula(peliculaId, desde);
     this.funciones.set(data ?? []);
+  }
+
+  private async cargarAlerta(peliculaId: number) {
+    await this.auth.sesionCargada;
+    const usuario = this.auth.usuario();
+    if (!usuario) {
+      return;
+    }
+    const { data } = await this.alertasService.traerMias(usuario.id);
+    this.alerta.set((data ?? []).find(a => a.pelicula_id === peliculaId) ?? null);
+  }
+
+  async cambiarAlerta() {
+    const pelicula = this.pelicula()!;
+    const alerta = this.alerta();
+    if (alerta) {
+      await this.alertasService.desactivar(alerta.id);
+    } else {
+      await this.alertasService.activar(pelicula.id);
+    }
+    await this.cargarAlerta(pelicula.id);
   }
 
   private async cargarResenias(peliculaId: number) {

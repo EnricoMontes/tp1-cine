@@ -5,6 +5,9 @@ import { Peliculas } from '../../servicios/peliculas';
 import { Pelicula } from '../../modelos/pelicula';
 import { CardPelicula } from '../card-pelicula/card-pelicula';
 import { FiltroPeliculasPipe } from '../../pipes/filtro-peliculas-pipe';
+import { Auth } from '../../servicios/auth';
+import { Alerta, Alertas } from '../../servicios/alertas';
+import { ventaAbierta } from '../../servicios/carrito';
 
 @Component({
   imports: [CardPelicula, FormsModule, FiltroPeliculasPipe],
@@ -18,6 +21,8 @@ export class Home implements OnInit {
   cargando = signal(true);
   mensajeError = signal('');
 
+  avisos = signal<Alerta[]>([]);
+
   busqueda = signal('');
 
   masVendidas = computed(() =>
@@ -27,11 +32,32 @@ export class Home implements OnInit {
       .slice(0, 3)
   );
 
-  constructor(private peliculasService: Peliculas, private router: Router) {}
+  constructor(
+    private peliculasService: Peliculas,
+    private router: Router,
+    private auth: Auth,
+    private alertasService: Alertas,
+  ) {}
 
   ngOnInit() {
     this.cargarCartelera();
     this.cargarProximamente();
+    this.cargarAvisos();
+  }
+
+  private async cargarAvisos() {
+    await this.auth.sesionCargada;
+    const usuario = this.auth.usuario();
+    if (!usuario) {
+      return;
+    }
+    const { data } = await this.alertasService.traerMias(usuario.id);
+    this.avisos.set((data ?? []).filter(a => !a.notificada && a.peliculas && ventaAbierta(a.peliculas)));
+  }
+
+  async cerrarAviso(alerta: Alerta) {
+    await this.alertasService.marcarNotificada(alerta.id);
+    this.avisos.update(lista => lista.filter(a => a.id !== alerta.id));
   }
 
   private async cargarCartelera() {
