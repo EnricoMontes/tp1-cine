@@ -18,9 +18,30 @@
       <p class="aviso">⚠️ Película para mayores de {{ funcion()?.peliculas?.restriccion_edad }} años.</p>
     }
 
+    <div class="dos-columnas">
+    <div class="columna">
     <h2>Elegí tus entradas</h2>
     @if (preventa()) {
       <p class="ok">🎟 Precio de preventa hasta el estreno (después: {{ funcion()?.peliculas?.precio_base | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}).</p>
+    }
+
+    @if (combos().length) {
+      <div class="combos">
+        @for (item of combos(); track item.combo.id) {
+          <div class="entrada combo">
+            <div>
+              <strong>⭐ {{ item.combo.nombre }}</strong>
+              <p class="ayuda">{{ item.combo.incluye }}</p>
+            </div>
+            <span class="precio">{{ item.combo.precio | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</span>
+            <div class="contador">
+              <button type="button" (click)="cambiarCombo(item.combo.id, -1)" [disabled]="item.cantidad === 0">−</button>
+              <span>{{ item.cantidad }}</span>
+              <button type="button" (click)="cambiarCombo(item.combo.id, 1)" [disabled]="!puedeSumar('general')">+</button>
+            </div>
+          </div>
+        }
+      </div>
     }
 
     <div class="entrada">
@@ -71,7 +92,32 @@
       </div>
     </div>
 
-    <p class="ayuda">Máximo {{ maximo }} entradas por compra.</p>
+    <p class="ayuda">Máximo {{ maximo }} entradas por compra (los combos cuentan como entrada).</p>
+    </div>
+
+    <div class="columna">
+    @if (productos().length) {
+      <h2>Candy</h2>
+      <p class="ayuda">Lo retirás en el candy bar con el mismo QR de tu entrada.</p>
+      @for (categoria of categorias; track categoria) {
+        @if (productosDe(categoria).length) {
+          <h3 class="categoria">{{ categoria }}</h3>
+          @for (item of productosDe(categoria); track item.producto.id) {
+            <div class="entrada">
+              <div><strong>{{ item.producto.nombre }}</strong></div>
+              <span class="precio">{{ item.producto.precio | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</span>
+              <div class="contador">
+                <button type="button" (click)="cambiarProducto(item.producto.id, -1)" [disabled]="item.cantidad === 0">−</button>
+                <span>{{ item.cantidad }}</span>
+                <button type="button" (click)="cambiarProducto(item.producto.id, 1)">+</button>
+              </div>
+            </div>
+          }
+        }
+      }
+    }
+    </div>
+    </div>
 
     <div class="total">
       <span>Total</span>

@@ -29,8 +29,12 @@ export class EntradaPdf {
     doc.text(`Butacas: ${datos.butacas}`, 20, 78);
     doc.text(`Total pagado: $${datos.total}`, 20, 86);
 
+    if (datos.candy) {
+      doc.text(doc.splitTextToSize(`Candy: ${datos.candy}`, 170), 20, 94);
+    }
+
     if (datos.restriccion) {
-      doc.text(`Película +${datos.restriccion}: los menores deben asistir acompañados de un adulto.`, 20, 98);
+      doc.text(`Película +${datos.restriccion}: los menores deben asistir acompañados de un adulto.`, 20, 104);
     }
 
     doc.addImage(qr, 'PNG', 70, 110, 70, 70);

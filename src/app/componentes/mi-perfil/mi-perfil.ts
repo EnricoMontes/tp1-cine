@@ -65,6 +65,18 @@ export class MiPerfil implements OnInit {
       butacas: compra.compra_entradas.map(e => e.butacas.fila + e.butacas.numero).join(', '),
       total: compra.total,
       restriccion: funcion.peliculas?.restriccion_edad ?? null,
+      candy: this.textoCandy(compra),
     });
+  }
+
+  textoCandy(compra: Compra) {
+    const partes: string[] = [];
+    for (const item of compra.compra_combos ?? []) {
+      partes.push(`${item.cantidad} x ${item.combos.nombre}`);
+    }
+    for (const item of compra.compra_productos ?? []) {
+      partes.push(`${item.cantidad} x ${item.productos.nombre}`);
+    }
+    return partes.join(', ');
   }
 }

@@ -18,6 +18,7 @@ export interface DatosEntradaPdf {
   butacas: string;
   total: number;
   restriccion: number | null;
+  candy: string;
 }
 
 export interface Compra {
@@ -30,4 +31,6 @@ export interface Compra {
   creado_en: string;
   validada_en: string | null;
   compra_entradas: EntradaComprada[];
+  compra_productos: { cantidad: number; productos: { nombre: string } }[];
+  compra_combos: { cantidad: number; combos: { nombre: string } }[];
 }

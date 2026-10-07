@@ -61,6 +61,9 @@
             <span class="chip" [class.vip]="entrada.butacas.tipo === 'vip'">{{ entrada.butacas.fila }}{{ entrada.butacas.numero }}</span>
           }
         </p>
+        @if (textoCandy(compra)) {
+          <p>Candy: {{ textoCandy(compra) }}</p>
+        }
         <p>
           Total pagado: <strong>{{ compra.total | currency: 'ARS' : 'symbol-narrow' : '1.0-2' }}</strong>
           @if (compra.descuento > 0) {

@@ -19,6 +19,9 @@
         <span class="chip" [class.vip]="butaca.tipo === 'vip'">{{ butaca.fila }}{{ butaca.numero }}</span>
       }
     </p>
+    @if (textoCandy()) {
+      <p>Candy: <strong>{{ textoCandy() }}</strong> <span class="ayuda">(retiralo en el candy bar con este QR)</span></p>
+    }
     @if (descuento()) {
       <p class="ayuda">Descuento de {{ cuponAplicado()?.porcentaje }}% aplicado: −{{ descuento() | currency: 'ARS' : 'symbol-narrow' : '1.0-2' }}</p>
     }
@@ -48,14 +51,18 @@
         {{ carrito.funcion()?.idioma }} · {{ carrito.funcion()?.salas?.nombre }}
       </p>
 
-      <table class="detalle">
+      <p>
+        Butacas:
         @for (butaca of carrito.butacas(); track butaca.id) {
+          <span class="chip" [class.vip]="butaca.tipo === 'vip'">{{ butaca.fila }}{{ butaca.numero }}{{ butaca.tipo === 'vip' ? ' VIP' : '' }}</span>
+        }
+      </p>
+
+      <table class="detalle">
+        @for (linea of carrito.lineas(); track linea.texto) {
           <tr>
-            <td>
-              Butaca {{ butaca.fila }}{{ butaca.numero }}
-              @if (butaca.tipo === 'vip') { <span class="chip vip">VIP +50%</span> }
-            </td>
-            <td class="precio">{{ carrito.precioDe(butaca) | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
+            <td>{{ linea.texto }}</td>
+            <td class="precio">{{ linea.monto | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
           </tr>
         }
         @if (cuponAplicado()) {

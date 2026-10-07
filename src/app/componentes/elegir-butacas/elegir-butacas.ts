@@ -62,7 +62,7 @@ export class ElegirButacas implements OnInit, OnDestroy {
     if (tipo === 'accesible') {
       return this.carrito.cantidadAccesible();
     }
-    return tipo === 'vip' ? this.carrito.cantidadVip() : this.carrito.cantidadGeneral();
+    return tipo === 'vip' ? this.carrito.cantidadVip() : this.carrito.cantidadGeneral() + this.carrito.cantidadCombos();
   }
 
   completo() {

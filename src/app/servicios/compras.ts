@@ -13,11 +13,14 @@ export class Compras {
       .eq('funcion_id', funcionId);
   }
 
-  comprar(funcionId: number, butacaIds: number[], email: string, cuponId: number | null) {
+  comprar(funcionId: number, butacaIds: number[], email: string, cuponId: number | null,
+          productoIds: number[], comboIds: number[]) {
     return this.supabase.cliente.rpc('comprar_entradas', {
       p_funcion_id: funcionId,
       p_butaca_ids: butacaIds,
       p_email: email,
+      p_producto_ids: productoIds,
+      p_combo_ids: comboIds,
       p_cupon_id: cuponId,
     });
   }
@@ -25,13 +28,17 @@ export class Compras {
   traerMisCompras(usuarioId: string) {
     return this.supabase.cliente
       .from('compras')
-      .select('*, compra_entradas(id, precio, butacas(*), funciones(*, peliculas(nombre, imagen_url, restriccion_edad), salas(nombre)))')
+      .select('*, compra_entradas(id, precio, butacas(*), funciones(*, peliculas(nombre, imagen_url, restriccion_edad), salas(nombre)), compra_productos(cantidad, productos(nombre)), compra_combos(cantidad, combos(nombre)))')
       .eq('usuario_id', usuarioId)
       .order('creado_en', { ascending: false });
   }
 
   validar(codigo: string) {
     return this.supabase.cliente.rpc('validar_entrada', { p_codigo: codigo });
+  }
+
+  entregarCandy(codigo: string) {
+    return this.supabase.cliente.rpc('entregar_candy', { p_codigo: codigo });
   }
 
   escucharVentas(funcionId: number, alVender: (butacaId: number) => void): RealtimeChannel {

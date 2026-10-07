@@ -1,0 +1,21 @@
+.formularios {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: start;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 800px) {
+  .formularios {
+    grid-template-columns: 1fr;
+  }
+}
+
+.formularios h3 {
+  margin-top: 0;
+}
+
+.tabla-contenedor {
+  margin-bottom: 2.5rem;
+}

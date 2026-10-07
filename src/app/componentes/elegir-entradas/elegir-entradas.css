@@ -1,6 +1,20 @@
 .tarjeta {
-  max-width: 600px;
+  max-width: 1100px;
   margin: 0 auto;
+}
+
+.dos-columnas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+@media (max-width: 800px) {
+  .dos-columnas {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
 }
 
 .tarjeta h1 {
@@ -93,4 +107,24 @@
 
 .quedan.agotadas {
   color: var(--error);
+}
+
+.combos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.entrada.combo {
+  border: 1px solid var(--acento);
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  background: var(--superficie-2);
+}
+
+.categoria {
+  margin: 1rem 0 0.3rem;
+  font-size: 1rem;
+  color: var(--texto-suave);
 }

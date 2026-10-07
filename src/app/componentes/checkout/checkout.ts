@@ -168,7 +168,10 @@ export class Checkout implements OnInit, OnDestroy {
     const funcion = this.carrito.funcion()!;
     const ids = this.carrito.butacas().map(b => b.id);
     const cuponId = this.cuponAplicado()?.id ?? null;
-    const { data, error } = await this.comprasService.comprar(funcion.id, ids, this.formPago.controls.email.value.trim(), cuponId);
+    const { data, error } = await this.comprasService.comprar(
+      funcion.id, ids, this.formPago.controls.email.value.trim(), cuponId,
+      this.carrito.productoIds(), this.carrito.comboIds(),
+    );
     this.cargando.set(false);
 
     if (error) {
@@ -197,7 +200,19 @@ export class Checkout implements OnInit, OnDestroy {
       butacas: this.carrito.butacas().map(b => b.fila + b.numero).join(', '),
       total: this.totalAPagar(),
       restriccion: this.restriccion(),
+      candy: this.textoCandy(),
     });
+  }
+
+  textoCandy() {
+    const partes: string[] = [];
+    for (const item of this.carrito.combos()) {
+      partes.push(`${item.cantidad} x ${item.combo.nombre}`);
+    }
+    for (const item of this.carrito.productos()) {
+      partes.push(`${item.cantidad} x ${item.producto.nombre}`);
+    }
+    return partes.join(', ');
   }
 
   soloNumeros(event: Event, campo: 'numeroTarjeta' | 'cvv') {

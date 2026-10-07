@@ -24,11 +24,22 @@ export class Empleado implements OnInit {
     }
   }
 
-  async validar() {
+  validar() {
+    this.procesar('entrada');
+  }
+
+  entregarCandy() {
+    this.procesar('candy');
+  }
+
+  private async procesar(que: 'entrada' | 'candy') {
     this.mensajeOk.set('');
     this.mensajeError.set('');
     this.cargando.set(true);
-    const { data, error } = await this.comprasService.validar(this.codigo.value.trim());
+    const codigo = this.codigo.value.trim();
+    const { data, error } = que === 'entrada'
+      ? await this.comprasService.validar(codigo)
+      : await this.comprasService.entregarCandy(codigo);
     this.cargando.set(false);
 
     if (error) {

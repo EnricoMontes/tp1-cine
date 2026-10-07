@@ -1,15 +1,16 @@
 <h1>Panel del empleado</h1>
 
 <section class="panel validar">
-  <h2>Validar entrada</h2>
+  <h2>Validar entrada / entregar candy</h2>
   <p class="ayuda">Escaneá el QR con la cámara del celular o escribí el código de la compra.</p>
 
   <div class="form">
     <label for="codigo">Código de la compra</label>
     <input type="text" id="codigo" [formControl]="codigo" placeholder="ej. 0aee4101-1832-40ec-b275-6618fb4d4031">
-    <button type="button" (click)="validar()" [disabled]="codigo.invalid || cargando()">
-      {{ cargando() ? 'Validando...' : 'Validar' }}
-    </button>
+    <div class="botones">
+      <button type="button" (click)="validar()" [disabled]="codigo.invalid || cargando()">🎬 Validar entrada</button>
+      <button type="button" class="secundario" (click)="entregarCandy()" [disabled]="codigo.invalid || cargando()">🍿 Entregar candy</button>
+    </div>
   </div>
 
   @if (mensajeOk()) {

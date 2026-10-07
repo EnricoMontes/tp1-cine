@@ -1,0 +1,114 @@
+@if (mensajeError()) {
+  <p class="error">{{ mensajeError() }}</p>
+}
+@if (mensajeOk()) {
+  <p class="ok">{{ mensajeOk() }}</p>
+}
+
+<div class="formularios">
+  <form class="form panel" [formGroup]="formProducto" (ngSubmit)="guardarProducto()">
+    <h3>{{ editandoProductoId() === null ? 'Nuevo producto' : 'Editar producto' }}</h3>
+    <label for="nombreProducto">Nombre</label>
+    <input type="text" id="nombreProducto" formControlName="nombre" placeholder="ej. Pochoclo grande">
+    <div class="fila">
+      <div class="campo">
+        <label for="categoria">Categoría</label>
+        <select id="categoria" formControlName="categoria">
+          @for (categoria of categorias; track categoria) {
+            <option [ngValue]="categoria">{{ categoria }}</option>
+          }
+        </select>
+      </div>
+      <div class="campo">
+        <label for="precioProducto">Precio ($)</label>
+        <input type="number" id="precioProducto" formControlName="precio">
+      </div>
+    </div>
+    <div class="botones">
+      <button type="submit" [disabled]="formProducto.invalid">Guardar producto</button>
+      @if (editandoProductoId() !== null) {
+        <button type="button" class="secundario" (click)="cancelarProducto()">Cancelar</button>
+      }
+    </div>
+  </form>
+
+  <form class="form panel" [formGroup]="formCombo" (ngSubmit)="guardarCombo()">
+    <h3>{{ editandoComboId() === null ? 'Nuevo combo' : 'Editar combo' }}</h3>
+    <label for="nombreCombo">Nombre</label>
+    <input type="text" id="nombreCombo" formControlName="nombre" placeholder="ej. Combo Clásico">
+    <label for="incluye">Qué incluye (siempre trae una entrada general)</label>
+    <input type="text" id="incluye" formControlName="incluye" placeholder="ej. Entrada general + pochoclo mediano + gaseosa">
+    <label for="precioCombo">Precio fijo ($)</label>
+    <input type="number" id="precioCombo" formControlName="precio">
+    <div class="botones">
+      <button type="submit" [disabled]="formCombo.invalid">Guardar combo</button>
+      @if (editandoComboId() !== null) {
+        <button type="button" class="secundario" (click)="cancelarCombo()">Cancelar</button>
+      }
+    </div>
+  </form>
+</div>
+
+<div class="encabezado-seccion">
+  <h2>Combos</h2>
+  <span class="ayuda">Aparecen destacados arriba de todo al comprar entradas</span>
+</div>
+<div class="tabla-contenedor">
+  <table class="tabla">
+    <thead>
+      <tr><th>Combo</th><th>Incluye</th><th>Precio</th><th>Vendidos</th><th>Estado</th><th></th></tr>
+    </thead>
+    <tbody>
+      @for (combo of combos(); track combo.id) {
+        <tr>
+          <td><strong>{{ combo.nombre }}</strong></td>
+          <td class="ayuda">{{ combo.incluye }}</td>
+          <td>{{ combo.precio | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
+          <td>{{ combo.vendidos }}</td>
+          <td><span class="etiqueta" [class.azul]="combo.activo">{{ combo.activo ? 'Activo' : 'Inactivo' }}</span></td>
+          <td>
+            <div class="acciones">
+              <button type="button" class="secundario chico" (click)="editarCombo(combo)">Editar</button>
+              <button type="button" class="secundario chico" (click)="cambiarActivoCombo(combo)">{{ combo.activo ? 'Desactivar' : 'Activar' }}</button>
+              <button type="button" class="peligro chico" (click)="borrarCombo(combo)">Borrar</button>
+            </div>
+          </td>
+        </tr>
+      } @empty {
+        <tr><td colspan="6" class="ayuda">No hay combos.</td></tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+<div class="encabezado-seccion">
+  <h2>Productos</h2>
+  <span class="ayuda">{{ productos().length }} en total</span>
+</div>
+<div class="tabla-contenedor">
+  <table class="tabla">
+    <thead>
+      <tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Vendidos</th><th>Estado</th><th></th></tr>
+    </thead>
+    <tbody>
+      @for (producto of productos(); track producto.id) {
+        <tr>
+          <td><strong>{{ producto.nombre }}</strong></td>
+          <td><span class="etiqueta">{{ producto.categoria }}</span></td>
+          <td>{{ producto.precio | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
+          <td>{{ producto.vendidos }}</td>
+          <td><span class="etiqueta" [class.azul]="producto.activo">{{ producto.activo ? 'Activo' : 'Inactivo' }}</span></td>
+          <td>
+            <div class="acciones">
+              <button type="button" class="secundario chico" (click)="editarProducto(producto)">Editar</button>
+              <button type="button" class="secundario chico" (click)="cambiarActivoProducto(producto)">{{ producto.activo ? 'Desactivar' : 'Activar' }}</button>
+              <button type="button" class="peligro chico" (click)="borrarProducto(producto)">Borrar</button>
+            </div>
+          </td>
+        </tr>
+      } @empty {
+        <tr><td colspan="6" class="ayuda">No hay productos.</td></tr>
+      }
+    </tbody>
+  </table>
+</div>

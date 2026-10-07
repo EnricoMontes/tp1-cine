@@ -2,6 +2,7 @@ import { computed, Service, signal } from '@angular/core';
 import { Funcion } from '../modelos/funcion';
 import { Butaca } from '../modelos/sala';
 import { Pelicula } from '../modelos/pelicula';
+import { ItemCombo, ItemProducto } from '../modelos/producto';
 
 export const RECARGO_VIP = 1.5;
 export const MAXIMO_ENTRADAS = 10;
@@ -38,23 +39,78 @@ export class Carrito {
   cantidadAccesible = signal(0);
   cantidadVip = signal(0);
   butacas = signal<Butaca[]>([]);
+  combos = signal<ItemCombo[]>([]);
+  productos = signal<ItemProducto[]>([]);
 
   precioGeneral = computed(() => precioDeLaPelicula(this.funcion()?.peliculas));
   precioVip = computed(() => this.precioGeneral() * RECARGO_VIP);
 
-  total = computed(() =>
-    (this.cantidadGeneral() + this.cantidadAccesible()) * this.precioGeneral() + this.cantidadVip() * this.precioVip()
-  );
+  cantidadCombos = computed(() => {
+    let suma = 0;
+    for (const item of this.combos()) {
+      suma += item.cantidad;
+    }
+    return suma;
+  });
+
+  lineas = computed(() => {
+    const lineas: { texto: string; monto: number }[] = [];
+    const generales = this.cantidadGeneral() + this.cantidadAccesible();
+    if (generales > 0) {
+      lineas.push({ texto: `Entrada general × ${generales}`, monto: generales * this.precioGeneral() });
+    }
+    if (this.cantidadVip() > 0) {
+      lineas.push({ texto: `Entrada VIP (+50%) × ${this.cantidadVip()}`, monto: this.cantidadVip() * this.precioVip() });
+    }
+    for (const item of this.combos()) {
+      lineas.push({ texto: `${item.combo.nombre} × ${item.cantidad} (incluye la entrada)`, monto: item.cantidad * item.combo.precio });
+    }
+    for (const item of this.productos()) {
+      lineas.push({ texto: `${item.producto.nombre} × ${item.cantidad}`, monto: item.cantidad * item.producto.precio });
+    }
+    return lineas;
+  });
+
+  total = computed(() => {
+    let suma = 0;
+    for (const linea of this.lineas()) {
+      suma += linea.monto;
+    }
+    return suma;
+  });
+
+  productoIds = computed(() => {
+    const ids: number[] = [];
+    for (const item of this.productos()) {
+      for (let i = 0; i < item.cantidad; i++) {
+        ids.push(item.producto.id);
+      }
+    }
+    return ids;
+  });
+
+  comboIds = computed(() => {
+    const ids: number[] = [];
+    for (const item of this.combos()) {
+      for (let i = 0; i < item.cantidad; i++) {
+        ids.push(item.combo.id);
+      }
+    }
+    return ids;
+  });
 
   precioDe(butaca: Butaca) {
     return butaca.tipo === 'vip' ? this.precioVip() : this.precioGeneral();
   }
 
-  iniciar(funcion: Funcion, cantidadGeneral: number, cantidadAccesible: number, cantidadVip: number) {
+  iniciar(funcion: Funcion, cantidadGeneral: number, cantidadAccesible: number, cantidadVip: number,
+          combos: ItemCombo[], productos: ItemProducto[]) {
     this.funcion.set(funcion);
     this.cantidadGeneral.set(cantidadGeneral);
     this.cantidadAccesible.set(cantidadAccesible);
     this.cantidadVip.set(cantidadVip);
+    this.combos.set(combos);
+    this.productos.set(productos);
     this.butacas.set([]);
   }
 
@@ -67,6 +123,8 @@ export class Carrito {
     this.cantidadGeneral.set(0);
     this.cantidadAccesible.set(0);
     this.cantidadVip.set(0);
+    this.combos.set([]);
+    this.productos.set([]);
     this.butacas.set([]);
   }
 }
