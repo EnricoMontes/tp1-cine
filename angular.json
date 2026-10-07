@@ -17,6 +17,7 @@
           "builder": "@angular/build:application",
           "options": {
             "browser": "src/main.ts",
+            "allowedCommonJsDependencies": ["qrcode", "html2canvas", "core-js", "raf", "rgbcolor"],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               {

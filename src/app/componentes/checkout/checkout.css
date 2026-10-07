@@ -102,3 +102,12 @@ h1 {
   gap: 0.35rem;
   margin-top: 0.5rem;
 }
+
+.qr {
+  display: block;
+  width: 200px;
+  margin: 1rem auto;
+  padding: 0.5rem;
+  background: #fff;
+  border-radius: 8px;
+}

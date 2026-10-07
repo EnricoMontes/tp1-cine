@@ -1,0 +1,16 @@
+.validar {
+  max-width: 600px;
+}
+
+.validar h2 {
+  margin-top: 0;
+}
+
+.resultado {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  background: var(--superficie-2);
+}

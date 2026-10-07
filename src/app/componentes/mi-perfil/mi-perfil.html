@@ -45,6 +45,9 @@
           · <strong>+{{ compra.puntos_ganados }} puntos</strong>
         </p>
         <p class="ayuda">Comprada el {{ compra.creado_en | date: 'dd/MM/yyyy HH:mm' }} · Código: {{ compra.id }}</p>
+        @if (compra.estado === 'pagada') {
+          <button type="button" class="secundario chico" (click)="descargarPdf(compra)">Descargar PDF</button>
+        }
       </article>
     } @empty {
       <p class="ayuda">Todavía no hiciste ninguna compra.</p>

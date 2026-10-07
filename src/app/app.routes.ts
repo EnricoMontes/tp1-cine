@@ -80,6 +80,11 @@ export const routes: Routes = [
     canMatch: [empleadoGuard]
   },
   {
+    path: 'empleado/:codigo',
+    loadComponent: () => import('./componentes/empleado/empleado').then(m => m.Empleado),
+    canMatch: [empleadoGuard]
+  },
+  {
     path: 'error',
     loadComponent: () => import('./componentes/error/error').then(m => m.Error)
   },

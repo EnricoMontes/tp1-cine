@@ -2,8 +2,12 @@
   <section class="panel confirmacion">
     <h1>¡Compra confirmada! 🎬</h1>
     <p>Te enviamos las entradas a <strong>{{ formPago.controls.email.value }}</strong>.</p>
-    <p class="ayuda">Código de compra (lo vas a necesitar en la entrada):</p>
+    @if (qrImagen()) {
+      <img class="qr" [src]="qrImagen()" alt="QR de la entrada">
+    }
+    <p class="ayuda">Código de compra (si el lector no funciona, el empleado lo escribe a mano):</p>
     <p class="codigo">{{ compraId() }}</p>
+    <button type="button" (click)="descargarPdf()">Descargar entrada en PDF</button>
 
     <p>
       <strong>{{ carrito.funcion()?.peliculas?.nombre }}</strong> ·

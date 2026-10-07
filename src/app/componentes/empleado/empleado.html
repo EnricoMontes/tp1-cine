@@ -1,3 +1,21 @@
 <h1>Panel del empleado</h1>
 
-<p>Solo visible para empleados.</p>
+<section class="panel validar">
+  <h2>Validar entrada</h2>
+  <p class="ayuda">Escaneá el QR con la cámara del celular o escribí el código de la compra.</p>
+
+  <div class="form">
+    <label for="codigo">Código de la compra</label>
+    <input type="text" id="codigo" [formControl]="codigo" placeholder="ej. 0aee4101-1832-40ec-b275-6618fb4d4031">
+    <button type="button" (click)="validar()" [disabled]="codigo.invalid || cargando()">
+      {{ cargando() ? 'Validando...' : 'Validar' }}
+    </button>
+  </div>
+
+  @if (mensajeOk()) {
+    <p class="resultado ok">✅ {{ mensajeOk() }}</p>
+  }
+  @if (mensajeError()) {
+    <p class="resultado error">❌ {{ mensajeError() }}</p>
+  }
+</section>

@@ -9,6 +9,7 @@ import { vencimientoValidator } from '../../validadores/pago.validadores';
 import { PasosCompra } from '../pasos-compra/pasos-compra';
 import { Cupones } from '../../servicios/cupones';
 import { Cupon } from '../../modelos/cupon';
+import { EntradaPdf } from '../../servicios/entrada-pdf';
 
 @Component({
   imports: [ReactiveFormsModule, RouterLink, CurrencyPipe, DatePipe, PasosCompra],
@@ -20,6 +21,7 @@ export class Checkout implements OnInit, OnDestroy {
   cargando = signal(false);
   mensajeError = signal('');
   compraId = signal<string | null>(null);
+  qrImagen = signal('');
 
   restriccion = computed(() => this.carrito.funcion()?.peliculas?.restriccion_edad ?? null);
   menorBloqueado = computed(() => {
@@ -95,6 +97,7 @@ export class Checkout implements OnInit, OnDestroy {
     public auth: Auth,
     private router: Router,
     private cuponesService: Cupones,
+    private entradaPdf: EntradaPdf,
   ) {}
 
   ngOnInit() {
@@ -179,6 +182,22 @@ export class Checkout implements OnInit, OnDestroy {
       return;
     }
     this.compraId.set(data);
+    this.qrImagen.set(await this.entradaPdf.generarQr(data));
+  }
+
+  descargarPdf() {
+    const funcion = this.carrito.funcion()!;
+    this.entradaPdf.descargar({
+      codigo: this.compraId()!,
+      pelicula: funcion.peliculas?.nombre ?? '',
+      inicio: funcion.inicio,
+      sala: funcion.salas?.nombre ?? '',
+      formato: funcion.formato,
+      idioma: funcion.idioma,
+      butacas: this.carrito.butacas().map(b => b.fila + b.numero).join(', '),
+      total: this.totalAPagar(),
+      restriccion: this.restriccion(),
+    });
   }
 
   formatearVencimiento(event: Event) {

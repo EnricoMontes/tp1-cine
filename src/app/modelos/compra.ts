@@ -8,6 +8,18 @@ export interface EntradaComprada {
   funciones: Funcion;
 }
 
+export interface DatosEntradaPdf {
+  codigo: string;
+  pelicula: string;
+  inicio: string;
+  sala: string;
+  formato: string;
+  idioma: string;
+  butacas: string;
+  total: number;
+  restriccion: number | null;
+}
+
 export interface Compra {
   id: string;
   subtotal: number;

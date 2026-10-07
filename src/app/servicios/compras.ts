@@ -25,9 +25,13 @@ export class Compras {
   traerMisCompras(usuarioId: string) {
     return this.supabase.cliente
       .from('compras')
-      .select('*, compra_entradas(id, precio, butacas(*), funciones(*, peliculas(nombre, imagen_url), salas(nombre)))')
+      .select('*, compra_entradas(id, precio, butacas(*), funciones(*, peliculas(nombre, imagen_url, restriccion_edad), salas(nombre)))')
       .eq('usuario_id', usuarioId)
       .order('creado_en', { ascending: false });
+  }
+
+  validar(codigo: string) {
+    return this.supabase.cliente.rpc('validar_entrada', { p_codigo: codigo });
   }
 
   escucharVentas(funcionId: number, alVender: (butacaId: number) => void): RealtimeChannel {
