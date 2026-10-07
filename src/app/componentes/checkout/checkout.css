@@ -35,21 +35,6 @@
   border-bottom: none;
 }
 
-.chip {
-  display: inline-block;
-  margin: 0 0.2rem;
-  padding: 0.1rem 0.5rem;
-  border-radius: 6px;
-  background: var(--superficie-2);
-  font-size: 0.85rem;
-}
-
-.chip.vip {
-  background: var(--amarillo);
-  color: #000;
-  font-weight: 700;
-}
-
 .form h2 {
   margin: 0;
 }
@@ -135,10 +120,4 @@ h1 {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-}
-
-button.secundario.elegida {
-  background: var(--acento);
-  border-color: var(--acento);
-  color: white;
 }

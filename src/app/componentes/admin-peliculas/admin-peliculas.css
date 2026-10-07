@@ -18,12 +18,6 @@
   gap: 0.4rem;
 }
 
-button.secundario.elegida {
-  background: var(--acento);
-  border-color: var(--acento);
-  color: white;
-}
-
 .pelicula {
   display: flex;
   align-items: center;
@@ -42,10 +36,4 @@ button.secundario.elegida {
 .pelicula div {
   display: flex;
   flex-direction: column;
-}
-
-.buscador {
-  width: 100%;
-  box-sizing: border-box;
-  margin-bottom: 1rem;
 }

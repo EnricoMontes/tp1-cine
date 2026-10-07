@@ -48,29 +48,6 @@
   opacity: 0.6;
 }
 
-.chip {
-  display: inline-block;
-  margin: 0 0.2rem;
-  padding: 0.1rem 0.5rem;
-  border-radius: 6px;
-  background: var(--superficie-2);
-  font-size: 0.85rem;
-}
-
-.chip.vip {
-  background: var(--amarillo);
-  color: #000;
-  font-weight: 700;
-}
-
-.paginado {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
 .vistas {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));

@@ -99,10 +99,6 @@ export class Carrito {
     return ids;
   });
 
-  precioDe(butaca: Butaca) {
-    return butaca.tipo === 'vip' ? this.precioVip() : this.precioGeneral();
-  }
-
   iniciar(funcion: Funcion, cantidadGeneral: number, cantidadAccesible: number, cantidadVip: number,
           combos: ItemCombo[], productos: ItemProducto[]) {
     this.funcion.set(funcion);

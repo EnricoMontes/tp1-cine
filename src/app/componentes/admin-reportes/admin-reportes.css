@@ -77,9 +77,3 @@
 .barra-numero {
   text-align: right;
 }
-
-button.secundario.elegida {
-  background: var(--acento);
-  border-color: var(--acento);
-  color: white;
-}

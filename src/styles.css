@@ -9,6 +9,7 @@
   --acento-hover: #1858c4;
   --amarillo: #f5c518;
   --error: #ff6b6b;
+
   --fuente-titulo: 'Audiowide', 'Exo 2', sans-serif;
   --fuente-texto: 'Exo 2', system-ui, sans-serif;
 }
@@ -358,4 +359,39 @@ label.check {
 .encabezado-seccion h2 {
   margin: 0;
   font-size: 1.4rem;
+}
+
+button.secundario.elegida {
+  background: var(--acento);
+  border-color: var(--acento);
+  color: white;
+}
+
+.chip {
+  display: inline-block;
+  margin: 0 0.2rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 6px;
+  background: var(--superficie-2);
+  font-size: 0.85rem;
+}
+
+.chip.vip {
+  background: var(--amarillo);
+  color: #000;
+  font-weight: 700;
+}
+
+.buscador {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 1rem;
+}
+
+.paginado {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
 }
