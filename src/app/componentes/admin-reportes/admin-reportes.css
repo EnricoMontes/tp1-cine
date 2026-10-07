@@ -1,0 +1,85 @@
+.resumen {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.dato {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.dato strong {
+  font-size: 1.6rem;
+}
+
+.tabla-contenedor {
+  margin-bottom: 2rem;
+}
+
+.graficos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+@media (max-width: 800px) {
+  .graficos {
+    grid-template-columns: 1fr;
+  }
+}
+
+.graficos h3 {
+  margin: 0;
+}
+
+.encabezado-grafico {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.barra-fila {
+  display: grid;
+  grid-template-columns: 9rem 1fr 3rem;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.barra-nombre {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.barra-fondo {
+  height: 0.9rem;
+  border-radius: 4px;
+  background: var(--superficie-2);
+}
+
+.barra {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--acento);
+}
+
+.barra.amarilla {
+  background: var(--amarillo);
+}
+
+.barra-numero {
+  text-align: right;
+}
+
+button.secundario.elegida {
+  background: var(--acento);
+  border-color: var(--acento);
+  color: white;
+}

@@ -1,0 +1,86 @@
+@if (cargando()) {
+  <p>Cargando reportes...</p>
+} @else {
+  @if (mensajeError()) {
+    <p class="error">{{ mensajeError() }}</p>
+  }
+
+  <div class="resumen">
+    <div class="panel dato">
+      <span class="ayuda">Facturación total</span>
+      <strong>{{ totalFacturado() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong>
+    </div>
+    <div class="panel dato">
+      <span class="ayuda">Entradas vendidas</span>
+      <strong>{{ totalEntradas() }}</strong>
+    </div>
+    <div class="panel dato">
+      <span class="ayuda">Lo más vendido del candy</span>
+      <strong>{{ candy()[0]?.nombre ?? '—' }}</strong>
+    </div>
+  </div>
+
+  <div class="encabezado-seccion">
+    <h2>Facturación por día</h2>
+    <div class="botones">
+      <button type="button" class="secundario chico" (click)="exportarPdf()" [disabled]="!porDia().length">Exportar PDF</button>
+      <button type="button" class="secundario chico" (click)="exportarExcel()" [disabled]="!porDia().length">Exportar Excel</button>
+    </div>
+  </div>
+  <div class="tabla-contenedor">
+    <table class="tabla">
+      <thead>
+        <tr><th>Fecha</th><th>Entradas vendidas</th><th>Facturación</th></tr>
+      </thead>
+      <tbody>
+        @for (dia of porDia(); track dia.fecha) {
+          <tr>
+            <td>{{ fechaPantalla(dia.fecha) }}</td>
+            <td>{{ dia.entradas }}</td>
+            <td>{{ dia.total | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
+          </tr>
+        } @empty {
+          <tr><td colspan="3" class="ayuda">Todavía no hay ventas.</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="graficos">
+    <section class="panel">
+      <div class="encabezado-grafico">
+        <h3>Películas más vistas</h3>
+        <div class="botones">
+          <button type="button" class="secundario chico" [class.elegida]="periodo() === 'semana'" (click)="periodo.set('semana')">Semana</button>
+          <button type="button" class="secundario chico" [class.elegida]="periodo() === 'mes'" (click)="periodo.set('mes')">Mes</button>
+        </div>
+      </div>
+      <p class="ayuda">Entradas vendidas en los últimos {{ periodo() === 'semana' ? '7' : '30' }} días.</p>
+      @for (barra of masVistas(); track barra.nombre) {
+        <div class="barra-fila">
+          <span class="barra-nombre">{{ barra.nombre }}</span>
+          <div class="barra-fondo">
+            <div class="barra" [style.width]="ancho(barra.cantidad, masVistas())"></div>
+          </div>
+          <span class="barra-numero">{{ barra.cantidad }}</span>
+        </div>
+      } @empty {
+        <p class="ayuda">No hay ventas en este período.</p>
+      }
+    </section>
+
+    <section class="panel">
+      <h3>Candy más vendido</h3>
+      <p class="ayuda">Unidades vendidas de cada producto y combo.</p>
+      @for (barra of candy(); track barra.nombre) {
+        <div class="barra-fila">
+          <span class="barra-nombre">{{ barra.nombre }}</span>
+          <div class="barra-fondo">
+            <div class="barra amarilla" [style.width]="ancho(barra.cantidad, candy())"></div>
+          </div>
+          <span class="barra-numero">{{ barra.cantidad }}</span>
+        </div>
+      }
+    </section>
+  </div>
+}

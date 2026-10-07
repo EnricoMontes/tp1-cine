@@ -77,6 +77,10 @@ export const routes: Routes = [
         loadComponent: () => import('./componentes/admin-candy/admin-candy').then(m => m.AdminCandy)
       },
       {
+        path: 'reportes',
+        loadComponent: () => import('./componentes/admin-reportes/admin-reportes').then(m => m.AdminReportes)
+      },
+      {
         path: 'actividad',
         loadComponent: () => import('./componentes/admin-actividad/admin-actividad').then(m => m.AdminActividad)
       }
