@@ -43,3 +43,9 @@ button.secundario.elegida {
   display: flex;
   flex-direction: column;
 }
+
+.buscador {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 1rem;
+}

@@ -1,20 +1,23 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
+import { FiltroPeliculasPipe } from '../../pipes/filtro-peliculas-pipe';
 import { Peliculas } from '../../servicios/peliculas';
 import { Genero, Pelicula, PeliculaDatos } from '../../modelos/pelicula';
 import { Actividades } from '../../servicios/actividades';
+import { Funciones } from '../../servicios/funciones';
 import { enteroValidator } from '../../validadores/registro.validadores';
 import { aFechaBase, aFechaPantalla, fechaValidator, ponerBarras } from '../../validadores/fecha.validadores';
 
 @Component({
-  imports: [ReactiveFormsModule, CurrencyPipe],
+  imports: [ReactiveFormsModule, FormsModule, CurrencyPipe, FiltroPeliculasPipe],
   selector: 'app-admin-peliculas',
   styleUrl: './admin-peliculas.css',
   templateUrl: './admin-peliculas.html',
 })
 export class AdminPeliculas implements OnInit {
   peliculas = signal<Pelicula[]>([]);
+  busqueda = signal('');
   generos = signal<Genero[]>([]);
 
   generosElegidos = signal<number[]>([]);
@@ -39,9 +42,15 @@ export class AdminPeliculas implements OnInit {
     estado: new FormControl('cartelera', { validators: [Validators.required] }),
     visibleEnHome: new FormControl(true),
     precioBase: new FormControl<number | null>(null, { validators: [Validators.required, Validators.min(0)] }),
+    preventaActiva: new FormControl(false),
+    precioPreventa: new FormControl<number | null>(null, { validators: [Validators.min(0)] }),
   });
 
-  constructor(private peliculasService: Peliculas, private actividades: Actividades) {}
+  constructor(
+    private peliculasService: Peliculas,
+    private actividades: Actividades,
+    private funcionesService: Funciones,
+  ) {}
 
   ngOnInit() {
     this.cargarPeliculas();
@@ -104,6 +113,8 @@ export class AdminPeliculas implements OnInit {
       estado: pelicula.estado,
       visibleEnHome: pelicula.visible_en_home,
       precioBase: pelicula.precio_base,
+      preventaActiva: pelicula.preventa_activa ?? false,
+      precioPreventa: pelicula.precio_preventa ?? null,
     });
     this.generosElegidos.set((pelicula.generos ?? []).map(g => g.id));
     this.mensajeError.set('');
@@ -113,7 +124,7 @@ export class AdminPeliculas implements OnInit {
 
   limpiarFormulario() {
     this.editandoId.set(null);
-    this.formPelicula.reset({ estado: 'cartelera', visibleEnHome: true });
+    this.formPelicula.reset({ estado: 'cartelera', visibleEnHome: true, preventaActiva: false });
     this.generosElegidos.set([]);
     this.archivoPoster.set(null);
   }
@@ -127,8 +138,24 @@ export class AdminPeliculas implements OnInit {
       return;
     }
 
-    this.cargando.set(true);
     const valores = this.formPelicula.getRawValue();
+
+    if (valores.preventaActiva && (!valores.fechaEstreno || valores.precioPreventa === null)) {
+      this.mensajeError.set('Para activar la preventa cargá la fecha de estreno y el precio de preventa.');
+      return;
+    }
+
+    const editando = this.editandoId();
+    if (editando !== null && valores.estado === 'proximamente' && valores.fechaEstreno) {
+      const { data: anteriores } = await this.funcionesService.traerAntesDe(editando, aFechaBase(valores.fechaEstreno));
+      if (anteriores?.length) {
+        const lista = anteriores.map(f => `${f.inicio.slice(8, 10)}/${f.inicio.slice(5, 7)} ${f.inicio.slice(11, 16)}`).join(', ');
+        this.mensajeError.set(`Hay funciones antes del estreno (${lista}). Borralas en Funciones o elegí una fecha de estreno anterior.`);
+        return;
+      }
+    }
+
+    this.cargando.set(true);
 
     let imagenUrl = valores.imagenUrl || null;
     const archivo = this.archivoPoster();
@@ -151,6 +178,8 @@ export class AdminPeliculas implements OnInit {
       estado: valores.estado as 'cartelera' | 'proximamente' | 'archivada',
       visible_en_home: valores.visibleEnHome!,
       precio_base: valores.precioBase!,
+      preventa_activa: valores.preventaActiva!,
+      precio_preventa: valores.preventaActiva ? valores.precioPreventa : null,
     };
 
     let id = this.editandoId();
@@ -173,6 +202,11 @@ export class AdminPeliculas implements OnInit {
         await this.actividades.registrar(`Cambió el precio de ${datos.nombre} de $${antes.precio_base} a $${datos.precio_base}`);
       } else {
         await this.actividades.registrar(`Modificó la película ${datos.nombre}`);
+      }
+      if (antes && (antes.preventa_activa !== datos.preventa_activa || antes.precio_preventa !== datos.precio_preventa)) {
+        await this.actividades.registrar(datos.preventa_activa
+          ? `Activó la preventa de ${datos.nombre} a $${datos.precio_preventa}`
+          : `Desactivó la preventa de ${datos.nombre}`);
       }
     }
 

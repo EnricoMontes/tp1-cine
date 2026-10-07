@@ -38,6 +38,15 @@ export class Funciones {
       .eq('id', id);
   }
 
+  traerAntesDe(peliculaId: number, fecha: string) {
+    return this.supabase.cliente
+      .from('funciones')
+      .select('inicio')
+      .eq('pelicula_id', peliculaId)
+      .lt('inicio', fecha)
+      .order('inicio');
+  }
+
   crear(funcion: FuncionDatos) {
     return this.supabase.cliente
       .from('funciones')

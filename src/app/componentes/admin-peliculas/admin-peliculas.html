@@ -76,6 +76,25 @@
     }
   </div>
 
+  <div class="fila preventa">
+    <div class="campo">
+      <label>Preventa</label>
+      <div>
+        <button type="button" class="secundario chico" [class.elegida]="formPelicula.controls.preventaActiva.value"
+                (click)="formPelicula.controls.preventaActiva.setValue(!formPelicula.controls.preventaActiva.value)">
+          {{ formPelicula.controls.preventaActiva.value ? '✓ Preventa activa' : 'Sin preventa' }}
+        </button>
+      </div>
+      <p class="ayuda">Abre la venta 7 días antes del estreno, a precio especial hasta el día del estreno.</p>
+    </div>
+    @if (formPelicula.controls.preventaActiva.value) {
+      <div class="campo">
+        <label for="precioPreventa">Precio de preventa ($)</label>
+        <input type="number" id="precioPreventa" formControlName="precioPreventa">
+      </div>
+    }
+  </div>
+
   <div>
     <button type="button" class="secundario chico" [class.elegida]="formPelicula.controls.visibleEnHome.value"
             (click)="formPelicula.controls.visibleEnHome.setValue(!formPelicula.controls.visibleEnHome.value)">
@@ -106,6 +125,8 @@
   <span class="ayuda">{{ peliculas().length }} en total</span>
 </div>
 
+<input class="buscador" type="text" placeholder="Buscar por película o género..." [(ngModel)]="busqueda" />
+
 <div class="tabla-contenedor">
   <table class="tabla">
     <thead>
@@ -119,7 +140,7 @@
       </tr>
     </thead>
     <tbody>
-      @for (pelicula of peliculas(); track pelicula.id) {
+      @for (pelicula of peliculas() | filtroPeliculas: busqueda(); track pelicula.id) {
         <tr>
           <td>
             <div class="pelicula">
@@ -149,7 +170,7 @@
         </tr>
       } @empty {
         <tr>
-          <td colspan="6" class="ayuda">No hay películas cargadas.</td>
+          <td colspan="6" class="ayuda">{{ busqueda() ? 'Ninguna película coincide con la búsqueda.' : 'No hay películas cargadas.' }}</td>
         </tr>
       }
     </tbody>

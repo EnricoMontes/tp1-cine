@@ -1,7 +1,7 @@
 import { Component, computed, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { DatePipe, DecimalPipe } from '@angular/common';
+import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { Peliculas } from '../../servicios/peliculas';
 import { Pelicula } from '../../modelos/pelicula';
 import { Funciones } from '../../servicios/funciones';
@@ -9,9 +9,10 @@ import { Funcion } from '../../modelos/funcion';
 import { Resenias } from '../../servicios/resenias';
 import { Resenia } from '../../modelos/resenia';
 import { Auth } from '../../servicios/auth';
+import { aperturaPreventa, enPreventa, ventaAbierta } from '../../servicios/carrito';
 
 @Component({
-  imports: [RouterLink, DatePipe, DecimalPipe, ReactiveFormsModule],
+  imports: [RouterLink, DatePipe, DecimalPipe, CurrencyPipe, ReactiveFormsModule],
   selector: 'app-detalle-pelicula',
   styleUrl: './detalle-pelicula.css',
   templateUrl: './detalle-pelicula.html',
@@ -21,6 +22,10 @@ export class DetallePelicula implements OnInit {
   cargando = signal(true);
   mensajeError = signal('');
   funciones = signal<Funcion[]>([]);
+
+  abierta = computed(() => !!this.pelicula() && ventaAbierta(this.pelicula()!));
+  preventa = computed(() => !!this.pelicula() && enPreventa(this.pelicula()!));
+  apertura = computed(() => this.pelicula()?.fecha_estreno ? aperturaPreventa(this.pelicula()!) : null);
 
   resenias = signal<Resenia[]>([]);
   numeros = [1, 2, 3, 4, 5];

@@ -19,6 +19,9 @@
     }
 
     <h2>Elegí tus entradas</h2>
+    @if (preventa()) {
+      <p class="ok">🎟 Precio de preventa hasta el estreno (después: {{ funcion()?.peliculas?.precio_base | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}).</p>
+    }
 
     <div class="entrada">
       <div>

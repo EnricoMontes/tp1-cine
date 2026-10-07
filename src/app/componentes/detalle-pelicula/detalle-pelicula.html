@@ -35,16 +35,25 @@
 
   <section class="seccion-funciones">
     <h2>Funciones</h2>
-    @if (pelicula()?.estado === 'proximamente') {
+    @if (!abierta()) {
       <div class="proximamente">
         <span>Próximamente</span>
         @if (pelicula()?.fecha_estreno) {
           <p class="ayuda">Estreno: {{ pelicula()?.fecha_estreno + 'T00:00' | date: 'dd/MM/yyyy' }}</p>
         }
+        @if (pelicula()?.preventa_activa && apertura()) {
+          <p class="ok">🎟 Preventa desde el {{ apertura() | date: 'dd/MM/yyyy' }} a {{ pelicula()?.precio_preventa | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</p>
+        }
       </div>
     } @else if (funciones().length === 0) {
       <p class="ayuda">Todavía no hay funciones cargadas para esta película.</p>
     } @else {
+      @if (preventa()) {
+        <p class="ok banner-preventa">
+          🎟 Preventa abierta: {{ pelicula()?.precio_preventa | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }} hasta el estreno
+          ({{ pelicula()?.fecha_estreno + 'T00:00' | date: 'dd/MM' }}). Después, {{ pelicula()?.precio_base | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}.
+        </p>
+      }
       <div class="funciones">
         @for (funcion of funciones(); track funcion.id) {
           <article class="funcion">

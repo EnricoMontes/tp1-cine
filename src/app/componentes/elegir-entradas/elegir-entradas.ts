@@ -4,7 +4,7 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Funciones } from '../../servicios/funciones';
 import { Salas } from '../../servicios/salas';
 import { Compras } from '../../servicios/compras';
-import { Carrito, MAXIMO_ENTRADAS, RECARGO_VIP } from '../../servicios/carrito';
+import { Carrito, enPreventa, MAXIMO_ENTRADAS, precioDeLaPelicula, RECARGO_VIP } from '../../servicios/carrito';
 import { Funcion } from '../../modelos/funcion';
 import { PasosCompra } from '../pasos-compra/pasos-compra';
 
@@ -27,7 +27,8 @@ export class ElegirEntradas implements OnInit {
 
   libres = signal({ general: 0, accesible: 0, vip: 0 });
 
-  precioGeneral = computed(() => this.funcion()?.peliculas?.precio_base ?? 0);
+  precioGeneral = computed(() => precioDeLaPelicula(this.funcion()?.peliculas));
+  preventa = computed(() => !!this.funcion()?.peliculas && enPreventa(this.funcion()!.peliculas!));
   precioVip = computed(() => this.precioGeneral() * RECARGO_VIP);
   cantidad = computed(() => this.general() + this.accesible() + this.vip());
   total = computed(() => (this.general() + this.accesible()) * this.precioGeneral() + this.vip() * this.precioVip());

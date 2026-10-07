@@ -19,8 +19,8 @@
       }
     </p>
 
-    <button (click)="seleccionar()" [class.secundario]="pelicula().estado === 'proximamente'">
-      {{ pelicula().estado === 'proximamente' ? 'Próximamente' : 'Ver funciones' }}
+    <button (click)="seleccionar()" [class.secundario]="pelicula().estado === 'proximamente' && !preventaAbierta()">
+      {{ preventaAbierta() ? '🎟 Preventa' : (pelicula().estado === 'proximamente' ? 'Próximamente' : 'Ver funciones') }}
     </button>
   </div>
 </article>

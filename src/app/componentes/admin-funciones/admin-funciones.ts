@@ -87,7 +87,7 @@ export class AdminFunciones implements OnInit {
 
   private async cargarPeliculas() {
     const { data } = await this.peliculasService.traerTodas();
-    this.peliculas.set((data ?? []).filter(p => p.estado === 'cartelera'));
+    this.peliculas.set((data ?? []).filter(p => p.estado === 'cartelera' || (p.estado === 'proximamente' && p.preventa_activa)));
   }
 
   formatearFecha(event: Event, campo: 'fecha' | 'hasta') {
@@ -142,6 +142,11 @@ export class AdminFunciones implements OnInit {
         this.mensajeError.set('Son demasiadas funciones juntas: como máximo 60 por vez.');
         return;
       }
+    }
+
+    if (pelicula.estado === 'proximamente' && pelicula.fecha_estreno && horarios[0].slice(0, 10) < pelicula.fecha_estreno) {
+      this.mensajeError.set('Las funciones de una película en preventa van desde el día del estreno.');
+      return;
     }
 
     if (new Date(horarios[0]) <= new Date()) {
