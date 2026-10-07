@@ -8,7 +8,6 @@
   }
 
   <label for="sinopsis">Sinopsis</label>
-
   <textarea id="sinopsis" rows="3" formControlName="sinopsis"></textarea>
   @if (formPelicula.controls.sinopsis.touched && formPelicula.controls.sinopsis.invalid) {
     <p class="error">La sinopsis es obligatoria (mínimo 10 caracteres)</p>
@@ -53,7 +52,10 @@
 
     <div class="campo">
       <label for="fechaEstreno">Fecha de estreno</label>
-      <input type="date" id="fechaEstreno" formControlName="fechaEstreno">
+      <input type="text" id="fechaEstreno" formControlName="fechaEstreno" placeholder="DD/MM/AAAA" maxlength="10" inputmode="numeric" (input)="formatearFecha($event)">
+      @if (formPelicula.controls.fechaEstreno.touched && formPelicula.controls.fechaEstreno.invalid) {
+        <p class="error">Fecha DD/MM/AAAA</p>
+      }
     </div>
   </div>
 
@@ -89,7 +91,6 @@
     <button type="submit" [disabled]="formPelicula.invalid || cargando()">
       {{ editandoId() === null ? 'Crear película' : 'Guardar cambios' }}
     </button>
-
     @if (editandoId() !== null) {
       <button type="button" class="secundario" (click)="limpiarFormulario()">Cancelar</button>
     }

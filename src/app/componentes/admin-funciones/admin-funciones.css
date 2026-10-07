@@ -14,3 +14,51 @@
 .tabla td .ayuda {
   display: block;
 }
+
+.repetir {
+  margin-top: 0.5rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--borde);
+}
+
+.repetir .ayuda {
+  margin: 0 0 0.5rem;
+}
+
+.dias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.dias button {
+  min-width: 3.2rem;
+}
+
+.buscador {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 1rem;
+}
+
+.paginado {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.horas-rapidas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.horas-rapidas button.elegida,
+.dias button.elegida {
+  background: var(--acento);
+  border-color: var(--acento);
+  color: white;
+}

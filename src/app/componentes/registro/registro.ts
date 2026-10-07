@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Auth } from '../../servicios/auth';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { clavesCoincidenValidator, enteroValidator, fechaNacimientoValidator } from '../../validadores/registro.validadores';
+import { aFechaBase, fechaValidator, ponerBarras } from '../../validadores/fecha.validadores';
 
 @Component({
   imports: [ReactiveFormsModule],
@@ -28,7 +29,7 @@ export class Registro {
     apellido: new FormControl('', {
       validators: [Validators.required, Validators.minLength(2), Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$/)],
     }),
-    fechaNacimiento: new FormControl('', { validators: [Validators.required, fechaNacimientoValidator(120)] }),
+    fechaNacimiento: new FormControl('', { validators: [Validators.required, fechaValidator(), fechaNacimientoValidator(120)] }),
     tipoSangre: new FormControl('', { validators: [Validators.required] }),
     colorOjos: new FormControl('', { validators: [Validators.required] }),
     diasVacaciones: new FormControl<number | null>(null, {
@@ -40,6 +41,10 @@ export class Registro {
   cargando = signal(false);
 
   constructor(private auth: Auth, private router: Router) {}
+
+  formatearFecha(event: Event) {
+    this.formRegistro.controls.fechaNacimiento.setValue(ponerBarras((event.target as HTMLInputElement).value));
+  }
 
   async registrar() {
     this.mensajeError.set('');
@@ -58,7 +63,7 @@ export class Registro {
       email: datos.email!,
       nombre: datos.nombre!,
       apellido: datos.apellido!,
-      fecha_nacimiento: datos.fechaNacimiento!,
+      fecha_nacimiento: aFechaBase(datos.fechaNacimiento!),
       tipo_sangre: datos.tipoSangre!,
       color_ojos: datos.colorOjos!,
       dias_vacaciones: datos.diasVacaciones!,

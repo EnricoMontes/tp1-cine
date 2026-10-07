@@ -4,6 +4,7 @@ import { CurrencyPipe } from '@angular/common';
 import { Peliculas } from '../../servicios/peliculas';
 import { Genero, Pelicula, PeliculaDatos } from '../../modelos/pelicula';
 import { enteroValidator } from '../../validadores/registro.validadores';
+import { aFechaBase, aFechaPantalla, fechaValidator, ponerBarras } from '../../validadores/fecha.validadores';
 
 @Component({
   imports: [ReactiveFormsModule, CurrencyPipe],
@@ -33,7 +34,7 @@ export class AdminPeliculas implements OnInit {
     }),
     imagenUrl: new FormControl(''),
     restriccionEdad: new FormControl(''),
-    fechaEstreno: new FormControl(''),
+    fechaEstreno: new FormControl('', { validators: [fechaValidator()] }),
     estado: new FormControl('cartelera', { validators: [Validators.required] }),
     visibleEnHome: new FormControl(true),
     precioBase: new FormControl<number | null>(null, { validators: [Validators.required, Validators.min(0)] }),
@@ -58,6 +59,10 @@ export class AdminPeliculas implements OnInit {
   private async cargarGeneros() {
     const { data } = await this.peliculasService.traerGeneros();
     this.generos.set(data ?? []);
+  }
+
+  formatearFecha(event: Event) {
+    this.formPelicula.controls.fechaEstreno.setValue(ponerBarras((event.target as HTMLInputElement).value));
   }
 
   alternarGenero(id: number) {
@@ -94,7 +99,7 @@ export class AdminPeliculas implements OnInit {
       duracionMin: pelicula.duracion_min,
       imagenUrl: pelicula.imagen_url ?? '',
       restriccionEdad: pelicula.restriccion_edad ? String(pelicula.restriccion_edad) : '',
-      fechaEstreno: pelicula.fecha_estreno ?? '',
+      fechaEstreno: pelicula.fecha_estreno ? aFechaPantalla(pelicula.fecha_estreno) : '',
       estado: pelicula.estado,
       visibleEnHome: pelicula.visible_en_home,
       precioBase: pelicula.precio_base,
@@ -141,7 +146,7 @@ export class AdminPeliculas implements OnInit {
       duracion_min: valores.duracionMin!,
       imagen_url: imagenUrl,
       restriccion_edad: valores.restriccionEdad ? (Number(valores.restriccionEdad) as 13 | 18) : null,
-      fecha_estreno: valores.fechaEstreno || null,
+      fecha_estreno: valores.fechaEstreno ? aFechaBase(valores.fechaEstreno) : null,
       estado: valores.estado as 'cartelera' | 'proximamente' | 'archivada',
       visible_en_home: valores.visibleEnHome!,
       precio_base: valores.precioBase!,

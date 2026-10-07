@@ -37,9 +37,12 @@
   }
 
   <label for="fechaNacimiento">Fecha de nacimiento</label>
-  <input type="date" id="fechaNacimiento" formControlName="fechaNacimiento">
+  <input type="text" id="fechaNacimiento" formControlName="fechaNacimiento" placeholder="DD/MM/AAAA" maxlength="10" inputmode="numeric" (input)="formatearFecha($event)">
   @if (formRegistro.controls.fechaNacimiento.touched && formRegistro.controls.fechaNacimiento.hasError('required')) {
     <p class="error">La fecha de nacimiento es obligatoria</p>
+  }
+  @if (formRegistro.controls.fechaNacimiento.touched && formRegistro.controls.fechaNacimiento.hasError('fechaInvalida')) {
+    <p class="error">Escribí una fecha real con el formato DD/MM/AAAA</p>
   }
   @if (formRegistro.controls.fechaNacimiento.touched && formRegistro.controls.fechaNacimiento.hasError('fechaFutura')) {
     <p class="error">La fecha de nacimiento no puede ser futura</p>

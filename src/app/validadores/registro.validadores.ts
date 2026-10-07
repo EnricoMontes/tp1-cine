@@ -1,4 +1,5 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { aFechaBase } from './fecha.validadores';
 
 export function clavesCoincidenValidator(controlACoincidir: AbstractControl): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -14,10 +15,10 @@ export function clavesCoincidenValidator(controlACoincidir: AbstractControl): Va
 
 export function fechaNacimientoValidator(edadMaxima: number): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
-    if (!control.value) {
+    if (!control.value || control.value.length !== 10) {
       return null;
     }
-    const fechaNacimiento = new Date(control.value);
+    const fechaNacimiento = new Date(aFechaBase(control.value) + 'T00:00');
     const hoy = new Date();
 
     if (fechaNacimiento > hoy) {

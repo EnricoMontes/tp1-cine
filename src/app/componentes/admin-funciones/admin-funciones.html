@@ -28,9 +28,50 @@
       </select>
     </div>
 
+  </div>
+
+  <div class="fila">
     <div class="campo">
-      <label for="inicio">Fecha y hora</label>
-      <input type="datetime-local" id="inicio" formControlName="inicio">
+      <label for="fecha">Fecha</label>
+      <input type="text" id="fecha" formControlName="fecha" placeholder="DD/MM/AAAA" maxlength="10" inputmode="numeric" (input)="formatearFecha($event, 'fecha')">
+      @if (formFuncion.controls.fecha.touched && formFuncion.controls.fecha.invalid) {
+        <p class="error">Fecha DD/MM/AAAA</p>
+      }
+    </div>
+    <div class="campo">
+      <label for="hora">Hora</label>
+      <input type="text" id="hora" formControlName="hora" placeholder="HH:MM" maxlength="5" inputmode="numeric" (input)="formatearHora($event)">
+      @if (formFuncion.controls.hora.touched && formFuncion.controls.hora.invalid) {
+        <p class="error">Hora HH:MM (00:00 a 23:59)</p>
+      }
+      <div class="horas-rapidas">
+        @for (hora of horasRapidas; track hora) {
+          <button type="button" class="secundario chico" [class.elegida]="formFuncion.controls.hora.value === hora"
+                  (click)="formFuncion.controls.hora.setValue(hora)">{{ hora }}</button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="repetir">
+    <p class="ayuda">Repetir (opcional): misma hora, en los días marcados, hasta la fecha que elijas.</p>
+    <div class="fila">
+      <div class="campo">
+        <label for="hasta">Hasta el día</label>
+        <input type="text" id="hasta" formControlName="hasta" placeholder="DD/MM/AAAA" maxlength="10" inputmode="numeric" (input)="formatearFecha($event, 'hasta')">
+        @if (formFuncion.controls.hasta.touched && formFuncion.controls.hasta.invalid) {
+          <p class="error">Fecha DD/MM/AAAA</p>
+        }
+      </div>
+      <div class="campo">
+        <label>Días</label>
+        <div class="dias">
+          @for (dia of dias; track dia.numero) {
+            <button type="button" class="secundario chico" [class.elegida]="diasElegidos().includes(dia.numero)"
+                    (click)="alternarDia(dia.numero)">{{ dia.nombre }}</button>
+          }
+        </div>
+      </div>
     </div>
   </div>
 
@@ -40,7 +81,7 @@
 
   <div class="botones">
     <button type="submit" [disabled]="formFuncion.invalid || cargando()">
-      {{ cargando() ? 'Buscando sala...' : 'Crear función' }}
+      {{ cargando() ? 'Buscando salas...' : (formFuncion.controls.hasta.value ? 'Crear funciones' : 'Crear función') }}
     </button>
   </div>
 </form>
@@ -54,8 +95,13 @@
   <span class="ayuda">{{ funciones().length }} en total</span>
 </div>
 
+<input class="buscador" type="text" placeholder="Buscar por película o sala..."
+       [(ngModel)]="busqueda" (ngModelChange)="pagina.set(0)" />
+
 @if (funciones().length === 0) {
   <p class="ayuda">Todavía no hay funciones cargadas.</p>
+} @else if (funcionesFiltradas().length === 0) {
+  <p class="ayuda">Ninguna función coincide con "{{ busqueda() }}".</p>
 } @else {
   <div class="tabla-contenedor">
     <table class="tabla">
@@ -70,10 +116,9 @@
         </tr>
       </thead>
       <tbody>
-        @for (funcion of funciones(); track funcion.id) {
+        @for (funcion of funcionesDeLaPagina(); track funcion.id) {
           <tr>
             <td><strong>{{ funcion.peliculas?.nombre }}</strong></td>
-
             <td>
               {{ funcion.inicio | date: 'dd/MM/yyyy' }}
               <span class="ayuda">{{ funcion.inicio | date: 'HH:mm' }} a {{ funcion.fin | date: 'HH:mm' }}</span>
@@ -91,4 +136,12 @@
       </tbody>
     </table>
   </div>
+
+  @if (totalPaginas() > 1) {
+    <div class="paginado">
+      <button type="button" class="secundario chico" [disabled]="pagina() === 0" (click)="pagina.set(pagina() - 1)">Anterior</button>
+      <span>Página {{ pagina() + 1 }} de {{ totalPaginas() }}</span>
+      <button type="button" class="secundario chico" [disabled]="pagina() + 1 >= totalPaginas()" (click)="pagina.set(pagina() + 1)">Siguiente</button>
+    </div>
+  }
 }
