@@ -138,7 +138,7 @@
           }
 
           <label for="numeroTarjeta">Número de tarjeta</label>
-          <input type="text" id="numeroTarjeta" formControlName="numeroTarjeta" maxlength="16" placeholder="16 números">
+          <input type="text" id="numeroTarjeta" formControlName="numeroTarjeta" maxlength="16" placeholder="16 números" inputmode="numeric" (input)="soloNumeros($event, 'numeroTarjeta')">
           @if (formPago.controls.numeroTarjeta.touched && formPago.controls.numeroTarjeta.invalid) {
             <p class="error">Tienen que ser 16 números, sin espacios</p>
           }
@@ -155,7 +155,7 @@
             </div>
             <div class="campo">
               <label for="cvv">CVV</label>
-              <input type="password" id="cvv" formControlName="cvv" maxlength="3">
+              <input type="password" id="cvv" formControlName="cvv" maxlength="3" inputmode="numeric" (input)="soloNumeros($event, 'cvv')">
               @if (formPago.controls.cvv.touched && formPago.controls.cvv.invalid) {
                 <p class="error">3 números</p>
               }

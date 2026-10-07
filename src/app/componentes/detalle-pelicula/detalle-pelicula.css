@@ -137,3 +137,87 @@
     padding: 1.5rem;
   }
 }
+
+.promedio {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--amarillo);
+}
+
+.seccion-resenias h2 {
+  margin: 2.5rem 0 1rem;
+  font-size: 1.4rem;
+}
+
+.columnas-resenias {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-resenia {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.form-resenia p {
+  margin: 0;
+}
+
+.form-resenia textarea {
+  padding: 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--borde);
+  background: var(--superficie-2);
+  color: inherit;
+  font: inherit;
+  resize: vertical;
+}
+
+.form-resenia > button {
+  align-self: flex-start;
+}
+
+.estrellas {
+  display: flex;
+  gap: 0.2rem;
+}
+
+.estrella {
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--borde);
+  cursor: pointer;
+}
+
+.estrella.llena,
+.estrellas-chicas .llena {
+  color: var(--amarillo);
+}
+
+.estrellas-chicas {
+  margin: 0 0.5rem;
+  color: var(--borde);
+}
+
+.resenia {
+  padding: 0.8rem 0;
+  border-bottom: 1px solid var(--borde);
+}
+
+.resenia:last-child {
+  border-bottom: none;
+}
+
+.lista-resenias {
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+}
+
+.resenia p {
+  margin: 0.2rem 0;
+}

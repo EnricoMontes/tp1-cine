@@ -200,6 +200,11 @@ export class Checkout implements OnInit, OnDestroy {
     });
   }
 
+  soloNumeros(event: Event, campo: 'numeroTarjeta' | 'cvv') {
+    const input = event.target as HTMLInputElement;
+    this.formPago.controls[campo].setValue(input.value.replace(/\D/g, ''));
+  }
+
   formatearVencimiento(event: Event) {
     const input = event.target as HTMLInputElement;
     const numeros = input.value.replace(/\D/g, '').slice(0, 4);

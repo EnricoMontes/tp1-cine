@@ -23,6 +23,10 @@
 
       <p class="sinopsis">{{ pelicula()?.sinopsis }}</p>
 
+      @if (resenias().length) {
+        <p class="promedio">★ {{ promedio() | number: '1.1-1' }} <span class="ayuda">({{ resenias().length }} reseñas)</span></p>
+      }
+
       @if (pelicula()?.restriccion_edad) {
         <p class="aviso">⚠️ Película para mayores de {{ pelicula()?.restriccion_edad }} años.</p>
       }
@@ -57,5 +61,52 @@
         }
       </div>
     }
+  </section>
+
+  <section class="seccion-resenias" id="calificar">
+    <h2>Reseñas</h2>
+
+    <div class="columnas-resenias">
+      <div class="panel form-resenia">
+        @if (!auth.usuario()) {
+          <p class="ayuda"><a routerLink="/login">Iniciá sesión</a> para calificar esta película.</p>
+        } @else if (yaCalifico()) {
+          <p class="ok">Ya calificaste esta película. ¡Gracias!</p>
+        } @else {
+          <p>Tu calificación:</p>
+          <div class="estrellas">
+            @for (numero of numeros; track numero) {
+              <button type="button" class="estrella" [class.llena]="numero <= formResenia.controls.estrellas.value"
+                      (click)="formResenia.controls.estrellas.setValue(numero)">★</button>
+            }
+          </div>
+          <textarea [formControl]="formResenia.controls.comentario" maxlength="200" rows="3"
+                    placeholder="Un comentario corto (máximo 200 caracteres)"></textarea>
+          @if (mensajeResenia()) {
+            <p class="error">{{ mensajeResenia() }}</p>
+          }
+          <button type="button" [disabled]="formResenia.invalid" (click)="enviarResenia()">Publicar reseña</button>
+        }
+      </div>
+
+      <div class="panel lista-resenias">
+        @for (resenia of resenias(); track resenia.id) {
+          <article class="resenia">
+            <p>
+              <strong>{{ resenia.autor }}</strong>
+              <span class="estrellas-chicas">
+                @for (numero of numeros; track numero) {
+                  <span [class.llena]="numero <= resenia.estrellas">★</span>
+                }
+              </span>
+              <span class="ayuda">{{ resenia.creado_en | date: 'dd/MM/yyyy' }}</span>
+            </p>
+            <p>{{ resenia.comentario }}</p>
+          </article>
+        } @empty {
+          <p class="ayuda">Todavía nadie calificó esta película.</p>
+        }
+      </div>
+    </div>
   </section>
 }

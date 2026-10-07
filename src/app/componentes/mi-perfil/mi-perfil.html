@@ -19,6 +19,30 @@
     </section>
   </div>
 
+  <h2>Mis películas</h2>
+  @if (!cargandoCompras()) {
+    <div class="vistas">
+      @for (compra of peliculasVistas(); track compra.id) {
+        <article class="vista">
+          <img [src]="compra.compra_entradas[0].funciones.peliculas?.imagen_url" [alt]="compra.compra_entradas[0].funciones.peliculas?.nombre">
+          <strong>{{ compra.compra_entradas[0].funciones.peliculas?.nombre }}</strong>
+          <span class="ayuda">{{ compra.compra_entradas[0].funciones.inicio | date: 'dd/MM/yyyy' }}</span>
+          @if (calificacion(compra.compra_entradas[0].funciones.pelicula_id)) {
+            <span class="estrellas-chicas">
+              @for (numero of numeros; track numero) {
+                <span [class.llena]="numero <= calificacion(compra.compra_entradas[0].funciones.pelicula_id)">★</span>
+              }
+            </span>
+          } @else {
+            <a [routerLink]="['/peliculas', compra.compra_entradas[0].funciones.pelicula_id]" fragment="calificar" class="boton calificar">★ Calificar</a>
+          }
+        </article>
+      } @empty {
+        <p class="ayuda">Acá vas a ver las películas que fuiste a ver al cine.</p>
+      }
+    </div>
+  }
+
   <h2>Mis compras</h2>
   @if (cargandoCompras()) {
     <p>Cargando...</p>

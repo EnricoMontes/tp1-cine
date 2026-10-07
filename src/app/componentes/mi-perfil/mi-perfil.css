@@ -70,3 +70,39 @@
   gap: 1rem;
   margin-top: 1rem;
 }
+
+.vistas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.vista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.9rem;
+}
+
+.vista img {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.estrellas-chicas {
+  color: var(--borde);
+}
+
+.estrellas-chicas .llena {
+  color: var(--amarillo);
+}
+
+.vista .calificar {
+  margin-top: 0.2rem;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.75rem;
+  text-align: center;
+}

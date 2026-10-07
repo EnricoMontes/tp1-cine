@@ -28,5 +28,6 @@ export interface Compra {
   puntos_ganados: number;
   estado: 'pagada' | 'cancelada';
   creado_en: string;
+  validada_en: string | null;
   compra_entradas: EntradaComprada[];
 }
