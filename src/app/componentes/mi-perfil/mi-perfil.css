@@ -123,3 +123,14 @@
 .vista .estrellas-chicas {
   margin-top: auto;
 }
+
+.credito {
+  margin: 0.5rem 0 0;
+}
+
+.acciones-compra {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 0.4rem;
+}

@@ -30,6 +30,8 @@ export interface Compra {
   estado: 'pagada' | 'cancelada';
   creado_en: string;
   validada_en: string | null;
+  candy_entregado_en: string | null;
+  credito_usado: number;
   compra_entradas: EntradaComprada[];
   compra_productos: { cantidad: number; productos: { nombre: string } }[];
   compra_combos: { cantidad: number; combos: { nombre: string } }[];

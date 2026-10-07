@@ -100,6 +100,11 @@ export class Checkout implements OnInit, OnDestroy {
     return cupon ? Math.round(this.subtotal() * cupon.porcentaje) / 100 : 0;
   });
   totalAPagar = computed(() => this.subtotal() - this.descuento());
+
+  usarCredito = signal(false);
+  creditoDisponible = computed(() => this.auth.perfil()?.credito ?? 0);
+  creditoUsado = computed(() => this.usarCredito() ? Math.min(this.creditoDisponible(), this.totalAPagar()) : 0);
+  aPagarConTarjeta = computed(() => this.totalAPagar() - this.creditoUsado());
   puntosAGanar = computed(() => Math.floor(this.totalAPagar()));
 
   formPago = new FormGroup({
@@ -241,6 +246,7 @@ export class Checkout implements OnInit, OnDestroy {
       funcion.id, ids, this.formPago.controls.email.value.trim(), cuponId,
       this.carrito.productoIds(), this.carrito.comboIds(),
       this.canjeEntradas(), this.canjeProductoIds(),
+      this.usarCredito(),
     );
     this.cargando.set(false);
 

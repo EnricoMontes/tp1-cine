@@ -39,7 +39,11 @@ export class MiPerfil implements OnInit {
     private reseniasService: Resenias,
   ) {}
 
-  async ngOnInit() {
+  ngOnInit() {
+    this.cargar();
+  }
+
+  private async cargar() {
     await this.auth.recargarPerfil();
     const usuario = this.auth.usuario();
     if (usuario) {
@@ -51,6 +55,28 @@ export class MiPerfil implements OnInit {
       this.canjes.set(canjes.data ?? []);
     }
     this.cargandoCompras.set(false);
+  }
+
+  mensajeCancelar = signal('');
+
+  puedeCancelar(compra: Compra) {
+    const inicio = new Date(compra.compra_entradas[0].funciones.inicio);
+    const limite = new Date(inicio.getTime() - 2 * 60 * 60 * 1000);
+    return compra.estado === 'pagada' && !compra.validada_en && !compra.candy_entregado_en && new Date() < limite;
+  }
+
+  async cancelar(compra: Compra) {
+    if (!confirm('¿Cancelar esta compra? No se devuelve dinero: el total pasa a tu crédito para futuras compras.')) {
+      return;
+    }
+    this.mensajeCancelar.set('');
+    const { data, error } = await this.comprasService.cancelar(compra.id);
+    if (error) {
+      this.mensajeCancelar.set(error.code === 'P0001' ? error.message : 'No se pudo cancelar la compra.');
+      return;
+    }
+    this.mensajeCancelar.set(`Compra cancelada: se acreditaron $${data} a tu crédito.`);
+    await this.cargar();
   }
 
   calificacion(peliculaId: number) {

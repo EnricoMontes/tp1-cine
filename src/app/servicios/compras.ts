@@ -10,11 +10,12 @@ export class Compras {
     return this.supabase.cliente
       .from('compra_entradas')
       .select('butaca_id')
-      .eq('funcion_id', funcionId);
+      .eq('funcion_id', funcionId)
+      .eq('cancelada', false);
   }
 
   comprar(funcionId: number, butacaIds: number[], email: string, cuponId: number | null,
-          productoIds: number[], comboIds: number[], canjeEntradas: number, canjeProductoIds: number[]) {
+          productoIds: number[], comboIds: number[], canjeEntradas: number, canjeProductoIds: number[], usarCredito: boolean) {
     return this.supabase.cliente.rpc('comprar_entradas', {
       p_funcion_id: funcionId,
       p_butaca_ids: butacaIds,
@@ -23,6 +24,7 @@ export class Compras {
       p_combo_ids: comboIds,
       p_canje_entradas: canjeEntradas,
       p_canje_producto_ids: canjeProductoIds,
+      p_usar_credito: usarCredito,
       p_cupon_id: cuponId,
     });
   }
@@ -33,6 +35,10 @@ export class Compras {
       .select('*, compra_entradas(id, precio, butacas(*), funciones(*, peliculas(nombre, imagen_url, restriccion_edad), salas(nombre))), compra_productos(cantidad, productos(nombre)), compra_combos(cantidad, combos(nombre))')
       .eq('usuario_id', usuarioId)
       .order('creado_en', { ascending: false });
+  }
+
+  cancelar(codigo: string) {
+    return this.supabase.cliente.rpc('cancelar_compra', { p_codigo: codigo });
   }
 
   traerMisCanjes(usuarioId: string) {

@@ -136,3 +136,9 @@ h1 {
   align-items: center;
   gap: 0.6rem;
 }
+
+button.secundario.elegida {
+  background: var(--acento);
+  border-color: var(--acento);
+  color: white;
+}

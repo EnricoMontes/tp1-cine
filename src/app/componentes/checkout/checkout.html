@@ -25,6 +25,9 @@
     @if (descuento()) {
       <p class="ayuda">Descuento de {{ cuponAplicado()?.porcentaje }}% aplicado: −{{ descuento() | currency: 'ARS' : 'symbol-narrow' : '1.0-2' }}</p>
     }
+    @if (creditoUsado()) {
+      <p class="ayuda">Pagaste {{ creditoUsado() | currency: 'ARS' : 'symbol-narrow' : '1.0-2' }} con tu crédito.</p>
+    }
     <p>Total pagado: <strong>{{ totalAPagar() | currency: 'ARS' : 'symbol-narrow' : '1.0-2' }}</strong></p>
     @if (auth.usuario()) {
       <p class="ok">Sumaste {{ puntosAGanar() }} puntos. Los ves en <a routerLink="/perfil">tu perfil</a>.</p>
@@ -87,7 +90,26 @@
           <td>Total</td>
           <td class="precio">{{ totalAPagar() | currency: 'ARS' : 'symbol-narrow' : '1.0-2' }}</td>
         </tr>
+        @if (creditoUsado()) {
+          <tr class="descuento">
+            <td>Crédito de tu cuenta</td>
+            <td class="precio">−{{ creditoUsado() | currency: 'ARS' : 'symbol-narrow' : '1.0-2' }}</td>
+          </tr>
+          <tr class="total">
+            <td>A pagar con tarjeta</td>
+            <td class="precio">{{ aPagarConTarjeta() | currency: 'ARS' : 'symbol-narrow' : '1.0-2' }}</td>
+          </tr>
+        }
       </table>
+
+      @if (creditoDisponible() > 0) {
+        <div class="canje">
+          <button type="button" class="secundario chico" [class.elegida]="usarCredito()" (click)="usarCredito.set(!usarCredito())">
+            {{ usarCredito() ? '✓ Usando mi crédito' : 'Usar mi crédito' }}
+          </button>
+          <span class="ayuda"> Tenés {{ creditoDisponible() | currency: 'ARS' : 'symbol-narrow' : '1.0-2' }} de crédito.</span>
+        </div>
+      }
 
       @if (auth.usuario() && puntosDisponibles() > 0 && (maxEntradasCanje() > 0 || canjeProductos().length)) {
         <div class="canje">
@@ -212,7 +234,10 @@
             <p class="error">{{ mensajeError() }}</p>
           }
 
-          <button type="submit" [disabled]="formPago.invalid || cargando()">
+          @if (aPagarConTarjeta() === 0) {
+            <p class="ok">Tu crédito cubre toda la compra: no hace falta completar la tarjeta.</p>
+          }
+          <button type="submit" [disabled]="(aPagarConTarjeta() > 0 ? formPago.invalid : formPago.controls.email.invalid) || cargando()">
             {{ cargando() ? 'Procesando...' : 'Pagar' }}
           </button>
         </form>
