@@ -13,7 +13,7 @@ Este documento resume **todos los requerimientos** que pide el cliente en la cad
 | **Anónimo** | sin cuenta | ver cartelera y reseñas, comprar entradas y candy |
 | **Cliente registrado** | Supabase Auth | todo lo anterior + cupones automáticos, puntos y canje, crédito, cancelar compras, reseñas, "Mis películas", alertas de estreno |
 | **Empleado** | cuenta con rol `empleado` | validar la entrada y entregar el candy con el QR o el código escrito a mano |
-| **Administrador** | cuenta con rol `admin` | películas, salas, funciones, candy y combos, cupones, puntos de canje, reportes y log de actividad |
+| **Administrador** | cuenta con rol `admin` | películas, funciones, candy y combos, cupones, puntos de canje, roles de los usuarios, reportes y log de actividad |
 
 ---
 
@@ -124,6 +124,8 @@ Cada requerimiento tiene un ID (`RF-nn`) y la fecha del mail que lo pide.
 | RF-57 | Empleados que escanean el QR para validar entradas y candy | 06/02 |
 | RF-58 | El código se puede ingresar a mano | 06/02 |
 | RF-59 | Una vez validada la entrada o entregada la comida, el QR deja de funcionar | 06/02 |
+
+**Alta de empleados:** la persona se registra en la página y el admin le cambia el rol a `empleado` en la pestaña **Usuarios**. Las salas y las butacas son fijas (A-01, A-02), así que el admin no las edita.
 
 ### 2.10 No funcionales
 

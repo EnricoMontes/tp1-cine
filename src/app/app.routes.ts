@@ -61,10 +61,6 @@ export const routes: Routes = [
         loadComponent: () => import('./componentes/admin-peliculas/admin-peliculas').then(m => m.AdminPeliculas)
       },
       {
-        path: 'salas',
-        loadComponent: () => import('./componentes/admin-salas/admin-salas').then(m => m.AdminSalas)
-      },
-      {
         path: 'funciones',
         loadComponent: () => import('./componentes/admin-funciones/admin-funciones').then(m => m.AdminFunciones)
       },
@@ -79,6 +75,10 @@ export const routes: Routes = [
       {
         path: 'reportes',
         loadComponent: () => import('./componentes/admin-reportes/admin-reportes').then(m => m.AdminReportes)
+      },
+      {
+        path: 'usuarios',
+        loadComponent: () => import('./componentes/admin-usuarios/admin-usuarios').then(m => m.AdminUsuarios)
       },
       {
         path: 'actividad',

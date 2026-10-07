@@ -6,13 +6,6 @@ import { Formato } from '../modelos/sala';
 export class Salas {
   private supabase = inject(Supabase);
 
-  traerSalas() {
-    return this.supabase.cliente
-      .from('salas')
-      .select('*')
-      .order('id');
-  }
-
   traerPorFormato(formato: Formato) {
     return this.supabase.cliente
       .from('salas')

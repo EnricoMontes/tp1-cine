@@ -70,7 +70,7 @@ También se puede comprar **sin cuenta** (compra anónima).
 
 **Administrador** (`/admin`)
 - **Películas:** ABM con géneros, póster en Supabase Storage, preventa y buscador.
-- **Salas:** las 8 salas con su mapa de butacas.
+- **Usuarios:** lista de usuarios con buscador; el admin les cambia el rol (cliente / empleado / admin).
 - **Funciones:**
   - alta con **asignación automática de sala**;
   - repetición por días de la semana ("lunes, martes y viernes a las 18 hs");
@@ -114,12 +114,12 @@ Todas las rutas usan **lazy loading** (`loadComponent`): el código de cada pant
 | `/checkout` | `Checkout` (paso 3: cupones, puntos, crédito y pago) | pública |
 | `/login`, `/registro` | `Login`, `Registro` | `canDeactivate` en registro |
 | `/perfil` | `MiPerfil` | `canActivate` (logueado) |
-| `/admin` → `peliculas`, `salas`, `funciones`, `candy`, `cupones`, `reportes`, `actividad` | `Admin` con rutas hijas | `canMatch` + `canActivateChild` (rol admin) |
+| `/admin` → `peliculas`, `funciones`, `candy`, `cupones`, `reportes`, `usuarios`, `actividad` | `Admin` con rutas hijas | `canMatch` + `canActivateChild` (rol admin) |
 | `/empleado` y `/empleado/:codigo` (adonde lleva el QR) | `Empleado` | `canMatch` (rol empleado) |
 | `**` | `Error` (404) | — |
 
 **Componentes reutilizados:**
-- `MapaButacas` se usa en el admin (solo para ver) y en la compra (para elegir), según los `input()` que le pasa cada padre.
+- `MapaButacas` es un componente hijo: recibe las butacas, las ocupadas y las elegidas por `input()` y avisa cuál se tocó con `output()`.
 - `PasosCompra` muestra en qué paso de la compra está el usuario.
 
 ### Servicios
@@ -133,7 +133,7 @@ Todas las rutas usan **lazy loading** (`loadComponent`): el código de cada pant
 | `Carrito` | estado de la compra en curso (función, cantidades, combos, candy, butacas), compartido entre los 3 pasos; también las reglas de preventa |
 | `Cupones`, `Candy`, `Resenias`, `Alertas` | cupones, productos/combos, reseñas y alertas de estreno |
 | `EntradaPdf` | genera el QR y el PDF de la entrada |
-| `Actividades`, `Reportes` | log de actividad y reporte de ventas del admin |
+| `Actividades`, `Reportes`, `Usuarios` | log de actividad, reporte de ventas y roles de los usuarios (admin) |
 
 Los servicios usan `@Service()` e `inject()`. Los componentes reciben los servicios por el constructor, como en las clases.
 
@@ -169,6 +169,7 @@ Los guards esperan a que se cargue la sesión (`auth.sesionCargada`). Sin eso, a
 | `validar_entrada` / `entregar_candy` | solo empleados; cada una sirve una vez por compra |
 | `cancelar_compra` | solo el dueño, hasta 2 h antes; libera butacas y acredita crédito |
 | `reporte_ventas` | solo admin; devuelve las ventas para los reportes |
+| `traer_usuarios` / `cambiar_rol` | solo admin; lista los usuarios y les cambia el rol (no el propio) |
 
 Además:
 - **Storage:** bucket `peliculas` para los pósters.

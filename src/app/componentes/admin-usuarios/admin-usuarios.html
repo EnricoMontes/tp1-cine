@@ -1,0 +1,51 @@
+<div class="encabezado-seccion">
+  <h2>Usuarios</h2>
+  <span class="ayuda">{{ usuarios().length }} usuarios</span>
+</div>
+<p class="ayuda">Para sumar un empleado: la persona se registra en la página y acá le cambiás el rol a "empleado".</p>
+
+<input class="buscador" type="text" placeholder="Buscar por nombre, mail o rol..." [(ngModel)]="busqueda" />
+
+@if (mensaje()) {
+  <p class="ok">{{ mensaje() }}</p>
+}
+@if (mensajeError()) {
+  <p class="error">{{ mensajeError() }}</p>
+}
+
+@if (cargando()) {
+  <p>Cargando...</p>
+} @else if (filtrados().length === 0) {
+  <p class="ayuda">No hay usuarios.</p>
+} @else {
+  <div class="tabla-contenedor">
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Mail</th>
+          <th>Rol</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (usuario of filtrados(); track usuario.id) {
+          <tr>
+            <td>{{ usuario.apellido }}, {{ usuario.nombre }}</td>
+            <td>{{ usuario.email }}</td>
+            <td>
+              @if (usuario.id === auth.perfil()?.id) {
+                {{ usuario.rol }} (vos)
+              } @else {
+                <select [ngModel]="usuario.rol" (ngModelChange)="cambiarRol(usuario, $event)">
+                  <option value="cliente">cliente</option>
+                  <option value="empleado">empleado</option>
+                  <option value="admin">admin</option>
+                </select>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
