@@ -75,6 +75,7 @@ export class Checkout implements OnInit, OnDestroy {
     return cupon ? Math.round(this.carrito.total() * cupon.porcentaje) / 100 : 0;
   });
   totalAPagar = computed(() => this.carrito.total() - this.descuento());
+  puntosAGanar = computed(() => Math.floor(this.totalAPagar()));
 
   formPago = new FormGroup({
     email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),

@@ -1,14 +1,63 @@
 <h1>Mi perfil</h1>
 
 @if (auth.perfil()) {
-  <p><strong>Nombre:</strong> {{ auth.perfil()?.nombre }} {{ auth.perfil()?.apellido }}</p>
-  <p><strong>Mail:</strong> {{ auth.perfil()?.email }}</p>
-  <p><strong>Rol:</strong> {{ auth.perfil()?.rol }}</p>
-  <p><strong>Puntos:</strong> {{ auth.perfil()?.puntos }}</p>
-  <p>
-    <strong>Cupón de bienvenida:</strong>
-    {{ auth.perfil()?.cupon_bienvenida_usado ? 'ya usado' : 'disponible: se aplica solo en tu primera compra' }}
-  </p>
+  <div class="columnas">
+    <section class="panel datos">
+      <p><strong>Nombre:</strong> {{ auth.perfil()?.nombre }} {{ auth.perfil()?.apellido }}</p>
+      <p><strong>Mail:</strong> {{ auth.perfil()?.email }}</p>
+      <p><strong>Rol:</strong> {{ auth.perfil()?.rol }}</p>
+      <p>
+        <strong>Cupón de bienvenida:</strong>
+        {{ auth.perfil()?.cupon_bienvenida_usado ? 'ya usado' : 'disponible: se aplica solo en tu primera compra' }}
+      </p>
+    </section>
+
+    <section class="panel puntos">
+      <span class="etiqueta">Mis puntos</span>
+      <p class="cantidad">{{ auth.perfil()?.puntos ?? 0 }}</p>
+      <p class="ayuda">Sumás 1 punto por cada peso que pagás.</p>
+    </section>
+  </div>
+
+  <h2>Mis compras</h2>
+  @if (cargandoCompras()) {
+    <p>Cargando...</p>
+  } @else {
+    @for (compra of comprasDeLaPagina(); track compra.id) {
+      <article class="panel compra" [class.cancelada]="compra.estado === 'cancelada'">
+        <h3>{{ compra.compra_entradas[0]?.funciones?.peliculas?.nombre }}</h3>
+        <p class="ayuda">
+          {{ compra.compra_entradas[0]?.funciones?.inicio | date: 'dd/MM/yyyy HH:mm' }} ·
+          {{ compra.compra_entradas[0]?.funciones?.formato }} ·
+          {{ compra.compra_entradas[0]?.funciones?.salas?.nombre }}
+        </p>
+        <p>
+          Butacas:
+          @for (entrada of compra.compra_entradas; track entrada.id) {
+            <span class="chip" [class.vip]="entrada.butacas.tipo === 'vip'">{{ entrada.butacas.fila }}{{ entrada.butacas.numero }}</span>
+          }
+        </p>
+        <p>
+          Total pagado: <strong>{{ compra.total | currency: 'ARS' : 'symbol-narrow' : '1.0-2' }}</strong>
+          @if (compra.descuento > 0) {
+            <span class="ayuda">(descuento −{{ compra.descuento | currency: 'ARS' : 'symbol-narrow' : '1.0-2' }})</span>
+          }
+          · <strong>+{{ compra.puntos_ganados }} puntos</strong>
+        </p>
+        <p class="ayuda">Comprada el {{ compra.creado_en | date: 'dd/MM/yyyy HH:mm' }} · Código: {{ compra.id }}</p>
+      </article>
+    } @empty {
+      <p class="ayuda">Todavía no hiciste ninguna compra.</p>
+    }
+
+    @if (totalPaginas() > 1) {
+      <div class="paginado">
+        <button type="button" class="secundario chico" [disabled]="pagina() === 0" (click)="pagina.set(pagina() - 1)">Anterior</button>
+        <span>Página {{ pagina() + 1 }} de {{ totalPaginas() }}</span>
+        <button type="button" class="secundario chico" [disabled]="pagina() + 1 >= totalPaginas()" (click)="pagina.set(pagina() + 1)">Siguiente</button>
+      </div>
+    }
+  }
 } @else {
   <p>Cargando...</p>
 }

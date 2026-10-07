@@ -1,6 +1,72 @@
-p {
-  max-width: 520px;
+.columnas {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 700px) {
+  .columnas {
+    grid-template-columns: 1fr;
+  }
+}
+
+.datos p {
   margin: 0;
   padding: 0.6rem 0;
   border-bottom: 1px solid var(--borde);
+}
+
+.puntos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.puntos .cantidad {
+  margin: 0.4rem 0;
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--acento);
+}
+
+.compra {
+  margin-bottom: 1rem;
+}
+
+.compra h3 {
+  margin: 0 0 0.3rem;
+}
+
+.compra p {
+  margin: 0.4rem 0;
+}
+
+.compra.cancelada {
+  opacity: 0.6;
+}
+
+.chip {
+  display: inline-block;
+  margin: 0 0.2rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 6px;
+  background: var(--superficie-2);
+  font-size: 0.85rem;
+}
+
+.chip.vip {
+  background: var(--amarillo);
+  color: #000;
+  font-weight: 700;
+}
+
+.paginado {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
 }

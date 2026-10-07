@@ -22,6 +22,14 @@ export class Compras {
     });
   }
 
+  traerMisCompras(usuarioId: string) {
+    return this.supabase.cliente
+      .from('compras')
+      .select('*, compra_entradas(id, precio, butacas(*), funciones(*, peliculas(nombre, imagen_url), salas(nombre)))')
+      .eq('usuario_id', usuarioId)
+      .order('creado_en', { ascending: false });
+  }
+
   escucharVentas(funcionId: number, alVender: (butacaId: number) => void): RealtimeChannel {
     return this.supabase.cliente
       .channel(`ventas-funcion-${funcionId}`)

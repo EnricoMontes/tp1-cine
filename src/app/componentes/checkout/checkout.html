@@ -19,6 +19,9 @@
       <p class="ayuda">Descuento de {{ cuponAplicado()?.porcentaje }}% aplicado: −{{ descuento() | currency: 'ARS' : 'symbol-narrow' : '1.0-2' }}</p>
     }
     <p>Total pagado: <strong>{{ totalAPagar() | currency: 'ARS' : 'symbol-narrow' : '1.0-2' }}</strong></p>
+    @if (auth.usuario()) {
+      <p class="ok">Sumaste {{ puntosAGanar() }} puntos. Los ves en <a routerLink="/perfil">tu perfil</a>.</p>
+    }
 
     @if (restriccion()) {
       <p class="aviso">⚠️ Película +{{ restriccion() }}: los menores deben asistir acompañados de un adulto.</p>
@@ -79,7 +82,15 @@
             </label>
           }
         </div>
-      } @else if (porcentajeBienvenida() && !auth.usuario()) {
+      }
+
+      @if (auth.usuario()) {
+        <p class="ok">Con esta compra sumás {{ puntosAGanar() }} puntos.</p>
+      } @else {
+        <p class="ayuda">Registrate para sumar 1 punto por cada peso que pagás.</p>
+      }
+
+      @if (!opcionesCupon().length && porcentajeBienvenida() && !auth.usuario()) {
         <p class="ayuda">¿Primera vez? Registrate y tenés {{ porcentajeBienvenida() }}% de descuento en tu primera compra.</p>
       }
 
