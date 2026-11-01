@@ -15,7 +15,8 @@ export class Compras {
   }
 
   comprar(funcionId: number, butacaIds: number[], email: string, cuponId: number | null,
-          productoIds: number[], comboIds: number[], canjeEntradas: number, canjeProductoIds: number[], usarCredito: boolean) {
+          productoIds: number[], comboIds: number[], canjeEntradas: number, canjeProductoIds: number[], usarCredito: boolean,
+          canjeComboIds: number[]) {
     return this.supabase.cliente.rpc('comprar_entradas', {
       p_funcion_id: funcionId,
       p_butaca_ids: butacaIds,
@@ -24,6 +25,7 @@ export class Compras {
       p_combo_ids: comboIds,
       p_canje_entradas: canjeEntradas,
       p_canje_producto_ids: canjeProductoIds,
+      p_canje_combo_ids: canjeComboIds,
       p_usar_credito: usarCredito,
       p_cupon_id: cuponId,
     });

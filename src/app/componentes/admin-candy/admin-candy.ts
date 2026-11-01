@@ -5,6 +5,8 @@ import { Candy } from '../../servicios/candy';
 import { Actividades } from '../../servicios/actividades';
 import { Categoria, Combo, Producto } from '../../modelos/producto';
 
+type TipoCandy = 'producto' | 'combo';
+
 @Component({
   imports: [ReactiveFormsModule, CurrencyPipe],
   selector: 'app-admin-candy',
@@ -19,24 +21,22 @@ export class AdminCandy implements OnInit {
   mensajeError = signal('');
   mensajeOk = signal('');
 
-  editandoProductoId = signal<number | null>(null);
-  formProducto = new FormGroup({
+  tipo = signal<TipoCandy>('producto');
+  editandoId = signal<number | null>(null);
+  formCandy = new FormGroup({
     nombre: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     categoria: new FormControl<Categoria>('Pochoclos', { nonNullable: true }),
+    incluye: new FormControl({ value: '', disabled: true }, { nonNullable: true, validators: [Validators.required] }),
     precio: new FormControl<number | null>(null, { validators: [Validators.required, Validators.min(0)] }),
     puntos: new FormControl<number | null>(null, { validators: [Validators.min(1)] }),
+    imagenUrl: new FormControl('', { nonNullable: true }),
   });
+  archivoFoto = signal<File | null>(null);
+  vistaFoto = signal('');
 
   puntosEntrada = new FormControl<number | null>(null, { validators: [Validators.required, Validators.min(1)] });
   puntosEntradaGuardados = signal<number | null>(null);
   mensajeCanje = signal('');
-
-  editandoComboId = signal<number | null>(null);
-  formCombo = new FormGroup({
-    nombre: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    incluye: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    precio: new FormControl<number | null>(null, { validators: [Validators.required, Validators.min(0)] }),
-  });
 
   constructor(private candyService: Candy, private actividades: Actividades) {}
 
@@ -75,45 +75,134 @@ export class AdminCandy implements OnInit {
     this.mensajeOk.set('');
   }
 
+  cambiarTipo(tipo: TipoCandy) {
+    this.tipo.set(tipo);
+    if (tipo === 'producto') {
+      this.formCandy.controls.categoria.enable();
+      this.formCandy.controls.incluye.disable();
+    } else {
+      this.formCandy.controls.categoria.disable();
+      this.formCandy.controls.incluye.enable();
+    }
+  }
+
+  elegirFoto(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const archivo = input.files?.[0] ?? null;
+    input.value = '';
+    if (!archivo) {
+      return;
+    }
+    if (!archivo.type.startsWith('image/')) {
+      this.mensajeError.set('La foto tiene que ser una imagen (jpg, png, webp...).');
+      return;
+    }
+    if (archivo.size > 2 * 1024 * 1024) {
+      this.mensajeError.set('La foto no puede pesar más de 2 MB.');
+      return;
+    }
+    this.mensajeError.set('');
+    this.archivoFoto.set(archivo);
+    this.vistaFoto.set(URL.createObjectURL(archivo));
+  }
+
   editarProducto(producto: Producto) {
-    this.editandoProductoId.set(producto.id);
-    this.formProducto.setValue({ nombre: producto.nombre, categoria: producto.categoria, precio: producto.precio, puntos: producto.puntos ?? null });
+    this.cambiarTipo('producto');
+    this.editandoId.set(producto.id);
+    this.formCandy.reset({
+      nombre: producto.nombre,
+      categoria: producto.categoria,
+      precio: producto.precio,
+      puntos: producto.puntos ?? null,
+      imagenUrl: producto.imagen_url ?? '',
+    });
+    this.prepararEdicion();
   }
 
-  cancelarProducto() {
-    this.editandoProductoId.set(null);
-    this.formProducto.reset({ categoria: 'Pochoclos' });
+  editarCombo(combo: Combo) {
+    this.cambiarTipo('combo');
+    this.editandoId.set(combo.id);
+    this.formCandy.reset({
+      nombre: combo.nombre,
+      incluye: combo.incluye,
+      precio: combo.precio,
+      puntos: combo.puntos ?? null,
+      imagenUrl: combo.imagen_url ?? '',
+    });
+    this.prepararEdicion();
   }
 
-  async guardarProducto() {
+  private prepararEdicion() {
+    this.archivoFoto.set(null);
+    this.vistaFoto.set('');
     this.limpiarMensajes();
-    const valores = this.formProducto.getRawValue();
-    const datos = { nombre: valores.nombre.trim(), categoria: valores.categoria, precio: valores.precio!, puntos: valores.puntos || null };
-    const id = this.editandoProductoId();
+    document.getElementById('formulario-candy')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('nombreCandy')?.focus({ preventScroll: true });
+  }
 
+  cancelar() {
+    this.editandoId.set(null);
+    this.formCandy.reset({ categoria: 'Pochoclos' });
+    this.archivoFoto.set(null);
+    this.vistaFoto.set('');
+  }
+
+  private async urlFoto(actual: string) {
+    const archivo = this.archivoFoto();
+    if (!archivo) {
+      return actual || null;
+    }
+    const subida = await this.candyService.subirFoto(archivo, this.tipo() === 'producto' ? 'productos' : 'combos');
+    if (subida.error) {
+      this.mensajeError.set('No se pudo subir la foto.');
+      return undefined;
+    }
+    return subida.url;
+  }
+
+  async guardar() {
+    this.limpiarMensajes();
+    const valores = this.formCandy.getRawValue();
+    const imagenUrl = await this.urlFoto(valores.imagenUrl);
+    if (imagenUrl === undefined) {
+      return;
+    }
+    const comunes = { nombre: valores.nombre.trim(), precio: valores.precio!, puntos: valores.puntos || null, imagen_url: imagenUrl };
+
+    const ok = this.tipo() === 'producto'
+      ? await this.guardarProducto({ ...comunes, categoria: valores.categoria })
+      : await this.guardarCombo({ ...comunes, incluye: valores.incluye.trim() });
+    if (!ok) {
+      return;
+    }
+    this.mensajeOk.set(this.tipo() === 'producto' ? 'Producto guardado.' : 'Combo guardado.');
+    this.cancelar();
+    this.cargar();
+  }
+
+  private async guardarProducto(datos: Omit<Producto, 'id' | 'vendidos' | 'activo'>) {
+    const id = this.editandoId();
     if (id === null) {
       const { error } = await this.candyService.crearProducto({ ...datos, activo: true });
       if (error) {
         this.mensajeError.set('No se pudo crear el producto.');
-        return;
+        return false;
       }
       await this.actividades.registrar(`Creó el producto ${datos.nombre} (${datos.categoria}, $${datos.precio})`);
-    } else {
-      const antes = this.productos().find(p => p.id === id);
-      const { error } = await this.candyService.modificarProducto(id, datos);
-      if (error) {
-        this.mensajeError.set('No se pudo modificar el producto.');
-        return;
-      }
-      if (antes && antes.precio !== datos.precio) {
-        await this.actividades.registrar(`Cambió el precio de ${datos.nombre} de $${antes.precio} a $${datos.precio}`);
-      } else {
-        await this.actividades.registrar(`Modificó el producto ${datos.nombre}`);
-      }
+      return true;
     }
-    this.mensajeOk.set('Producto guardado.');
-    this.cancelarProducto();
-    this.cargar();
+    const antes = this.productos().find(p => p.id === id);
+    const { error } = await this.candyService.modificarProducto(id, datos);
+    if (error) {
+      this.mensajeError.set('No se pudo modificar el producto.');
+      return false;
+    }
+    if (antes && antes.precio !== datos.precio) {
+      await this.actividades.registrar(`Cambió el precio de ${datos.nombre} de $${antes.precio} a $${datos.precio}`);
+    } else {
+      await this.actividades.registrar(`Modificó el producto ${datos.nombre}`);
+    }
+    return true;
   }
 
   async cambiarActivoProducto(producto: Producto) {
@@ -141,45 +230,29 @@ export class AdminCandy implements OnInit {
     this.cargar();
   }
 
-  editarCombo(combo: Combo) {
-    this.editandoComboId.set(combo.id);
-    this.formCombo.setValue({ nombre: combo.nombre, incluye: combo.incluye, precio: combo.precio });
-  }
-
-  cancelarCombo() {
-    this.editandoComboId.set(null);
-    this.formCombo.reset();
-  }
-
-  async guardarCombo() {
-    this.limpiarMensajes();
-    const valores = this.formCombo.getRawValue();
-    const datos = { nombre: valores.nombre.trim(), incluye: valores.incluye.trim(), precio: valores.precio! };
-    const id = this.editandoComboId();
-
+  private async guardarCombo(datos: Omit<Combo, 'id' | 'vendidos' | 'activo'>) {
+    const id = this.editandoId();
     if (id === null) {
       const { error } = await this.candyService.crearCombo({ ...datos, activo: true });
       if (error) {
         this.mensajeError.set('No se pudo crear el combo.');
-        return;
+        return false;
       }
       await this.actividades.registrar(`Creó el combo ${datos.nombre} ($${datos.precio})`);
-    } else {
-      const antes = this.combos().find(c => c.id === id);
-      const { error } = await this.candyService.modificarCombo(id, datos);
-      if (error) {
-        this.mensajeError.set('No se pudo modificar el combo.');
-        return;
-      }
-      if (antes && antes.precio !== datos.precio) {
-        await this.actividades.registrar(`Cambió el precio del ${datos.nombre} de $${antes.precio} a $${datos.precio}`);
-      } else {
-        await this.actividades.registrar(`Modificó el combo ${datos.nombre}`);
-      }
+      return true;
     }
-    this.mensajeOk.set('Combo guardado.');
-    this.cancelarCombo();
-    this.cargar();
+    const antes = this.combos().find(c => c.id === id);
+    const { error } = await this.candyService.modificarCombo(id, datos);
+    if (error) {
+      this.mensajeError.set('No se pudo modificar el combo.');
+      return false;
+    }
+    if (antes && antes.precio !== datos.precio) {
+      await this.actividades.registrar(`Cambió el precio del ${datos.nombre} de $${antes.precio} a $${datos.precio}`);
+    } else {
+      await this.actividades.registrar(`Modificó el combo ${datos.nombre}`);
+    }
+    return true;
   }
 
   async cambiarActivoCombo(combo: Combo) {

@@ -40,7 +40,7 @@ export class Registro {
   mensajeError = signal('');
   cargando = signal(false);
 
-  constructor(private auth: Auth, private router: Router) {}
+  constructor(protected auth: Auth, private router: Router) {}
 
   formatearFecha(event: Event) {
     this.formRegistro.controls.fechaNacimiento.setValue(ponerBarras((event.target as HTMLInputElement).value));
@@ -75,7 +75,7 @@ export class Registro {
     }
 
     this.formRegistro.reset();
-    this.router.navigate(['/home']);
+    this.router.navigate(['/']);
   }
 
   private traducirError(codigo?: string): string {

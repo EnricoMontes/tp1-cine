@@ -1,9 +1,18 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 .navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 1.5rem;
-  padding: 0.9rem 2rem;
+  gap: 2rem;
+  padding: 0.9rem 2.5rem;
   background: #0f1520;
   border-bottom: 1px solid var(--borde);
 }
@@ -11,7 +20,7 @@
 .navbar a {
   color: var(--texto);
   text-decoration: none;
-  font-size: 0.95rem;
+  font-size: 1.15rem;
   font-weight: 500;
   padding-bottom: 0.3rem;
   border-bottom: 2px solid transparent;
@@ -32,7 +41,7 @@
 
 .navbar .logo img {
   display: block;
-  height: 34px;
+  height: 44px;
   width: auto;
 }
 
@@ -42,14 +51,64 @@
 }
 
 main {
+  flex: 1;
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
 }
 
-.navbar a.usuario {
+.footer {
+  background: #0f1520;
+  border-top: 1px solid var(--borde);
+  padding: 2rem 2rem 1rem;
   color: var(--texto-suave);
   font-size: 0.9rem;
+}
+
+.footer-columnas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-marca img {
+  display: block;
+  height: 30px;
+  width: auto;
+}
+
+.footer h4 {
+  color: var(--texto);
+  margin: 0 0 0.6rem;
+}
+
+.footer a {
+  display: block;
+  color: var(--texto-suave);
+  text-decoration: none;
+  margin-bottom: 0.4rem;
+}
+
+.footer a:hover {
+  color: var(--acento);
+}
+
+.footer-legal {
+  max-width: 1200px;
+  margin: 1.5rem auto 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--borde);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.navbar a.usuario {
+  color: var(--texto-suave);
+  font-size: 1rem;
 }
 
 .navbar .salir {
@@ -63,6 +122,33 @@ main {
 .navbar .salir:hover {
   background: var(--acento);
   color: white;
+}
+
+.navbar .avatar {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--texto);
+  color: var(--fondo);
+  transition: background 0.2s, color 0.2s;
+}
+
+.navbar .avatar:hover {
+  background: var(--acento);
+  color: white;
+}
+
+.navbar .avatar svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .navbar .rol {

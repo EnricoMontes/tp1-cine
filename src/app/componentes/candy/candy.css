@@ -1,0 +1,211 @@
+.encabezado {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.encabezado h1 {
+  margin: 0.15rem 0 0.35rem;
+  text-align: left;
+}
+
+.etiqueta-cine {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(1.25rem, 3vw, 1.6rem);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--acento);
+}
+
+.buscador-candy {
+  width: min(320px, 100%);
+  padding: 0.7rem 1.1rem;
+  border-radius: 999px;
+}
+
+.aviso {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1.1rem;
+  margin-bottom: 1.25rem;
+  border: 1px solid var(--acento);
+  border-radius: 12px;
+  background: rgb(31 111 235 / 0.1);
+  font-size: 0.9rem;
+}
+
+.aviso svg {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: var(--acento);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.chips-candy {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.chip-candy {
+  width: auto;
+  padding: 0.45rem 1.1rem;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--texto);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: none;
+}
+
+.chip-candy:hover {
+  background: var(--acento);
+  border-color: var(--acento);
+}
+
+.seccion {
+  margin-top: 2.5rem;
+  scroll-margin-top: 6rem;
+}
+
+.titulo-seccion {
+  margin: 0 0 1rem;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.2rem;
+  font-weight: normal;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.grilla-candy {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 1.25rem;
+}
+
+.tarjeta-candy {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  background: var(--superficie);
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.tarjeta-candy:hover {
+  transform: translateY(-4px);
+  border-color: var(--texto-suave);
+}
+
+.tarjeta-candy.destacada {
+  border-color: var(--acento);
+}
+
+.foto {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 50% 40%, var(--superficie-2), var(--fondo));
+  color: var(--texto-suave);
+}
+
+.foto img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.foto svg {
+  width: 64px;
+  height: 64px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.chips-foto {
+  position: absolute;
+  top: 0.6rem;
+  left: 0.6rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.chip-foto {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: var(--texto);
+  color: var(--fondo);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.chip-foto.azul {
+  background: var(--acento);
+  color: white;
+}
+
+.cuerpo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 1.1rem 1.2rem;
+}
+
+.cuerpo h3 {
+  margin: 0;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.precio {
+  margin-top: auto;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.9rem;
+  line-height: 1;
+  color: var(--acento);
+}
+
+.lo-quiero {
+  align-self: flex-start;
+  width: auto;
+  padding: 0.45rem 1.2rem;
+  border: 1px solid var(--acento);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--texto);
+  font-size: 0.85rem;
+  text-transform: none;
+}
+
+.lo-quiero:hover {
+  background: var(--acento);
+}
+
+.sin-resultados {
+  margin-top: 2rem;
+  padding: 3rem 1rem;
+  border: 1px dashed var(--borde);
+  border-radius: 14px;
+  text-align: center;
+  color: var(--texto-suave);
+}

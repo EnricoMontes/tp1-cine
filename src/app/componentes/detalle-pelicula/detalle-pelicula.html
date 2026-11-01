@@ -1,4 +1,4 @@
-<a routerLink="/home" class="volver">Volver a la cartelera</a>
+<a routerLink="/cartelera" class="volver">Volver a la cartelera</a>
 
 @if (cargando()) {
   <p>Cargando película...</p>
@@ -6,6 +6,7 @@
   <p class="error">{{ mensajeError() }}</p>
 } @else if (pelicula()) {
   <section class="detalle">
+
     <div class="fondo" [style.background-image]="'url(' + pelicula()?.imagen_url + ')'"></div>
 
     <img class="poster" [src]="pelicula()?.imagen_url" [alt]="pelicula()?.nombre" />
@@ -15,6 +16,7 @@
 
       <p class="datos">
         <span>{{ pelicula()?.duracion_min }} min</span>
+
         <span class="etiqueta amarilla">{{ pelicula()?.restriccion_edad ? '+' + pelicula()?.restriccion_edad : 'ATP' }}</span>
         @for (genero of pelicula()?.generos; track genero.id) {
           <span class="etiqueta">{{ genero.nombre }}</span>
@@ -35,19 +37,22 @@
 
   <section class="seccion-funciones">
     <h2>Funciones</h2>
+
     @if (!abierta()) {
       <div class="proximamente">
         <span>Próximamente</span>
         @if (pelicula()?.fecha_estreno) {
           <p class="ayuda">Estreno: {{ pelicula()?.fecha_estreno + 'T00:00' | date: 'dd/MM/yyyy' }}</p>
         }
+
         @if (auth.usuario()) {
           <button type="button" class="secundario chico" [class.elegida]="alerta()" (click)="cambiarAlerta()">
             {{ alerta() ? '🔔 Te vamos a avisar (tocá para quitar)' : '🔔 Avisarme cuando salgan las entradas' }}
           </button>
         } @else {
-          <p class="ayuda"><a routerLink="/login">Iniciá sesión</a> para que te avisemos cuando salgan las entradas.</p>
+          <p class="ayuda"><a class="link-login" (click)="auth.loginAbierto.set(true)">Iniciá sesión</a> para que te avisemos cuando salgan las entradas.</p>
         }
+
         @if (pelicula()?.preventa_activa && apertura()) {
           <p class="ok">🎟 Preventa desde el {{ apertura() | date: 'dd/MM/yyyy' }} a {{ pelicula()?.precio_preventa | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</p>
         }
@@ -61,10 +66,12 @@
           ({{ pelicula()?.fecha_estreno + 'T00:00' | date: 'dd/MM' }}). Después, {{ pelicula()?.precio_base | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}.
         </p>
       }
+
       <div class="funciones">
         @for (funcion of funciones(); track funcion.id) {
           <article class="funcion">
             <div class="cuando">
+
               <span class="dia">{{ funcion.inicio | date: 'dd/MM' }}</span>
               <span class="hora">{{ funcion.inicio | date: 'HH:mm' }}</span>
             </div>
@@ -72,6 +79,7 @@
               <span class="etiqueta azul">{{ funcion.formato }}</span>
               <span class="ayuda">{{ funcion.idioma === 'castellano' ? 'Castellano' : 'Subtitulada' }} · {{ funcion.salas?.nombre }}</span>
             </div>
+
             <a class="boton" [routerLink]="['/funciones', funcion.id, 'entradas']">Comprar</a>
           </article>
         }
@@ -85,11 +93,12 @@
     <div class="columnas-resenias">
       <div class="panel form-resenia">
         @if (!auth.usuario()) {
-          <p class="ayuda"><a routerLink="/login">Iniciá sesión</a> para calificar esta película.</p>
+          <p class="ayuda"><a class="link-login" (click)="auth.loginAbierto.set(true)">Iniciá sesión</a> para calificar esta película.</p>
         } @else if (yaCalifico()) {
           <p class="ok">Ya calificaste esta película. ¡Gracias!</p>
         } @else {
           <p>Tu calificación:</p>
+
           <div class="estrellas">
             @for (numero of numeros; track numero) {
               <button type="button" class="estrella" [class.llena]="numero <= formResenia.controls.estrellas.value"
@@ -110,6 +119,7 @@
           <article class="resenia">
             <p>
               <strong>{{ resenia.autor }}</strong>
+
               <span class="estrellas-chicas">
                 @for (numero of numeros; track numero) {
                   <span [class.llena]="numero <= resenia.estrellas">★</span>

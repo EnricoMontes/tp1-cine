@@ -42,6 +42,8 @@ export class Carrito {
   combos = signal<ItemCombo[]>([]);
   productos = signal<ItemProducto[]>([]);
 
+  candyElegido = signal<{ tipo: 'producto' | 'combo'; id: number; nombre: string } | null>(null);
+
   precioGeneral = computed(() => precioDeLaPelicula(this.funcion()?.peliculas));
   precioVip = computed(() => this.precioGeneral() * RECARGO_VIP);
 

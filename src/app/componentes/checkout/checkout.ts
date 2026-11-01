@@ -11,7 +11,7 @@ import { Cupones } from '../../servicios/cupones';
 import { Cupon } from '../../modelos/cupon';
 import { EntradaPdf } from '../../servicios/entrada-pdf';
 import { Candy } from '../../servicios/candy';
-import { ItemProducto } from '../../modelos/producto';
+import { ItemCombo, ItemProducto } from '../../modelos/producto';
 
 @Component({
   imports: [ReactiveFormsModule, RouterLink, CurrencyPipe, DatePipe, PasosCompra],
@@ -77,11 +77,18 @@ export class Checkout implements OnInit, OnDestroy {
   puntosEntrada = signal(0);
   canjeEntradas = signal(0);
   canjeProductos = signal<ItemProducto[]>([]);
-  maxEntradasCanje = computed(() => this.carrito.cantidadGeneral() + this.carrito.cantidadAccesible() + this.carrito.cantidadCombos());
+  canjeCombos = signal<ItemCombo[]>([]);
+  combosCanjeados = computed(() => this.canjeCombos().reduce((suma, item) => suma + item.cantidad, 0));
+  maxEntradasCanje = computed(() =>
+    this.carrito.cantidadGeneral() + this.carrito.cantidadAccesible() + this.carrito.cantidadCombos() - this.combosCanjeados()
+  );
   puntosUsados = computed(() => {
     let suma = this.canjeEntradas() * this.puntosEntrada();
     for (const item of this.canjeProductos()) {
       suma += item.cantidad * (item.producto.puntos ?? 0);
+    }
+    for (const item of this.canjeCombos()) {
+      suma += item.cantidad * (item.combo.puntos ?? 0);
     }
     return suma;
   });
@@ -90,6 +97,9 @@ export class Checkout implements OnInit, OnDestroy {
     let suma = this.canjeEntradas() * this.carrito.precioGeneral();
     for (const item of this.canjeProductos()) {
       suma += item.cantidad * item.producto.precio;
+    }
+    for (const item of this.canjeCombos()) {
+      suma += item.cantidad * item.combo.precio;
     }
     return suma;
   });
@@ -131,7 +141,7 @@ export class Checkout implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (!this.carrito.funcion() || this.carrito.butacas().length === 0) {
-      this.router.navigate(['/home']);
+      this.router.navigate(['/']);
       return;
     }
     this.formPago.controls.email.setValue(this.auth.usuario()?.email ?? '');
@@ -144,6 +154,9 @@ export class Checkout implements OnInit, OnDestroy {
     this.puntosEntrada.set(data?.[0]?.puntos_entrada ?? 0);
     this.canjeProductos.set(
       this.carrito.productos().filter(item => item.producto.puntos).map(item => ({ producto: item.producto, cantidad: 0 }))
+    );
+    this.canjeCombos.set(
+      this.carrito.combos().filter(item => item.combo.puntos).map(item => ({ combo: item.combo, cantidad: 0 }))
     );
   }
 
@@ -178,6 +191,33 @@ export class Checkout implements OnInit, OnDestroy {
     for (const item of this.canjeProductos()) {
       for (let i = 0; i < item.cantidad; i++) {
         ids.push(item.producto.id);
+      }
+    }
+    return ids;
+  }
+
+  cambiarCanjeCombo(id: number, cambio: number) {
+    if (cambio > 0 && this.canjeEntradas() >= this.maxEntradasCanje()) {
+      return;
+    }
+    this.canjeCombos.update(lista => lista.map(item => {
+      if (item.combo.id !== id) {
+        return item;
+      }
+      const comprados = this.carrito.combos().find(c => c.combo.id === id)?.cantidad ?? 0;
+      const nuevo = item.cantidad + cambio;
+      if (nuevo < 0 || nuevo > comprados || (cambio > 0 && !this.alcanza(item.combo.puntos ?? 0))) {
+        return item;
+      }
+      return { ...item, cantidad: nuevo };
+    }));
+  }
+
+  private canjeComboIds() {
+    const ids: number[] = [];
+    for (const item of this.canjeCombos()) {
+      for (let i = 0; i < item.cantidad; i++) {
+        ids.push(item.combo.id);
       }
     }
     return ids;
@@ -247,6 +287,7 @@ export class Checkout implements OnInit, OnDestroy {
       this.carrito.productoIds(), this.carrito.comboIds(),
       this.canjeEntradas(), this.canjeProductoIds(),
       this.usarCredito(),
+      this.canjeComboIds(),
     );
     this.cargando.set(false);
 

@@ -8,36 +8,239 @@
 }
 
 .form > .ayuda {
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.75rem;
 }
 
-.tabla td .ayuda {
-  display: block;
+#formulario-funcion,
+#funciones-elegida {
+  scroll-margin-top: 6rem;
 }
 
-.repetir {
-  margin-top: 0.5rem;
-  padding-top: 0.8rem;
-  border-top: 1px solid var(--borde);
+.poster-nombre {
+  margin: 0;
+  text-align: center;
+  font-weight: 600;
 }
 
-.repetir .ayuda {
-  margin: 0 0 0.5rem;
+.centrada {
+  text-align: center;
 }
 
-.dias {
+.pildoras {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 0.45rem;
+  margin-top: 0.2rem;
 }
 
-.dias button {
+.pildora {
+  width: auto;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  background: var(--superficie-2);
+  color: var(--texto);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: none;
+}
+
+.pildora:hover {
+  background: var(--superficie-2);
+  border-color: var(--texto-suave);
+}
+
+.pildora.elegida {
+  background: var(--acento);
+  border-color: var(--acento);
+}
+
+.pildora.chica {
+  padding: 0.3rem 0.8rem;
+  font-size: 0.8rem;
+}
+
+.pildora.dia {
   min-width: 3.2rem;
 }
 
-.horas-rapidas {
+.pildoras.dias-semana {
+  display: grid;
+  grid-template-columns: repeat(5, auto);
+  justify-content: start;
+}
+
+.repetir {
+  margin-top: 1.25rem;
+  padding: 1rem 1.1rem 1.2rem;
+  border: 1px dashed var(--borde);
+  border-radius: 12px;
+}
+
+.repetir-titulo {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.repetir-titulo div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.repetir-titulo svg {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin-top: 0.1rem;
+  fill: none;
+  stroke: var(--acento);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.campo-hasta {
+  max-width: 200px;
+}
+
+.funciones-elegida {
+  margin: 1rem 0 2rem;
+  border-color: var(--acento);
+}
+
+.elegida-encabezado {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.elegida-encabezado img {
+  width: 70px;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.elegida-datos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.elegida-datos h3 {
+  margin: 0;
+}
+
+.elegida-botones {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.dia-funciones + .dia-funciones {
+  margin-top: 1.25rem;
+}
+
+.dia-funciones h4 {
+  margin: 0 0 0.6rem;
+  color: var(--texto-suave);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.funciones-del-dia {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 0.75rem;
+}
+
+.funcion {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  background: var(--superficie-2);
+}
+
+.funcion.pasada {
+  opacity: 0.45;
+}
+
+.funcion-hora {
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.funcion-etiquetas {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
-  margin-top: 0.5rem;
+  gap: 0.3rem;
+  margin-top: 0.4rem;
+}
+
+.borrar-funcion {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--texto-suave);
+}
+
+.borrar-funcion:hover {
+  background: var(--error);
+  border-color: var(--error);
+  color: white;
+}
+
+.borrar-funcion svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.contador {
+  position: absolute;
+  left: 0.5rem;
+  bottom: 0.5rem;
+  z-index: 1;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  background: var(--acento);
+  color: white;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.contador.cero {
+  background: rgb(0 0 0 / 0.72);
+  color: var(--texto-suave);
+}
+
+@media (max-width: 800px) {
+  .form-cuerpo {
+    grid-template-columns: 1fr;
+  }
+
+  .columna-poster {
+    max-width: 200px;
+  }
 }

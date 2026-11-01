@@ -17,12 +17,30 @@ export class AdminUsuarios implements OnInit {
   mensajeError = signal('');
 
   busqueda = signal('');
+  rolFiltro = signal('todos');
   filtrados = computed(() => {
     const texto = this.busqueda().toLowerCase().trim();
     return this.usuarios().filter(u =>
-      `${u.nombre} ${u.apellido} ${u.email} ${u.rol}`.toLowerCase().includes(texto)
+      `${u.nombre} ${u.apellido} ${u.email} ${u.rol}`.toLowerCase().includes(texto) &&
+      (this.rolFiltro() === 'todos' || u.rol === this.rolFiltro())
     );
   });
+
+  opcionesRol = [
+    { texto: 'Todos', valor: 'todos' },
+    { texto: 'Clientes', valor: 'cliente' },
+    { texto: 'Empleados', valor: 'empleado' },
+    { texto: 'Admins', valor: 'admin' },
+  ];
+  roles = ['cliente', 'empleado', 'admin'];
+
+  cantidad(rol: string) {
+    return rol === 'todos' ? this.usuarios().length : this.usuarios().filter(u => u.rol === rol).length;
+  }
+
+  iniciales(usuario: Usuario) {
+    return `${usuario.nombre.charAt(0)}${usuario.apellido.charAt(0)}`.toUpperCase();
+  }
 
   constructor(
     private usuariosService: Usuarios,

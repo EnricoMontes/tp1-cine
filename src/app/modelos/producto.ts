@@ -6,6 +6,7 @@ export interface ProductoDatos {
   precio: number;
   activo: boolean;
   puntos?: number | null;
+  imagen_url?: string | null;
 }
 
 export interface Producto extends ProductoDatos {
@@ -18,6 +19,8 @@ export interface ComboDatos {
   incluye: string;
   precio: number;
   activo: boolean;
+  imagen_url?: string | null;
+  puntos?: number | null;
 }
 
 export interface Combo extends ComboDatos {

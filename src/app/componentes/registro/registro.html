@@ -1,89 +1,137 @@
-<h1>Registrarse</h1>
+<div class="encabezado">
+  <span class="etiqueta-registro">Registro</span>
+  <h1>Creá tu cuenta en SignalCine</h1>
+  <p>Registrate y obtené un descuento en tu primera compra.</p>
+</div>
 
-<form class="form" [formGroup]="formRegistro" (ngSubmit)="registrar()">
+<form class="form-registro" [formGroup]="formRegistro" (ngSubmit)="registrar()">
 
-  <label for="email">Mail</label>
-  <input type="email" id="email" formControlName="email">
-  @if (formRegistro.controls.email.touched && formRegistro.controls.email.hasError('required')) {
-    <p class="error">El mail es obligatorio</p>
-  }
-  @if (formRegistro.controls.email.touched && formRegistro.controls.email.hasError('email')) {
-    <p class="error">El mail no tiene un formato válido</p>
-  }
+  <fieldset>
+    <legend>Datos de acceso</legend>
 
-  <label for="clave">Contraseña</label>
-  <input type="password" id="clave" formControlName="clave"
-    (input)="formRegistro.controls.confirmarClave.updateValueAndValidity()">
-  @if (formRegistro.controls.clave.touched && formRegistro.controls.clave.invalid) {
-    <p class="error">La contraseña es obligatoria y debe tener al menos 6 caracteres</p>
-  }
+    <div class="campo">
+      <label for="email">Correo electrónico</label>
 
-  <label for="confirmarClave">Repetir contraseña</label>
-  <input type="password" id="confirmarClave" formControlName="confirmarClave">
-  @if (formRegistro.controls.confirmarClave.touched && formRegistro.controls.confirmarClave.hasError('losControlesNoCoinciden')) {
-    <p class="error">Las contraseñas no coinciden</p>
-  }
+      <input type="email" id="email" formControlName="email" autocomplete="email">
 
-  <label for="nombre">Nombre</label>
-  <input type="text" id="nombre" formControlName="nombre">
-  @if (formRegistro.controls.nombre.touched && formRegistro.controls.nombre.invalid) {
-    <p class="error">El nombre es obligatorio, mínimo 2 letras y solo letras</p>
-  }
+      @if (formRegistro.controls.email.touched && formRegistro.controls.email.hasError('required')) {
+        <p class="error">El mail es obligatorio</p>
+      }
+      @if (formRegistro.controls.email.touched && formRegistro.controls.email.hasError('email')) {
+        <p class="error">El mail no tiene un formato válido</p>
+      }
+    </div>
 
-  <label for="apellido">Apellido</label>
-  <input type="text" id="apellido" formControlName="apellido">
-  @if (formRegistro.controls.apellido.touched && formRegistro.controls.apellido.invalid) {
-    <p class="error">El apellido es obligatorio, mínimo 2 letras y solo letras</p>
-  }
+    <div class="dos-columnas">
+      <div class="campo">
+        <label for="clave">Contraseña</label>
 
-  <label for="fechaNacimiento">Fecha de nacimiento</label>
-  <input type="text" id="fechaNacimiento" formControlName="fechaNacimiento" placeholder="DD/MM/AAAA" maxlength="10" inputmode="numeric" (input)="formatearFecha($event)">
-  @if (formRegistro.controls.fechaNacimiento.touched && formRegistro.controls.fechaNacimiento.hasError('required')) {
-    <p class="error">La fecha de nacimiento es obligatoria</p>
-  }
-  @if (formRegistro.controls.fechaNacimiento.touched && formRegistro.controls.fechaNacimiento.hasError('fechaInvalida')) {
-    <p class="error">Escribí una fecha real con el formato DD/MM/AAAA</p>
-  }
-  @if (formRegistro.controls.fechaNacimiento.touched && formRegistro.controls.fechaNacimiento.hasError('fechaFutura')) {
-    <p class="error">La fecha de nacimiento no puede ser futura</p>
-  }
-  @if (formRegistro.controls.fechaNacimiento.touched && formRegistro.controls.fechaNacimiento.hasError('edadInvalida')) {
-    <p class="error">La fecha de nacimiento no es válida</p>
-  }
+        <input type="password" id="clave" formControlName="clave" autocomplete="new-password"
+          (input)="formRegistro.controls.confirmarClave.updateValueAndValidity()">
+        @if (formRegistro.controls.clave.touched && formRegistro.controls.clave.invalid) {
+          <p class="error">Obligatoria, mínimo 6 caracteres</p>
+        }
+      </div>
 
-  <label for="tipoSangre">Tipo de sangre</label>
-  <select id="tipoSangre" formControlName="tipoSangre">
-    <option value="" disabled>Elegí una opción</option>
-    @for (tipo of tiposSangre; track tipo) {
-      <option [value]="tipo">{{ tipo }}</option>
-    }
-  </select>
-  @if (formRegistro.controls.tipoSangre.touched && formRegistro.controls.tipoSangre.invalid) {
-    <p class="error">Elegí un tipo de sangre</p>
-  }
+      <div class="campo">
+        <label for="confirmarClave">Repetir contraseña</label>
+        <input type="password" id="confirmarClave" formControlName="confirmarClave" autocomplete="new-password">
 
-  <label for="colorOjos">Color de ojos</label>
-  <select id="colorOjos" formControlName="colorOjos">
-    <option value="" disabled>Elegí una opción</option>
-    @for (color of coloresOjos; track color) {
-      <option [value]="color">{{ color }}</option>
-    }
-  </select>
-  @if (formRegistro.controls.colorOjos.touched && formRegistro.controls.colorOjos.invalid) {
-    <p class="error">Elegí un color de ojos</p>
-  }
+        @if (formRegistro.controls.confirmarClave.touched && formRegistro.controls.confirmarClave.hasError('losControlesNoCoinciden')) {
+          <p class="error">Las contraseñas no coinciden</p>
+        }
+      </div>
+    </div>
+  </fieldset>
 
-  <label for="diasVacaciones">Días de vacaciones por año</label>
-  <input type="number" id="diasVacaciones" formControlName="diasVacaciones">
-  @if (formRegistro.controls.diasVacaciones.touched && formRegistro.controls.diasVacaciones.invalid) {
-    <p class="error">Ingresá un número entero entre 0 y 365</p>
-  }
+  <fieldset>
+    <legend>Datos personales</legend>
+
+    <div class="dos-columnas">
+      <div class="campo">
+        <label for="nombre">Nombre</label>
+        <input type="text" id="nombre" formControlName="nombre" autocomplete="given-name">
+        @if (formRegistro.controls.nombre.touched && formRegistro.controls.nombre.invalid) {
+          <p class="error">Obligatorio, mínimo 2 letras y solo letras</p>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="apellido">Apellido</label>
+        <input type="text" id="apellido" formControlName="apellido" autocomplete="family-name">
+        @if (formRegistro.controls.apellido.touched && formRegistro.controls.apellido.invalid) {
+          <p class="error">Obligatorio, mínimo 2 letras y solo letras</p>
+        }
+      </div>
+    </div>
+
+    <div class="dos-columnas">
+      <div class="campo">
+        <label for="fechaNacimiento">Fecha de nacimiento</label>
+
+        <input type="text" id="fechaNacimiento" formControlName="fechaNacimiento" placeholder="DD/MM/AAAA" maxlength="10" inputmode="numeric" (input)="formatearFecha($event)">
+        @if (formRegistro.controls.fechaNacimiento.touched && formRegistro.controls.fechaNacimiento.hasError('required')) {
+          <p class="error">La fecha de nacimiento es obligatoria</p>
+        }
+        @if (formRegistro.controls.fechaNacimiento.touched && formRegistro.controls.fechaNacimiento.hasError('fechaInvalida')) {
+          <p class="error">Escribí una fecha real con el formato DD/MM/AAAA</p>
+        }
+
+        @if (formRegistro.controls.fechaNacimiento.touched && formRegistro.controls.fechaNacimiento.hasError('fechaFutura')) {
+          <p class="error">La fecha de nacimiento no puede ser futura</p>
+        }
+        @if (formRegistro.controls.fechaNacimiento.touched && formRegistro.controls.fechaNacimiento.hasError('edadInvalida')) {
+          <p class="error">La fecha de nacimiento no es válida</p>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="diasVacaciones">Días de vacaciones por año</label>
+        <input type="number" id="diasVacaciones" formControlName="diasVacaciones">
+        @if (formRegistro.controls.diasVacaciones.touched && formRegistro.controls.diasVacaciones.invalid) {
+          <p class="error">Un número entero entre 0 y 365</p>
+        }
+      </div>
+    </div>
+
+    <div class="dos-columnas">
+      <div class="campo">
+        <label for="tipoSangre">Tipo de sangre</label>
+        <select id="tipoSangre" formControlName="tipoSangre">
+          <option value="" disabled>Elegí una opción</option>
+
+          @for (tipo of tiposSangre; track tipo) {
+            <option [value]="tipo">{{ tipo }}</option>
+          }
+        </select>
+        @if (formRegistro.controls.tipoSangre.touched && formRegistro.controls.tipoSangre.invalid) {
+          <p class="error">Elegí un tipo de sangre</p>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="colorOjos">Color de ojos</label>
+        <select id="colorOjos" formControlName="colorOjos">
+          <option value="" disabled>Elegí una opción</option>
+          @for (color of coloresOjos; track color) {
+            <option [value]="color">{{ color }}</option>
+          }
+        </select>
+        @if (formRegistro.controls.colorOjos.touched && formRegistro.controls.colorOjos.invalid) {
+          <p class="error">Elegí un color de ojos</p>
+        }
+      </div>
+    </div>
+  </fieldset>
 
   @if (mensajeError()) {
-    <p class="error">{{ mensajeError() }}</p>
+    <p class="error alerta">{{ mensajeError() }}</p>
   }
 
-  <button type="submit" [disabled]="formRegistro.invalid || cargando()">
-    @if (cargando()) { Registrando... } @else { Registrarme }
+  <button type="submit" class="boton-crear" [disabled]="formRegistro.invalid || cargando()">
+
+    @if (cargando()) { Creando cuenta... } @else { Crear cuenta }
   </button>
+
+  <p class="ya-tenes">¿Ya tenés una cuenta? <a (click)="auth.loginAbierto.set(true)">Iniciá sesión</a></p>
 </form>

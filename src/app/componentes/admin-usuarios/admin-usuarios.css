@@ -1,3 +1,146 @@
-select {
+.chips-rol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.chip-rol {
   width: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1rem;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--texto);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: none;
+}
+
+.chip-rol:hover {
+  background: transparent;
+  border-color: var(--texto);
+}
+
+.chip-rol.activo {
+  background: var(--acento);
+  border-color: var(--acento);
+}
+
+.chip-rol span {
+  padding: 0.05rem 0.5rem;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.15);
+  font-size: 0.75rem;
+}
+
+.usuarios {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 520px) {
+  .usuarios {
+    grid-template-columns: 1fr;
+  }
+}
+
+.usuario {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  background: var(--superficie);
+}
+
+.usuario.yo {
+  border-color: var(--acento);
+}
+
+.avatar {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #555c6b;
+  color: white;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.avatar.empleado {
+  background: #1f8a4c;
+}
+
+.avatar.admin {
+  background: var(--acento);
+}
+
+.usuario-datos {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.usuario-datos .ayuda {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vos {
+  margin-left: 0.35rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: var(--acento);
+  font-size: 0.7rem;
+}
+
+.selector-rol {
+  flex: none;
+  display: flex;
+  gap: 0.15rem;
+  padding: 0.2rem;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  background: var(--superficie-2);
+}
+
+.selector-rol button {
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--texto-suave);
+  font-size: 0.75rem;
+  text-transform: none;
+}
+
+.selector-rol button:hover:not(:disabled) {
+  background: transparent;
+  color: var(--texto);
+}
+
+.selector-rol button.elegido {
+  background: var(--acento);
+  color: white;
+}
+
+.selector-rol button:disabled {
+  opacity: 1;
+  cursor: default;
+}
+
+.selector-rol button:disabled:not(.elegido) {
+  opacity: 0.4;
 }

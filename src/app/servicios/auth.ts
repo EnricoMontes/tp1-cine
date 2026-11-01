@@ -11,6 +11,8 @@ export class Auth {
 
   perfil = signal<Perfil | null>(null);
 
+  loginAbierto = signal(false);
+
   sesionCargada: Promise<void>;
 
   constructor() {

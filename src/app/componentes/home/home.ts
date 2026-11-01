@@ -1,21 +1,21 @@
-import { Component, computed, OnInit, signal } from '@angular/core';
-import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { Component, computed, OnDestroy, OnInit, signal } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { SlicePipe } from '@angular/common';
 import { Peliculas } from '../../servicios/peliculas';
 import { Pelicula } from '../../modelos/pelicula';
 import { CardPelicula } from '../card-pelicula/card-pelicula';
-import { FiltroPeliculasPipe } from '../../pipes/filtro-peliculas-pipe';
+import { DuracionPipe } from '../../pipes/duracion-pipe';
 import { Auth } from '../../servicios/auth';
 import { Alerta, Alertas } from '../../servicios/alertas';
 import { ventaAbierta } from '../../servicios/carrito';
 
 @Component({
-  imports: [CardPelicula, FormsModule, FiltroPeliculasPipe],
+  imports: [CardPelicula, RouterLink, DuracionPipe, SlicePipe],
   selector: 'app-home',
   styleUrl: './home.css',
   templateUrl: './home.html',
 })
-export class Home implements OnInit {
+export class Home implements OnInit, OnDestroy {
   peliculas = signal<Pelicula[]>([]);
   proximas = signal<Pelicula[]>([]);
   cargando = signal(true);
@@ -23,14 +23,21 @@ export class Home implements OnInit {
 
   avisos = signal<Alerta[]>([]);
 
-  busqueda = signal('');
-
   masVendidas = computed(() =>
     this.peliculas()
       .filter(p => p.entradas_vendidas > 0)
       .sort((a, b) => b.entradas_vendidas - a.entradas_vendidas)
       .slice(0, 3)
   );
+
+  filas = computed(() => [
+    { etiqueta: 'Recién llegadas', titulo: 'Estrenos', seccion: 'estrenos', peliculas: this.peliculas().filter(p => p.es_estreno) },
+    { etiqueta: 'Ahora en cines', titulo: 'En cartelera', seccion: 'cartelera', peliculas: this.peliculas().filter(p => !p.es_estreno) },
+    { etiqueta: 'Muy pronto', titulo: 'Próximamente', seccion: 'proximamente', peliculas: this.proximas() },
+  ]);
+
+  actual = signal(0);
+  private intervalo?: ReturnType<typeof setInterval>;
 
   constructor(
     private peliculasService: Peliculas,
@@ -43,6 +50,23 @@ export class Home implements OnInit {
     this.cargarCartelera();
     this.cargarProximamente();
     this.cargarAvisos();
+    this.intervalo = setInterval(() => this.siguiente(), 6000);
+  }
+
+  ngOnDestroy() {
+    clearInterval(this.intervalo);
+  }
+
+  siguiente() {
+    const total = this.masVendidas().length;
+    if (total) {
+      this.actual.update(i => (i + 1) % total);
+    }
+  }
+
+  anterior() {
+    const total = this.masVendidas().length;
+    this.actual.update(i => (i - 1 + total) % total);
   }
 
   private async cargarAvisos() {

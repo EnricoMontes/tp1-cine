@@ -7,12 +7,105 @@
 
 .dato {
   display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dato div {
+  display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.2rem;
+  min-width: 0;
 }
 
 .dato strong {
-  font-size: 1.6rem;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.3rem;
+  font-weight: normal;
+  line-height: 1;
+  color: var(--acento);
+}
+
+.dato strong.texto {
+  font-family: var(--fuente-texto);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.icono {
+  flex: none;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: rgb(31 111 235 / 0.15);
+  color: var(--acento);
+}
+
+.icono svg,
+.exportar svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icono svg {
+  width: 24px;
+  height: 24px;
+}
+
+.exportar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 1rem;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  background: var(--superficie);
+  color: var(--texto);
+  font-size: 0.8rem;
+}
+
+.exportar:hover:not(:disabled) {
+  background: var(--superficie);
+  border-color: var(--acento);
+  color: var(--acento);
+}
+
+.exportar svg {
+  width: 16px;
+  height: 16px;
+}
+
+.selector {
+  display: flex;
+  gap: 0.2rem;
+  padding: 0.25rem;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  background: var(--superficie-2);
+}
+
+.selector button {
+  padding: 0.3rem 0.9rem;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--texto-suave);
+  font-size: 0.8rem;
+  text-transform: none;
+}
+
+.selector button:hover {
+  background: transparent;
+  color: var(--texto);
+}
+
+.selector button.elegida {
+  background: var(--acento);
+  color: white;
 }
 
 .tabla-contenedor {
@@ -59,21 +152,23 @@
 }
 
 .barra-fondo {
-  height: 0.9rem;
-  border-radius: 4px;
+  height: 0.75rem;
+  border-radius: 999px;
   background: var(--superficie-2);
 }
 
 .barra {
   height: 100%;
-  border-radius: 4px;
-  background: var(--acento);
+  border-radius: 999px;
+  background: linear-gradient(90deg, #1858c4, var(--acento));
+  transition: width 0.4s ease;
 }
 
-.barra.amarilla {
-  background: var(--amarillo);
+.barra.clara {
+  background: linear-gradient(90deg, var(--acento), #6ea8ff);
 }
 
 .barra-numero {
   text-align: right;
+  font-weight: 700;
 }
