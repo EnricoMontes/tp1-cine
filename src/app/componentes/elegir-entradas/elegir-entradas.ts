@@ -97,6 +97,14 @@ export class ElegirEntradas implements OnInit {
     this.productos.set((productos.data ?? []).map(producto => ({ producto, cantidad: 0 })));
     this.combos.set((combos.data ?? []).map(combo => ({ combo, cantidad: 0 })));
 
+    const elegido = this.carrito.candyElegido();
+    if (elegido?.tipo === 'producto') {
+      this.productos.update(lista => lista.map(item => item.producto.id === elegido.id ? { ...item, cantidad: 1 } : item));
+    } else if (elegido?.tipo === 'combo') {
+      this.combos.update(lista => lista.map(item => item.combo.id === elegido.id ? { ...item, cantidad: 1 } : item));
+    }
+    this.carrito.candyElegido.set(null);
+
     const butacas = await this.salasService.traerButacas(funcion.sala_id);
     const ocupadas = await this.comprasService.traerOcupadas(id);
     if (butacas.error || ocupadas.error) {

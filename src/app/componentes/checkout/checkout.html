@@ -2,6 +2,7 @@
   <section class="panel confirmacion">
     <h1>¡Compra confirmada! 🎬</h1>
     <p>Te enviamos las entradas a <strong>{{ formPago.controls.email.value }}</strong>.</p>
+
     @if (qrImagen()) {
       <img class="qr" [src]="qrImagen()" alt="QR de la entrada">
     }
@@ -19,6 +20,7 @@
         <span class="chip" [class.vip]="butaca.tipo === 'vip'">{{ butaca.fila }}{{ butaca.numero }}</span>
       }
     </p>
+
     @if (textoCandy()) {
       <p>Candy: <strong>{{ textoCandy() }}</strong> <span class="ayuda">(retiralo en el candy bar con este QR)</span></p>
     }
@@ -29,6 +31,7 @@
       <p class="ayuda">Pagaste {{ creditoUsado() | currency: 'ARS' : 'symbol-narrow' : '1.0-2' }} con tu crédito.</p>
     }
     <p>Total pagado: <strong>{{ totalAPagar() | currency: 'ARS' : 'symbol-narrow' : '1.0-2' }}</strong></p>
+
     @if (auth.usuario()) {
       <p class="ok">Sumaste {{ puntosAGanar() }} puntos. Los ves en <a routerLink="/perfil">tu perfil</a>.</p>
     }
@@ -37,7 +40,7 @@
       <p class="aviso">⚠️ Película +{{ restriccion() }}: los menores deben asistir acompañados de un adulto.</p>
     }
 
-    <a class="boton" routerLink="/home">Ver más películas</a>
+    <a class="boton" routerLink="/">Ver más películas</a>
   </section>
 } @else {
   <a [routerLink]="['/funciones', carrito.funcion()?.id, 'butacas']" class="volver">Volver a las butacas</a>
@@ -47,6 +50,7 @@
   <h1>Finalizar compra</h1>
 
   <div class="columnas">
+
     <section class="panel tarjeta">
       <h2>{{ carrito.funcion()?.peliculas?.nombre }}</h2>
       <p class="ayuda">
@@ -62,12 +66,15 @@
       </p>
 
       <table class="detalle">
+
         @for (linea of carrito.lineas(); track linea.texto) {
           <tr>
             <td>{{ linea.texto }}</td>
+
             <td class="precio">{{ linea.monto | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
           </tr>
         }
+
         @if (descuentoCanje()) {
           <tr class="descuento">
             <td>Canje de puntos ({{ puntosUsados() }} pts)</td>
@@ -90,6 +97,7 @@
           <td>Total</td>
           <td class="precio">{{ totalAPagar() | currency: 'ARS' : 'symbol-narrow' : '1.0-2' }}</td>
         </tr>
+
         @if (creditoUsado()) {
           <tr class="descuento">
             <td>Crédito de tu cuenta</td>
@@ -111,7 +119,7 @@
         </div>
       }
 
-      @if (auth.usuario() && puntosDisponibles() > 0 && (maxEntradasCanje() > 0 || canjeProductos().length)) {
+      @if (auth.usuario() && puntosDisponibles() > 0 && (maxEntradasCanje() > 0 || canjeProductos().length || canjeCombos().length)) {
         <div class="canje">
           <p><strong>Canjear puntos</strong> <span class="ayuda">· tenés {{ puntosDisponibles() - puntosUsados() }} disponibles</span></p>
           @if (maxEntradasCanje() > 0 && puntosEntrada()) {
@@ -131,6 +139,17 @@
                 <button type="button" class="secundario chico" (click)="cambiarCanjeProducto(item.producto.id, -1)" [disabled]="item.cantidad === 0">−</button>
                 <span>{{ item.cantidad }}</span>
                 <button type="button" class="secundario chico" (click)="cambiarCanjeProducto(item.producto.id, 1)">+</button>
+              </div>
+            </div>
+          }
+
+          @for (item of canjeCombos(); track item.combo.id) {
+            <div class="fila-canje">
+              <span>{{ item.combo.nombre }} gratis <span class="ayuda">({{ item.combo.puntos }} pts)</span></span>
+              <div class="contador">
+                <button type="button" class="secundario chico" (click)="cambiarCanjeCombo(item.combo.id, -1)" [disabled]="item.cantidad === 0">−</button>
+                <span>{{ item.cantidad }}</span>
+                <button type="button" class="secundario chico" (click)="cambiarCanjeCombo(item.combo.id, 1)">+</button>
               </div>
             </div>
           }
@@ -199,6 +218,7 @@
           }
 
           <label for="numeroTarjeta">Número de tarjeta</label>
+
           <input type="text" id="numeroTarjeta" formControlName="numeroTarjeta" maxlength="16" placeholder="16 números" inputmode="numeric" (input)="soloNumeros($event, 'numeroTarjeta')">
           @if (formPago.controls.numeroTarjeta.touched && formPago.controls.numeroTarjeta.invalid) {
             <p class="error">Tienen que ser 16 números, sin espacios</p>
@@ -207,6 +227,7 @@
           <div class="fila">
             <div class="campo">
               <label for="vencimiento">Vencimiento</label>
+
               <input type="text" id="vencimiento" formControlName="vencimiento" maxlength="5" placeholder="MM/AA" inputmode="numeric" (input)="formatearVencimiento($event)">
               @if (formPago.controls.vencimiento.touched && formPago.controls.vencimiento.hasError('vencida')) {
                 <p class="error">La tarjeta está vencida</p>

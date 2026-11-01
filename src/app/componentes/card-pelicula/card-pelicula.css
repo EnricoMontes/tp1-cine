@@ -1,62 +1,74 @@
 .tarjeta {
-  background: var(--superficie);
-  border: 1px solid var(--borde);
-  border-radius: 10px;
-  overflow: hidden;
-  height: 100%;
   display: flex;
   flex-direction: column;
-  transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+  gap: 0.6rem;
+  cursor: pointer;
 }
 
-.tarjeta img {
-  width: 100%;
+.poster {
+  position: relative;
   aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: var(--superficie);
+  box-shadow: 0 10px 24px -14px rgb(0 0 0 / 0.8);
+
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.poster img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.cuerpo {
-  padding: 0.9rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  flex: 1;
-}
-
-.cuerpo h2 {
-  font-size: 1.05rem;
-  margin: 0;
-}
-
-.cuerpo p {
-  margin: 0;
-}
-
-.info {
-  color: var(--texto-suave);
-  font-size: 0.9rem;
-}
-
-.edad {
-  font-weight: bold;
-  color: var(--amarillo);
-}
-
-.generos {
+.chips {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  right: 0.5rem;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.3rem;
+  gap: 0.35rem;
 }
 
-.generos span {
-  font-size: 0.75rem;
-  background: var(--superficie-2);
-  color: var(--texto-suave);
+.chip-poster {
+  padding: 0.2rem 0.55rem;
   border-radius: 999px;
-  padding: 0.15rem 0.6rem;
+  background: rgb(0 0 0 / 0.72);
+  backdrop-filter: blur(4px);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
 }
 
-.cuerpo button {
-  margin-top: auto;
+.chip-poster.rojo {
+  background: var(--acento);
+}
+
+.chip-poster.dorado {
+  background: var(--amarillo);
+  color: #111;
+}
+
+.info h2 {
+  margin: 0 0 0.2rem;
+  font-family: var(--fuente-texto);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-transform: none;
+  line-height: 1.25;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.info p {
+  margin: 0;
+  color: var(--texto-suave);
+  font-size: 0.78rem;
 }

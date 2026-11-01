@@ -23,6 +23,7 @@ export class AdminPeliculas implements OnInit {
   generosElegidos = signal<number[]>([]);
 
   archivoPoster = signal<File | null>(null);
+  vistaPrevia = signal('');
 
   editandoId = signal<number | null>(null);
 
@@ -41,6 +42,7 @@ export class AdminPeliculas implements OnInit {
     fechaEstreno: new FormControl('', { validators: [fechaValidator()] }),
     estado: new FormControl('cartelera', { validators: [Validators.required] }),
     visibleEnHome: new FormControl(true),
+    esEstreno: new FormControl(false),
     precioBase: new FormControl<number | null>(null, { validators: [Validators.required, Validators.min(0)] }),
     preventaActiva: new FormControl(false),
     precioPreventa: new FormControl<number | null>(null, { validators: [Validators.min(0)] }),
@@ -99,6 +101,7 @@ export class AdminPeliculas implements OnInit {
     }
     this.mensajeError.set('');
     this.archivoPoster.set(archivo);
+    this.vistaPrevia.set(URL.createObjectURL(archivo));
   }
 
   editar(pelicula: Pelicula) {
@@ -112,21 +115,26 @@ export class AdminPeliculas implements OnInit {
       fechaEstreno: pelicula.fecha_estreno ? aFechaPantalla(pelicula.fecha_estreno) : '',
       estado: pelicula.estado,
       visibleEnHome: pelicula.visible_en_home,
+      esEstreno: pelicula.es_estreno,
       precioBase: pelicula.precio_base,
       preventaActiva: pelicula.preventa_activa ?? false,
       precioPreventa: pelicula.precio_preventa ?? null,
     });
     this.generosElegidos.set((pelicula.generos ?? []).map(g => g.id));
+    this.archivoPoster.set(null);
+    this.vistaPrevia.set('');
     this.mensajeError.set('');
     this.mensajeOk.set('');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById('formulario-pelicula')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('nombre')?.focus({ preventScroll: true });
   }
 
   limpiarFormulario() {
     this.editandoId.set(null);
-    this.formPelicula.reset({ estado: 'cartelera', visibleEnHome: true, preventaActiva: false });
+    this.formPelicula.reset({ estado: 'cartelera', visibleEnHome: true, esEstreno: false, preventaActiva: false });
     this.generosElegidos.set([]);
     this.archivoPoster.set(null);
+    this.vistaPrevia.set('');
   }
 
   async guardar() {
@@ -177,6 +185,7 @@ export class AdminPeliculas implements OnInit {
       fecha_estreno: valores.fechaEstreno ? aFechaBase(valores.fechaEstreno) : null,
       estado: valores.estado as 'cartelera' | 'proximamente' | 'archivada',
       visible_en_home: valores.visibleEnHome!,
+      es_estreno: valores.esEstreno!,
       precio_base: valores.precioBase!,
       preventa_activa: valores.preventaActiva!,
       precio_preventa: valores.preventaActiva ? valores.precioPreventa : null,
@@ -237,6 +246,13 @@ export class AdminPeliculas implements OnInit {
       this.limpiarFormulario();
     }
     this.cargarPeliculas();
+  }
+
+  borrarEditada() {
+    const pelicula = this.peliculas().find(p => p.id === this.editandoId());
+    if (pelicula) {
+      this.borrar(pelicula);
+    }
   }
 
   private terminarConError(mensaje: string) {

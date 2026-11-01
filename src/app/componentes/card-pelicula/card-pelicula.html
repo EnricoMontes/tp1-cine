@@ -1,26 +1,34 @@
-<article class="tarjeta" [appResaltar]="1.04">
-  <img [src]="pelicula().imagen_url" [alt]="pelicula().nombre" />
+<article class="tarjeta" (click)="seleccionar()">
 
-  <div class="cuerpo">
+  <div class="poster" [appResaltar]="1.04">
+    <img [src]="pelicula().imagen_url" [alt]="pelicula().nombre" loading="lazy" />
+
+    <div class="chips">
+
+      <span class="chip-poster">{{ pelicula().restriccion_edad ? '+' + pelicula().restriccion_edad : 'ATP' }}</span>
+      @if (pelicula().es_estreno && pelicula().estado === 'cartelera') {
+        <span class="chip-poster rojo">Estreno</span>
+      }
+
+      @if (pelicula().estado === 'proximamente') {
+        @if (fechaCorta()) {
+          <span class="chip-poster rojo">{{ fechaCorta() }}</span>
+        }
+        @if (preventaAbierta()) {
+          <span class="chip-poster dorado">🎟 Preventa</span>
+        }
+      }
+    </div>
+  </div>
+
+  <div class="info">
     <h2>{{ pelicula().nombre }}</h2>
 
-    <p class="info">
-      {{ pelicula().duracion_min }} min ·
-      @if (pelicula().restriccion_edad) {
-        <span class="edad">+{{ pelicula().restriccion_edad }}</span>
-      } @else {
-        <span class="edad">ATP</span>
-      }
-    </p>
-
-    <p class="generos">
+    <p>
+      {{ pelicula().duracion_min | duracion }}
       @for (genero of pelicula().generos; track genero.id) {
-        <span>{{ genero.nombre }}</span>
+        · {{ genero.nombre }}
       }
     </p>
-
-    <button (click)="seleccionar()" [class.secundario]="pelicula().estado === 'proximamente' && !preventaAbierta()">
-      {{ preventaAbierta() ? '🎟 Preventa' : (pelicula().estado === 'proximamente' ? 'Próximamente' : 'Ver funciones') }}
-    </button>
   </div>
 </article>

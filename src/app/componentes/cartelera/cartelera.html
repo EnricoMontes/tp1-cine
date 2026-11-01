@@ -1,0 +1,115 @@
+<div class="encabezado">
+  <div>
+    <span class="etiqueta-cine">SignalCine</span>
+    <h1>Cartelera</h1>
+  </div>
+  <span class="cantidad">{{ lista().length }} películas</span>
+</div>
+
+@if (carrito.candyElegido()) {
+  <div class="aviso-candy">
+    <span>🍿 Elegí la película y la función: tu <strong>{{ carrito.candyElegido()?.nombre }}</strong> ya va a estar sumado a la compra.</span>
+    <button type="button" class="quitar-candy" (click)="carrito.candyElegido.set(null)" aria-label="Quitar">✕</button>
+  </div>
+}
+
+<div class="chips-seccion">
+  @for (chip of chips; track chip.seccion) {
+    <button type="button" class="chip-seccion" [class.activo]="seccion() === chip.seccion" (click)="seccion.set(chip.seccion)">
+      {{ chip.texto }}
+    </button>
+  }
+</div>
+
+<div class="barra-busqueda">
+  <input class="buscador-cartelera" type="text" placeholder="Buscar por película o género..." [(ngModel)]="busqueda" />
+  <button type="button" class="boton-filtros" (click)="abrirFiltros()">
+
+    <svg viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0" /><circle cx="16" cy="6" r="2" /><circle cx="10" cy="12" r="2" /><circle cx="18" cy="18" r="2" /></svg>
+    Filtros
+    @if (cantidadFiltros()) {
+      <span class="contador-filtros">{{ cantidadFiltros() }}</span>
+    }
+  </button>
+</div>
+
+@if (cantidadFiltros()) {
+  <div class="filtros-activos">
+    @for (genero of generosActivos(); track genero.id) {
+      <button type="button" class="chip-activo" (click)="quitarGenero(genero.id)">{{ genero.nombre }} <span>✕</span></button>
+    }
+    @if (edad() !== 'todas') {
+      <button type="button" class="chip-activo" (click)="edad.set('todas')">{{ textoEdad() }} <span>✕</span></button>
+    }
+    <button type="button" class="borrar-filtros" (click)="borrarFiltros()">Borrar filtros</button>
+  </div>
+}
+
+@if (cargando()) {
+  <p>Cargando películas...</p>
+} @else if (mensajeError()) {
+  <p class="error">{{ mensajeError() }}</p>
+} @else {
+  <div class="grilla">
+
+    @for (pelicula of lista() | filtroPeliculas: busqueda(); track pelicula.id) {
+      <app-card-pelicula [pelicula]="pelicula" (seleccionada)="verDetalle($event)" />
+    } @empty {
+      <p class="sin-resultados">No se encontraron películas con esos filtros.</p>
+    }
+  </div>
+}
+
+@if (panelAbierto()) {
+  <div class="fondo-panel" (click)="cerrarFiltros()"></div>
+
+  <aside class="panel-lateral">
+    <header class="panel-encabezado">
+      <span>Filtrar películas</span>
+      <button type="button" class="panel-cerrar" (click)="cerrarFiltros()" aria-label="Cerrar filtros">
+        <svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12" /></svg>
+      </button>
+    </header>
+
+    <div class="panel-cuerpo">
+
+      <section class="grupo">
+        <h3>Géneros</h3>
+        <div class="opciones">
+          @for (genero of generos(); track genero.id) {
+            <button type="button" class="opcion" [class.elegida]="borradorGeneros().includes(genero.id)" (click)="alternarGenero(genero.id)">
+              {{ genero.nombre }}
+            </button>
+          }
+        </div>
+      </section>
+
+      <section class="grupo">
+        <h3>Clasificación</h3>
+        <div class="opciones">
+          @for (opcion of opcionesEdad; track opcion.valor) {
+            <button type="button" class="opcion" [class.elegida]="borradorEdad() === opcion.valor" (click)="borradorEdad.set(opcion.valor)">
+              {{ opcion.texto }}
+            </button>
+          }
+        </div>
+      </section>
+
+      <section class="grupo">
+        <h3>Lanzamiento</h3>
+        <div class="opciones">
+          @for (chip of chips; track chip.seccion) {
+            <button type="button" class="opcion" [class.elegida]="borradorSeccion() === chip.seccion" (click)="borradorSeccion.set(chip.seccion)">
+              {{ chip.texto }}
+            </button>
+          }
+        </div>
+      </section>
+    </div>
+
+    <div class="panel-acciones">
+      <button type="button" class="panel-buscar" (click)="aplicarFiltros()">Buscar</button>
+      <button type="button" class="panel-borrar" (click)="limpiarBorrador()">Borrar filtros</button>
+    </div>
+  </aside>
+}

@@ -1,3 +1,61 @@
+@if (masVendidas().length) {
+  <section class="hero">
+
+    @for (pelicula of masVendidas(); track pelicula.id; let i = $index) {
+      <div class="hero-fondo" [class.activo]="i === actual()" [style.background-image]="'url(' + pelicula.imagen_url + ')'"></div>
+    }
+
+    <div class="hero-slides">
+
+      @for (pelicula of masVendidas(); track pelicula.id; let i = $index) {
+        <div class="hero-contenido" [class.activo]="i === actual()">
+          <img class="hero-poster" [src]="pelicula.imagen_url" [alt]="pelicula.nombre" />
+
+          <div class="hero-texto">
+
+            <div class="hero-etiqueta">
+              <span class="hero-top">
+                <svg viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3" /></svg>
+                Top {{ i + 1 }}
+              </span>
+              <span class="hero-etiqueta-texto">Las más vendidas</span>
+            </div>
+            <h1 class="hero-titulo">{{ pelicula.nombre }}</h1>
+            <p class="hero-meta">
+
+              <span class="hero-edad">{{ pelicula.restriccion_edad ? '+' + pelicula.restriccion_edad : 'ATP' }}</span>
+              {{ pelicula.duracion_min | duracion }}
+              @for (genero of pelicula.generos; track genero.id) {
+                · {{ genero.nombre }}
+              }
+            </p>
+            <p class="hero-sinopsis">{{ pelicula.sinopsis }}</p>
+            <div class="hero-botones">
+              <button type="button" class="hero-boton primario" (click)="verDetalle(pelicula)">Comprar entradas</button>
+              <a class="hero-boton" routerLink="/cartelera">Ver cartelera</a>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (masVendidas().length > 1) {
+      <button type="button" class="hero-flecha anterior" (click)="anterior()" aria-label="Anterior">
+        <svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6" /></svg>
+      </button>
+      <button type="button" class="hero-flecha siguiente" (click)="siguiente()" aria-label="Siguiente">
+        <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" /></svg>
+      </button>
+      <div class="hero-puntos">
+        @for (pelicula of masVendidas(); track pelicula.id; let i = $index) {
+          <button type="button" class="hero-punto" [class.activo]="i === actual()" (click)="actual.set(i)"
+                  [attr.aria-label]="'Ir a la ' + (i + 1)"></button>
+        }
+      </div>
+    }
+  </section>
+}
+
 @for (aviso of avisos(); track aviso.id) {
   <div class="panel aviso-alerta">
     <span>🔔 ¡Ya salieron las entradas de <strong>{{ aviso.peliculas?.nombre }}</strong>!</span>
@@ -8,48 +66,31 @@
   </div>
 }
 
-@if (masVendidas().length) {
-  <h1>Las más vendidas</h1>
-  <div class="mas-vendidas">
-    @for (pelicula of masVendidas(); track pelicula.id) {
-      <div class="vendida" (click)="verDetalle(pelicula)">
-        <img [src]="pelicula.imagen_url" [alt]="pelicula.nombre" />
-        <div class="vendida-datos">
-          <span class="puesto">#{{ masVendidas().indexOf(pelicula) + 1 }}</span>
-          <strong>{{ pelicula.nombre }}</strong>
-          <span class="cantidad">{{ pelicula.entradas_vendidas }} entradas vendidas</span>
-        </div>
-      </div>
-    }
-  </div>
-  <h2 class="titulo-seccion">En cartelera</h2>
-} @else {
-  <h1>En cartelera</h1>
-}
-
-<div class="filtros">
-  <input type="text" placeholder="Buscar por película o género..." [(ngModel)]="busqueda" />
-</div>
-
 @if (cargando()) {
   <p>Cargando películas...</p>
 } @else if (mensajeError()) {
   <p class="error">{{ mensajeError() }}</p>
 } @else {
-  <div class="cartelera">
-    @for (pelicula of peliculas() | filtroPeliculas: busqueda(); track pelicula.id) {
-      <app-card-pelicula [pelicula]="pelicula" (seleccionada)="verDetalle($event)" />
-    } @empty {
-      <p>No se encontraron películas.</p>
-    }
-  </div>
-}
+  @for (fila of filas(); track fila.seccion) {
+    @if (fila.peliculas.length) {
+      <section class="seccion-peliculas">
+        <div class="fila-encabezado">
+          <div>
+            <span class="fila-etiqueta">{{ fila.etiqueta }}</span>
+            <h2>{{ fila.titulo }}</h2>
+          </div>
 
-@if (proximas().length) {
-  <h2 class="titulo-seccion">Próximamente</h2>
-  <div class="cartelera">
-    @for (pelicula of proximas(); track pelicula.id) {
-      <app-card-pelicula [pelicula]="pelicula" (seleccionada)="verDetalle($event)" />
+          <a class="fila-ver-todas" routerLink="/cartelera" [queryParams]="{ seccion: fila.seccion }">
+            Ver todas ({{ fila.peliculas.length }}) →
+          </a>
+        </div>
+
+        <div class="fila-peliculas">
+          @for (pelicula of fila.peliculas | slice: 0 : 5; track pelicula.id) {
+            <app-card-pelicula [pelicula]="pelicula" (seleccionada)="verDetalle($event)" />
+          }
+        </div>
+      </section>
     }
-  </div>
+  }
 }

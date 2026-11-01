@@ -1,6 +1,10 @@
 <nav class="navbar">
-  <a class="logo" routerLink="/home"><img src="img/logo-horizontal.svg" alt="SignalCine" height="34"></a>
-  <a routerLink="/home" routerLinkActive="active">Cartelera</a>
+
+  <a class="logo" routerLink="/"><img src="img/logo-horizontal.svg" alt="SignalCine" height="44"></a>
+
+  <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
+  <a routerLink="/cartelera" routerLinkActive="active">Cartelera</a>
+  <a routerLink="/candy" routerLinkActive="active">Candy bar</a>
 
   @if (auth.usuario()) {
     @if (auth.perfil()?.rol === 'admin') {
@@ -18,11 +22,42 @@
 
     <button class="salir" (click)="salir()">Salir</button>
   } @else {
-    <a routerLink="/login" routerLinkActive="active">Ingresar</a>
-    <a routerLink="/registro" routerLinkActive="active">Registrarse</a>
+    <button type="button" class="avatar" (click)="auth.loginAbierto.set(true)" aria-label="Iniciar sesión" title="Iniciar sesión">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></svg>
+    </button>
   }
 </nav>
 
+@if (auth.loginAbierto()) {
+  <app-login-panel />
+}
+
 <main>
+
   <router-outlet />
 </main>
+
+<footer class="footer">
+  <div class="footer-columnas">
+    <div class="footer-marca">
+      <img src="img/logo-horizontal.svg" alt="SignalCine" height="30">
+      <p>Cartelera, entradas y candy bar en un solo lugar.</p>
+    </div>
+
+    <div>
+      <h4>Navegación</h4>
+      <a routerLink="/">Inicio</a>
+      <a routerLink="/cartelera">Cartelera</a>
+      <a routerLink="/candy">Candy bar</a>
+
+      @if (auth.usuario()) {
+        <a routerLink="/perfil">Mi perfil</a>
+      } @else {
+        <a (click)="auth.loginAbierto.set(true)">Ingresar</a>
+        <a routerLink="/registro">Registrarse</a>
+      }
+    </div>
+  </div>
+
+  <p class="footer-legal">© {{ anio }} SignalCine · Trabajo práctico de Programación IV · UTN FRA</p>
+</footer>

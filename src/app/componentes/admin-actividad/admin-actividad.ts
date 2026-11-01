@@ -29,7 +29,55 @@ export class AdminActividad implements OnInit {
     return this.filtradas().slice(desde, desde + this.porPagina);
   });
 
+  diasDeLaPagina = computed(() => {
+    const dias: { fecha: string; actividades: Actividad[] }[] = [];
+    for (const actividad of this.deLaPagina()) {
+      const fecha = this.fechaLocal(actividad.creado_en);
+      const ultimo = dias[dias.length - 1];
+      if (ultimo && ultimo.fecha === fecha) {
+        ultimo.actividades.push(actividad);
+      } else {
+        dias.push({ fecha, actividades: [actividad] });
+      }
+    }
+    return dias;
+  });
+
   constructor(private actividadesService: Actividades) {}
+
+  private fechaLocal(fecha: string) {
+    const d = new Date(fecha);
+    const dos = (n: number) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${dos(d.getMonth() + 1)}-${dos(d.getDate())}`;
+  }
+
+  textoDia(fecha: string) {
+    return new Date(fecha + 'T00:00').toLocaleDateString('es-AR', { weekday: 'long', day: '2-digit', month: '2-digit' });
+  }
+
+  tipo(accion: string) {
+    if (accion.startsWith('Validó')) {
+      return 'validar';
+    }
+    if (accion.startsWith('Entregó')) {
+      return 'candy';
+    }
+    if (accion.startsWith('Creó')) {
+      return 'crear';
+    }
+    if (accion.startsWith('Borró')) {
+      return 'borrar';
+    }
+    return 'cambiar';
+  }
+
+  nombreDe(usuario: string) {
+    return usuario.replace(/\s*\([^)]*\)$/, '');
+  }
+
+  rolDe(usuario: string) {
+    return usuario.match(/\(([^)]*)\)$/)?.[1] ?? '';
+  }
 
   async ngOnInit() {
     const { data } = await this.actividadesService.traerTodas();

@@ -6,25 +6,40 @@
   }
 
   <div class="resumen">
+
     <div class="panel dato">
-      <span class="ayuda">Facturación total</span>
-      <strong>{{ totalFacturado() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong>
+      <span class="icono"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg></span>
+      <div>
+        <span class="ayuda">Facturación total</span>
+        <strong>{{ totalFacturado() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong>
+      </div>
     </div>
     <div class="panel dato">
-      <span class="ayuda">Entradas vendidas</span>
-      <strong>{{ totalEntradas() }}</strong>
+      <span class="icono"><svg viewBox="0 0 24 24"><path d="M3 9a3 3 0 0 0 0 6v4h18v-4a3 3 0 0 1 0-6V5H3zM13 5v14" /></svg></span>
+      <div>
+        <span class="ayuda">Entradas vendidas</span>
+        <strong>{{ totalEntradas() }}</strong>
+      </div>
     </div>
     <div class="panel dato">
-      <span class="ayuda">Lo más vendido del candy</span>
-      <strong>{{ candy()[0]?.nombre ?? '—' }}</strong>
+      <span class="icono"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1.5 13h-11zM8 8a4 4 0 0 1 8 0" /></svg></span>
+      <div>
+
+        <span class="ayuda">Lo más vendido del candy</span>
+        <strong class="texto">{{ candy()[0]?.nombre ?? '—' }}</strong>
+      </div>
     </div>
   </div>
 
   <div class="encabezado-seccion">
     <h2>Facturación por día</h2>
     <div class="botones">
-      <button type="button" class="secundario chico" (click)="exportarPdf()" [disabled]="!porDia().length">Exportar PDF</button>
-      <button type="button" class="secundario chico" (click)="exportarExcel()" [disabled]="!porDia().length">Exportar Excel</button>
+      <button type="button" class="exportar" (click)="exportarPdf()" [disabled]="!porDia().length">
+        <svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 21h16" /></svg> PDF
+      </button>
+      <button type="button" class="exportar" (click)="exportarExcel()" [disabled]="!porDia().length">
+        <svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 21h16" /></svg> Excel
+      </button>
     </div>
   </div>
   <div class="tabla-contenedor">
@@ -47,15 +62,18 @@
   </div>
 
   <div class="graficos">
+
     <section class="panel">
       <div class="encabezado-grafico">
         <h3>Películas más vistas</h3>
-        <div class="botones">
-          <button type="button" class="secundario chico" [class.elegida]="periodo() === 'semana'" (click)="periodo.set('semana')">Semana</button>
-          <button type="button" class="secundario chico" [class.elegida]="periodo() === 'mes'" (click)="periodo.set('mes')">Mes</button>
+
+        <div class="selector">
+          <button type="button" [class.elegida]="periodo() === 'semana'" (click)="periodo.set('semana')">Semana</button>
+          <button type="button" [class.elegida]="periodo() === 'mes'" (click)="periodo.set('mes')">Mes</button>
         </div>
       </div>
       <p class="ayuda">Entradas vendidas en los últimos {{ periodo() === 'semana' ? '7' : '30' }} días.</p>
+
       @for (barra of masVistas(); track barra.nombre) {
         <div class="barra-fila">
           <span class="barra-nombre">{{ barra.nombre }}</span>
@@ -76,7 +94,7 @@
         <div class="barra-fila">
           <span class="barra-nombre">{{ barra.nombre }}</span>
           <div class="barra-fondo">
-            <div class="barra amarilla" [style.width]="ancho(barra.cantidad, candy())"></div>
+            <div class="barra clara" [style.width]="ancho(barra.cantidad, candy())"></div>
           </div>
           <span class="barra-numero">{{ barra.cantidad }}</span>
         </div>

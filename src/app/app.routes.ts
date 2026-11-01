@@ -8,12 +8,21 @@ import { formGuard } from './guards/form-guard';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'home',
-    pathMatch: 'full'
+    pathMatch: 'full',
+    loadComponent: () => import('./componentes/home/home').then(m => m.Home)
   },
   {
     path: 'home',
-    loadComponent: () => import('./componentes/home/home').then(m => m.Home)
+    redirectTo: '',
+    pathMatch: 'full'
+  },
+  {
+    path: 'cartelera',
+    loadComponent: () => import('./componentes/cartelera/cartelera').then(m => m.Cartelera)
+  },
+  {
+    path: 'candy',
+    loadComponent: () => import('./componentes/candy/candy').then(m => m.CandyBar)
   },
   {
     path: 'peliculas/:id',

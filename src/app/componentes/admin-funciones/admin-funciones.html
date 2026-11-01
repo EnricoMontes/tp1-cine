@@ -1,75 +1,109 @@
-<form class="form panel" [formGroup]="formFuncion" (ngSubmit)="guardar()">
+<form class="form panel" id="formulario-funcion" [formGroup]="formFuncion" (ngSubmit)="guardar()">
   <h3>Nueva función</h3>
   <p class="ayuda">La sala se asigna automáticamente: la primera libre del formato elegido.</p>
 
-  <label for="peliculaId">Película</label>
-  <select id="peliculaId" formControlName="peliculaId">
-    <option [ngValue]="null" disabled>Elegí una película</option>
-    @for (pelicula of peliculas(); track pelicula.id) {
-      <option [ngValue]="pelicula.id">{{ pelicula.nombre }} ({{ pelicula.duracion_min }} min)</option>
-    }
-  </select>
+  <div class="form-cuerpo">
 
-  <div class="fila">
-    <div class="campo">
-      <label for="formato">Formato</label>
-      <select id="formato" formControlName="formato">
-        @for (formato of formatos; track formato) {
-          <option [ngValue]="formato">{{ formato }}</option>
+    <div class="columna-poster">
+      <div class="poster-vista">
+        @if (peliculaDelFormulario()) {
+          <img [src]="peliculaDelFormulario()?.imagen_url" [alt]="peliculaDelFormulario()?.nombre">
+        } @else {
+          <div class="sin-poster">
+            <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="M2 9h20M7 4v5M12 4v5M17 4v5" /></svg>
+            <span>Elegí una película</span>
+          </div>
+        }
+      </div>
+      @if (peliculaDelFormulario()) {
+        <p class="poster-nombre">{{ peliculaDelFormulario()?.nombre }}</p>
+
+        <p class="ayuda centrada">{{ peliculaDelFormulario()!.duracion_min | duracion }}</p>
+      }
+    </div>
+
+    <div class="columna-campos">
+      <label for="peliculaId">Película</label>
+      <select id="peliculaId" formControlName="peliculaId">
+        <option [ngValue]="null" disabled>Elegí una película</option>
+        @for (pelicula of peliculas(); track pelicula.id) {
+          <option [ngValue]="pelicula.id">{{ pelicula.nombre }} ({{ pelicula.duracion_min }} min)</option>
         }
       </select>
-    </div>
 
-    <div class="campo">
-      <label for="idioma">Idioma</label>
-      <select id="idioma" formControlName="idioma">
-        <option value="castellano">Castellano</option>
-        <option value="subtitulada">Subtitulada</option>
-      </select>
-    </div>
+      <div class="fila">
 
-  </div>
+        <div class="campo">
+          <label>Formato</label>
+          <div class="pildoras">
+            @for (formato of formatos; track formato) {
+              <button type="button" class="pildora" [class.elegida]="formFuncion.controls.formato.value === formato"
+                      (click)="formFuncion.controls.formato.setValue(formato)">{{ formato }}</button>
+            }
+          </div>
+        </div>
 
-  <div class="fila">
-    <div class="campo">
-      <label for="fecha">Fecha</label>
-      <input type="text" id="fecha" formControlName="fecha" placeholder="DD/MM/AAAA" maxlength="10" inputmode="numeric" (input)="formatearFecha($event, 'fecha')">
-      @if (formFuncion.controls.fecha.touched && formFuncion.controls.fecha.invalid) {
-        <p class="error">Fecha DD/MM/AAAA</p>
-      }
-    </div>
-    <div class="campo">
-      <label for="hora">Hora</label>
-      <input type="text" id="hora" formControlName="hora" placeholder="HH:MM" maxlength="5" inputmode="numeric" (input)="formatearHora($event)">
-      @if (formFuncion.controls.hora.touched && formFuncion.controls.hora.invalid) {
-        <p class="error">Hora HH:MM (00:00 a 23:59)</p>
-      }
-      <div class="horas-rapidas">
+        <div class="campo">
+          <label>Idioma</label>
+          <div class="pildoras">
+            <button type="button" class="pildora" [class.elegida]="formFuncion.controls.idioma.value === 'castellano'"
+                    (click)="formFuncion.controls.idioma.setValue('castellano')">Castellano</button>
+            <button type="button" class="pildora" [class.elegida]="formFuncion.controls.idioma.value === 'subtitulada'"
+                    (click)="formFuncion.controls.idioma.setValue('subtitulada')">Subtitulada</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="fila">
+        <div class="campo">
+          <label for="fecha">Fecha</label>
+          <input type="text" id="fecha" formControlName="fecha" placeholder="DD/MM/AAAA" maxlength="10" inputmode="numeric" (input)="formatearFecha($event, 'fecha')">
+          @if (formFuncion.controls.fecha.touched && formFuncion.controls.fecha.invalid) {
+            <p class="error">Fecha DD/MM/AAAA</p>
+          }
+        </div>
+        <div class="campo">
+          <label for="hora">Hora</label>
+          <input type="text" id="hora" formControlName="hora" placeholder="HH:MM" maxlength="5" inputmode="numeric" (input)="formatearHora($event)">
+          @if (formFuncion.controls.hora.touched && formFuncion.controls.hora.invalid) {
+            <p class="error">Hora HH:MM (00:00 a 23:59)</p>
+          }
+        </div>
+      </div>
+      <div class="pildoras">
         @for (hora of horasRapidas; track hora) {
-          <button type="button" class="secundario chico" [class.elegida]="formFuncion.controls.hora.value === hora"
+          <button type="button" class="pildora chica" [class.elegida]="formFuncion.controls.hora.value === hora"
                   (click)="formFuncion.controls.hora.setValue(hora)">{{ hora }}</button>
         }
       </div>
-    </div>
-  </div>
 
-  <div class="repetir">
-    <p class="ayuda">Repetir (opcional): misma hora, en los días marcados, hasta la fecha que elijas.</p>
-    <div class="fila">
-      <div class="campo">
-        <label for="hasta">Hasta el día</label>
-        <input type="text" id="hasta" formControlName="hasta" placeholder="DD/MM/AAAA" maxlength="10" inputmode="numeric" (input)="formatearFecha($event, 'hasta')">
-        @if (formFuncion.controls.hasta.touched && formFuncion.controls.hasta.invalid) {
-          <p class="error">Fecha DD/MM/AAAA</p>
-        }
-      </div>
-      <div class="campo">
-        <label>Días</label>
-        <div class="dias">
-          @for (dia of dias; track dia.numero) {
-            <button type="button" class="secundario chico" [class.elegida]="diasElegidos().includes(dia.numero)"
-                    (click)="alternarDia(dia.numero)">{{ dia.nombre }}</button>
-          }
+      <div class="repetir">
+        <div class="repetir-titulo">
+          <svg viewBox="0 0 24 24"><path d="M17 2l4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4M21 13v2a3 3 0 0 1-3 3H3" /></svg>
+          <div>
+            <strong>Repetir (opcional)</strong>
+            <span class="ayuda">Misma hora, en los días marcados, hasta la fecha que elijas.</span>
+          </div>
+        </div>
+        <div class="fila">
+          <div class="campo campo-hasta">
+            <label for="hasta">Hasta el día</label>
+            <input type="text" id="hasta" formControlName="hasta" placeholder="DD/MM/AAAA" maxlength="10" inputmode="numeric" (input)="formatearFecha($event, 'hasta')">
+            @if (formFuncion.controls.hasta.touched && formFuncion.controls.hasta.invalid) {
+              <p class="error">Fecha DD/MM/AAAA</p>
+            }
+          </div>
+          <div class="campo">
+            <label>Días</label>
+
+            <div class="pildoras dias-semana">
+
+              @for (dia of dias; track dia.numero) {
+                <button type="button" class="pildora dia" [class.elegida]="diasElegidos().includes(dia.numero)"
+                        (click)="alternarDia(dia.numero)">{{ dia.nombre }}</button>
+              }
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -92,56 +126,71 @@
 
 <div class="encabezado-seccion">
   <h2>Funciones programadas</h2>
-  <span class="ayuda">{{ funciones().length }} en total</span>
+  <span class="ayuda">{{ funcionesProximas() }} próximas en total</span>
 </div>
 
-<input class="buscador" type="text" placeholder="Buscar por película o sala..."
-       [(ngModel)]="busqueda" (ngModelChange)="pagina.set(0)" />
+<input class="buscador" type="text" placeholder="Buscar película..." [(ngModel)]="busqueda" />
 
-@if (funciones().length === 0) {
-  <p class="ayuda">Todavía no hay funciones cargadas.</p>
-} @else if (funcionesFiltradas().length === 0) {
-  <p class="ayuda">Ninguna función coincide con "{{ busqueda() }}".</p>
-} @else {
-  <div class="tabla-contenedor">
-    <table class="tabla">
-      <thead>
-        <tr>
-          <th>Película</th>
-          <th>Cuándo</th>
-          <th>Sala</th>
-          <th>Formato</th>
-          <th>Idioma</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (funcion of funcionesDeLaPagina(); track funcion.id) {
-          <tr>
-            <td><strong>{{ funcion.peliculas?.nombre }}</strong></td>
-            <td>
-              {{ funcion.inicio | date: 'dd/MM/yyyy' }}
-              <span class="ayuda">{{ funcion.inicio | date: 'HH:mm' }} a {{ funcion.fin | date: 'HH:mm' }}</span>
-            </td>
-            <td>{{ funcion.salas?.nombre }}</td>
-            <td><span class="etiqueta azul">{{ funcion.formato }}</span></td>
-            <td><span class="etiqueta">{{ funcion.idioma === 'castellano' ? 'Castellano' : 'Subtitulada' }}</span></td>
-            <td>
-              <div class="acciones">
-                <button type="button" class="peligro chico" (click)="borrar(funcion)">Borrar</button>
-              </div>
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  </div>
-
-  @if (totalPaginas() > 1) {
-    <div class="paginado">
-      <button type="button" class="secundario chico" [disabled]="pagina() === 0" (click)="pagina.set(pagina() - 1)">Anterior</button>
-      <span>Página {{ pagina() + 1 }} de {{ totalPaginas() }}</span>
-      <button type="button" class="secundario chico" [disabled]="pagina() + 1 >= totalPaginas()" (click)="pagina.set(pagina() + 1)">Siguiente</button>
+@if (peliculaElegida()) {
+  <section class="panel funciones-elegida" id="funciones-elegida">
+    <div class="elegida-encabezado">
+      <img [src]="peliculaElegida()?.imagen_url" [alt]="peliculaElegida()?.nombre">
+      <div class="elegida-datos">
+        <h3>{{ peliculaElegida()?.nombre }}</h3>
+        <span class="ayuda">{{ peliculaElegida()!.duracion_min | duracion }} · {{ funcionesDeLaElegida().length }} funciones</span>
+        <div class="elegida-botones">
+          <button type="button" class="chico" (click)="programar(peliculaElegida()!)">+ Programar función</button>
+          <button type="button" class="secundario chico" (click)="elegidaId.set(null)">Cerrar</button>
+        </div>
+      </div>
     </div>
-  }
+
+    @for (dia of diasDeLaElegida(); track dia.fecha) {
+      <div class="dia-funciones">
+        <h4>{{ textoDia(dia.fecha) }}</h4>
+        <div class="funciones-del-dia">
+          @for (funcion of dia.funciones; track funcion.id) {
+            <div class="funcion" [class.pasada]="esPasada(funcion)">
+
+              <span class="funcion-hora">{{ funcion.inicio | date: 'HH:mm' }}</span>
+              <span class="ayuda">hasta {{ funcion.fin | date: 'HH:mm' }}</span>
+              <div class="funcion-etiquetas">
+                <span class="etiqueta azul">{{ funcion.formato }}</span>
+                <span class="etiqueta">{{ funcion.salas?.nombre }}</span>
+                <span class="etiqueta">{{ funcion.idioma === 'castellano' ? 'Castellano' : 'Subtitulada' }}</span>
+              </div>
+              <button type="button" class="borrar-funcion" (click)="borrar(funcion)" aria-label="Borrar función" title="Borrar función">
+                <svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14" /></svg>
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    } @empty {
+      <p class="ayuda">Esta película todavía no tiene funciones.</p>
+    }
+  </section>
 }
+
+<div class="grilla-admin">
+  @for (pelicula of peliculas() | filtroPeliculas: busqueda(); track pelicula.id) {
+    <article class="tarjeta-admin" [class.editando]="elegidaId() === pelicula.id" (click)="elegir(pelicula)">
+      <div class="poster-admin">
+        <img [src]="pelicula.imagen_url" [alt]="pelicula.nombre" loading="lazy">
+
+        <span class="contador" [class.cero]="!cantidadProximas(pelicula.id)">
+          {{ cantidadProximas(pelicula.id) }} {{ cantidadProximas(pelicula.id) === 1 ? 'función' : 'funciones' }}
+        </span>
+        <div class="capa-editar">
+          <span class="boton-editar">Ver funciones</span>
+        </div>
+      </div>
+      <div class="info-admin">
+        <strong>{{ pelicula.nombre }}</strong>
+        <span>{{ pelicula.estado === 'proximamente' ? 'Preventa · estreno ' + diaMes(pelicula.fecha_estreno) : 'En cartelera' }}</span>
+      </div>
+    </article>
+  } @empty {
+    <p class="ayuda sin-peliculas">Ninguna película coincide con la búsqueda.</p>
+  }
+</div>

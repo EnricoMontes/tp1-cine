@@ -1,0 +1,95 @@
+<div class="encabezado">
+  <div>
+    <span class="etiqueta-cine">SignalCine</span>
+    <h1>Candy bar</h1>
+    <p class="ayuda">Pochoclos, bebidas, golosinas y combos para disfrutar la película.</p>
+  </div>
+  <input class="buscador-candy" type="text" placeholder="Buscar en el candy..." [(ngModel)]="busqueda" />
+</div>
+
+<div class="aviso">
+  <svg viewBox="0 0 24 24"><path d="M3 9a3 3 0 0 0 0 6v4h18v-4a3 3 0 0 1 0-6V5H3zM13 5v14" /></svg>
+  <span>El candy se compra junto con tu entrada. Tocá <strong>Lo quiero</strong>, elegí la película y la función, y ya te lo dejamos sumado.</span>
+</div>
+
+<div class="chips-candy">
+  <button type="button" class="chip-candy" (click)="irA('Combos')">Combos</button>
+  @for (categoria of categorias; track categoria) {
+    <button type="button" class="chip-candy" (click)="irA(categoria)">{{ categoria }}</button>
+  }
+</div>
+
+@if (cargando()) {
+  <p>Cargando el candy...</p>
+} @else {
+  @if (combosFiltrados().length) {
+    <section class="seccion" id="Combos">
+      <h2 class="titulo-seccion">Combos</h2>
+      <div class="grilla-candy">
+        @for (combo of combosFiltrados(); track combo.id) {
+          <article class="tarjeta-candy destacada">
+            <div class="foto">
+
+              @if (combo.imagen_url) {
+                <img [src]="combo.imagen_url" [alt]="combo.nombre" loading="lazy">
+              } @else {
+                <svg viewBox="0 0 24 24"><path d="M3 9a3 3 0 0 0 0 6v4h18v-4a3 3 0 0 1 0-6V5H3zM13 5v14" /></svg>
+              }
+              <div class="chips-foto">
+                <span class="chip-foto">★ Combo</span>
+                <span class="chip-foto azul">Incluye entrada</span>
+              </div>
+            </div>
+            <div class="cuerpo">
+              <h3>{{ combo.nombre }}</h3>
+              <p class="ayuda">{{ combo.incluye }}</p>
+              <span class="precio">{{ combo.precio | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</span>
+              <button type="button" class="lo-quiero" (click)="quiero('combo', combo)">Lo quiero</button>
+            </div>
+          </article>
+        }
+      </div>
+    </section>
+  }
+
+  @for (categoria of categorias; track categoria) {
+    @if (productosDe(categoria).length) {
+      <section class="seccion" [id]="categoria">
+        <h2 class="titulo-seccion">{{ categoria }}</h2>
+        <div class="grilla-candy">
+          @for (producto of productosDe(categoria); track producto.id) {
+            <article class="tarjeta-candy">
+              <div class="foto">
+
+                @if (producto.imagen_url) {
+                  <img [src]="producto.imagen_url" [alt]="producto.nombre" loading="lazy">
+                } @else {
+                  @switch (categoria) {
+                    @case ('Pochoclos') {
+                      <svg viewBox="0 0 24 24"><path d="M5 9h14l-2 12H7zM7 9a2.5 2.5 0 0 1 2-4 3 3 0 0 1 6 0 2.5 2.5 0 0 1 2 4" /></svg>
+                    }
+                    @case ('Bebidas') {
+                      <svg viewBox="0 0 24 24"><path d="M6 7h12l-1.5 14h-9zM5 7h14M12 7l2-5h3" /></svg>
+                    }
+                    @default {
+                      <svg viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="2" /><path d="M7 12 3 9v6zM17 12l4-3v6z" /></svg>
+                    }
+                  }
+                }
+              </div>
+              <div class="cuerpo">
+                <h3>{{ producto.nombre }}</h3>
+                <span class="precio">{{ producto.precio | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</span>
+                <button type="button" class="lo-quiero" (click)="quiero('producto', producto)">Lo quiero</button>
+              </div>
+            </article>
+          }
+        </div>
+      </section>
+    }
+  }
+
+  @if (!combosFiltrados().length && !productosFiltrados().length) {
+    <p class="sin-resultados">No encontramos nada con "{{ busqueda() }}".</p>
+  }
+}

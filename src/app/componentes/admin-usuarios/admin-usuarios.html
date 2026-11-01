@@ -4,7 +4,15 @@
 </div>
 <p class="ayuda">Para sumar un empleado: la persona se registra en la página y acá le cambiás el rol a "empleado".</p>
 
-<input class="buscador" type="text" placeholder="Buscar por nombre, mail o rol..." [(ngModel)]="busqueda" />
+<div class="chips-rol">
+  @for (opcion of opcionesRol; track opcion.valor) {
+    <button type="button" class="chip-rol" [class.activo]="rolFiltro() === opcion.valor" (click)="rolFiltro.set(opcion.valor)">
+      {{ opcion.texto }} <span>{{ cantidad(opcion.valor) }}</span>
+    </button>
+  }
+</div>
+
+<input class="buscador" type="text" placeholder="Buscar por nombre o mail..." [(ngModel)]="busqueda" />
 
 @if (mensaje()) {
   <p class="ok">{{ mensaje() }}</p>
@@ -18,34 +26,31 @@
 } @else if (filtrados().length === 0) {
   <p class="ayuda">No hay usuarios.</p>
 } @else {
-  <div class="tabla-contenedor">
-    <table class="tabla">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Mail</th>
-          <th>Rol</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (usuario of filtrados(); track usuario.id) {
-          <tr>
-            <td>{{ usuario.apellido }}, {{ usuario.nombre }}</td>
-            <td>{{ usuario.email }}</td>
-            <td>
-              @if (usuario.id === auth.perfil()?.id) {
-                {{ usuario.rol }} (vos)
-              } @else {
-                <select [ngModel]="usuario.rol" (ngModelChange)="cambiarRol(usuario, $event)">
-                  <option value="cliente">cliente</option>
-                  <option value="empleado">empleado</option>
-                  <option value="admin">admin</option>
-                </select>
-              }
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
+  <div class="usuarios">
+    @for (usuario of filtrados(); track usuario.id) {
+      <div class="usuario" [class.yo]="usuario.id === auth.perfil()?.id">
+
+        <span class="avatar" [class.empleado]="usuario.rol === 'empleado'" [class.admin]="usuario.rol === 'admin'">{{ iniciales(usuario) }}</span>
+
+        <div class="usuario-datos">
+          <strong>
+            {{ usuario.nombre }} {{ usuario.apellido }}
+            @if (usuario.id === auth.perfil()?.id) {
+              <span class="vos">Vos</span>
+            }
+          </strong>
+          <span class="ayuda">{{ usuario.email }}</span>
+        </div>
+
+        <div class="selector-rol">
+          @for (rol of roles; track rol) {
+            <button type="button" [class.elegido]="usuario.rol === rol" [disabled]="usuario.id === auth.perfil()?.id"
+                    (click)="usuario.rol !== rol && cambiarRol(usuario, rol)">
+              {{ rol === 'cliente' ? 'Cliente' : rol === 'empleado' ? 'Empleado' : 'Admin' }}
+            </button>
+          }
+        </div>
+      </div>
+    }
   </div>
 }

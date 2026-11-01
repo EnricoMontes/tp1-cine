@@ -9,9 +9,11 @@ import { Actividades } from '../../servicios/actividades';
 import { Pelicula } from '../../modelos/pelicula';
 import { Formato } from '../../modelos/sala';
 import { aFechaBase, fechaValidator, horaValidator, ponerBarras, ponerDosPuntos } from '../../validadores/fecha.validadores';
+import { FiltroPeliculasPipe } from '../../pipes/filtro-peliculas-pipe';
+import { DuracionPipe } from '../../pipes/duracion-pipe';
 
 @Component({
-  imports: [ReactiveFormsModule, FormsModule, DatePipe],
+  imports: [ReactiveFormsModule, FormsModule, DatePipe, FiltroPeliculasPipe, DuracionPipe],
   selector: 'app-admin-funciones',
   styleUrl: './admin-funciones.css',
   templateUrl: './admin-funciones.html',
@@ -20,20 +22,33 @@ export class AdminFunciones implements OnInit {
   funciones = signal<Funcion[]>([]);
 
   busqueda = signal('');
-  porPagina = 10;
-  pagina = signal(0);
-  funcionesFiltradas = computed(() => {
-    const texto = this.busqueda().toLowerCase().trim();
-    return this.funciones().filter(f =>
-      (f.peliculas?.nombre ?? '').toLowerCase().includes(texto) ||
-      (f.salas?.nombre ?? '').toLowerCase().includes(texto)
-    );
+  elegidaId = signal<number | null>(null);
+  peliculaElegida = computed(() => this.peliculas().find(p => p.id === this.elegidaId()) ?? null);
+  funcionesDeLaElegida = computed(() => this.funciones().filter(f => f.pelicula_id === this.elegidaId()));
+  diasDeLaElegida = computed(() => {
+    const dias: { fecha: string; funciones: Funcion[] }[] = [];
+    for (const funcion of this.funcionesDeLaElegida()) {
+      const fecha = funcion.inicio.slice(0, 10);
+      const ultimo = dias[dias.length - 1];
+      if (ultimo && ultimo.fecha === fecha) {
+        ultimo.funciones.push(funcion);
+      } else {
+        dias.push({ fecha, funciones: [funcion] });
+      }
+    }
+    return dias;
   });
-  totalPaginas = computed(() => Math.ceil(this.funcionesFiltradas().length / this.porPagina));
-  funcionesDeLaPagina = computed(() => {
-    const desde = this.pagina() * this.porPagina;
-    return this.funcionesFiltradas().slice(desde, desde + this.porPagina);
+  proximasPorPelicula = computed(() => {
+    const ahora = new Date();
+    const cantidades = new Map<number, number>();
+    for (const funcion of this.funciones()) {
+      if (new Date(funcion.inicio) > ahora) {
+        cantidades.set(funcion.pelicula_id, (cantidades.get(funcion.pelicula_id) ?? 0) + 1);
+      }
+    }
+    return cantidades;
   });
+  funcionesProximas = computed(() => [...this.proximasPorPelicula().values()].reduce((a, b) => a + b, 0));
   peliculas = signal<Pelicula[]>([]);
 
   formatos: Formato[] = ['2D', '3D', '4D', '5D'];
@@ -96,6 +111,40 @@ export class AdminFunciones implements OnInit {
 
   formatearHora(event: Event) {
     this.formFuncion.controls.hora.setValue(ponerDosPuntos((event.target as HTMLInputElement).value));
+  }
+
+  elegir(pelicula: Pelicula) {
+    if (this.elegidaId() === pelicula.id) {
+      this.elegidaId.set(null);
+      return;
+    }
+    this.elegidaId.set(pelicula.id);
+    setTimeout(() => document.getElementById('funciones-elegida')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  }
+
+  programar(pelicula: Pelicula) {
+    this.formFuncion.controls.peliculaId.setValue(pelicula.id);
+    document.getElementById('formulario-funcion')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  peliculaDelFormulario() {
+    return this.peliculas().find(p => p.id === this.formFuncion.controls.peliculaId.value) ?? null;
+  }
+
+  cantidadProximas(peliculaId: number) {
+    return this.proximasPorPelicula().get(peliculaId) ?? 0;
+  }
+
+  esPasada(funcion: Funcion) {
+    return new Date(funcion.inicio) <= new Date();
+  }
+
+  textoDia(fecha: string) {
+    return new Date(fecha + 'T00:00').toLocaleDateString('es-AR', { weekday: 'long', day: '2-digit', month: '2-digit' });
+  }
+
+  diaMes(fecha: string | null) {
+    return fecha ? `${fecha.slice(8, 10)}/${fecha.slice(5, 7)}` : '';
   }
 
   alternarDia(numero: number) {

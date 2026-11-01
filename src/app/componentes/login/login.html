@@ -1,24 +1,50 @@
-<h1>Ingresar</h1>
+@if (!enPanel()) {
+  <span class="etiqueta-login">Ingresar</span>
+  <h1>Iniciá sesión</h1>
+}
 
-<form class="form" [formGroup]="formLogin" (ngSubmit)="ingresar()">
+<form class="form-login" [class.tarjeta]="!enPanel()" [formGroup]="formLogin" (ngSubmit)="ingresar()">
+  <p class="saludo">¡Hola! Qué bueno verte por acá</p>
 
-  <label for="email">Mail</label>
-  <input type="email" id="email" formControlName="email">
-  @if (formLogin.controls.email.touched && formLogin.controls.email.invalid) {
-    <p class="error">Ingresá un mail válido</p>
-  }
+  <div class="campo">
+    <label for="email">Correo electrónico</label>
+    <input type="email" id="email" formControlName="email" autocomplete="email">
+    @if (formLogin.controls.email.touched && formLogin.controls.email.invalid) {
+      <p class="error">Ingresá un mail válido</p>
+    }
+  </div>
 
-  <label for="clave">Contraseña</label>
-  <input type="password" id="clave" formControlName="clave">
-  @if (formLogin.controls.clave.touched && formLogin.controls.clave.invalid) {
-    <p class="error">La contraseña es obligatoria</p>
-  }
+  <div class="campo">
+    <label for="clave">Contraseña</label>
+
+    <div class="campo-clave">
+
+      <input [type]="verClave() ? 'text' : 'password'" id="clave" formControlName="clave" autocomplete="current-password">
+      <button type="button" class="ojo" (click)="verClave.set(!verClave())" [attr.aria-label]="verClave() ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+        <svg viewBox="0 0 24 24">
+          <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
+          <circle cx="12" cy="12" r="3" />
+
+          @if (verClave()) {
+            <path d="M3 3l18 18" />
+          }
+        </svg>
+      </button>
+    </div>
+    @if (formLogin.controls.clave.touched && formLogin.controls.clave.invalid) {
+      <p class="error">La contraseña es obligatoria</p>
+    }
+  </div>
 
   @if (mensajeError()) {
-    <p class="error">{{ mensajeError() }}</p>
+    <p class="error alerta">{{ mensajeError() }}</p>
   }
 
-  <button type="submit" [disabled]="formLogin.invalid || cargando()">
-    @if (cargando()) { Ingresando... } @else { Ingresar }
+  <button type="submit" class="boton-ingresar" [disabled]="formLogin.invalid || cargando()">
+    @if (cargando()) { Ingresando... } @else { Iniciar sesión }
   </button>
+
+  <p class="registrate">
+    ¿No tenés una cuenta? <a routerLink="/registro" (click)="cerrar.emit()">Registrate acá</a>
+  </p>
 </form>

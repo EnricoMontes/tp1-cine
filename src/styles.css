@@ -26,6 +26,7 @@ body {
   color: var(--texto);
   font-family: var(--fuente-texto);
   line-height: 1.5;
+  overflow-x: clip;
 }
 
 h1, h2, h3 {
@@ -45,6 +46,7 @@ h2, h3 {
 
 a {
   color: var(--acento);
+  cursor: pointer;
 }
 
 input,
@@ -394,4 +396,236 @@ button.secundario.elegida {
   justify-content: center;
   gap: 1rem;
   margin-top: 1rem;
+}
+
+.fondo-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgb(0 0 0 / 0.6);
+  animation: aparecer 0.25s ease-out;
+}
+
+.panel-lateral {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 201;
+  width: min(420px, 100vw);
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--superficie);
+  border-left: 1px solid var(--borde);
+  animation: entrar 0.25s ease-out;
+}
+
+@keyframes entrar {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes aparecer {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.panel-encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--borde);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.panel-cerrar {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: var(--superficie-2);
+  color: var(--texto);
+}
+
+.panel-cerrar:hover {
+  background: var(--acento);
+}
+
+.panel-cerrar svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.form-cuerpo {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.columna-poster {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.poster-vista {
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid var(--borde);
+  background: var(--superficie-2);
+  box-shadow: 0 16px 32px -18px rgb(0 0 0 / 0.9);
+}
+
+.poster-vista img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.sin-poster {
+  height: 100%;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 0.5rem;
+  color: var(--texto-suave);
+  font-size: 0.85rem;
+}
+
+.sin-poster svg,
+.boton-archivo svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sin-poster svg {
+  width: 40px;
+  height: 40px;
+}
+
+.columna-campos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.grilla-admin {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.5rem 1rem;
+  margin-top: 1rem;
+}
+
+.tarjeta-admin {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  cursor: pointer;
+}
+
+.poster-admin {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  background: var(--superficie);
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.poster-admin img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tarjeta-admin:hover .poster-admin {
+  transform: translateY(-4px);
+}
+
+.tarjeta-admin.editando .poster-admin {
+  border-color: var(--acento);
+}
+
+.capa-editar {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgb(0 0 0 / 0.55);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.tarjeta-admin:hover .capa-editar,
+.tarjeta-admin.editando .capa-editar {
+  opacity: 1;
+}
+
+.boton-editar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 999px;
+  background: var(--acento);
+  color: white;
+  font-weight: 600;
+}
+
+.boton-editar svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.info-admin {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.78rem;
+  color: var(--texto-suave);
+}
+
+.info-admin strong {
+  color: var(--texto);
+  font-size: 0.95rem;
+}
+
+.sin-peliculas {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 1000px) {
+  .grilla-admin {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .grilla-admin {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

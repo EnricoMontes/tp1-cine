@@ -21,6 +21,7 @@
     <div class="dos-columnas">
     <div class="columna">
     <h2>Elegí tus entradas</h2>
+
     @if (preventa()) {
       <p class="ok">🎟 Precio de preventa hasta el estreno (después: {{ funcion()?.peliculas?.precio_base | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}).</p>
     }
@@ -48,6 +49,7 @@
       <div>
         <strong>General</strong>
         <p class="ayuda">Butacas comunes</p>
+
         <p class="quedan" [class.pocas]="libres().general > 0 && libres().general <= 10" [class.agotadas]="libres().general === 0">
           {{ libres().general === 0 ? 'Agotadas' : 'Quedan ' + libres().general }}
         </p>
@@ -64,6 +66,7 @@
       <div>
         <strong class="accesible">Accesible</strong>
         <p class="ayuda">Para personas con discapacidad · filas J y K</p>
+
         <p class="quedan" [class.pocas]="libres().accesible > 0 && libres().accesible <= 10" [class.agotadas]="libres().accesible === 0">
           {{ libres().accesible === 0 ? 'Agotadas' : 'Quedan ' + libres().accesible }}
         </p>
@@ -80,6 +83,7 @@
       <div>
         <strong class="vip">VIP</strong>
         <p class="ayuda">Filas R, S y T · +50%</p>
+
         <p class="quedan" [class.pocas]="libres().vip > 0 && libres().vip <= 10" [class.agotadas]="libres().vip === 0">
           {{ libres().vip === 0 ? 'Agotadas' : 'Quedan ' + libres().vip }}
         </p>

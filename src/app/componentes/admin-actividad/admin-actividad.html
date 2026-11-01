@@ -12,26 +12,36 @@
 } @else if (filtradas().length === 0) {
   <p class="ayuda">No hay registros.</p>
 } @else {
-  <div class="tabla-contenedor">
-    <table class="tabla">
-      <thead>
-        <tr>
-          <th>Fecha y hora</th>
-          <th>Usuario</th>
-          <th>Acción</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (actividad of deLaPagina(); track actividad.id) {
-          <tr>
-            <td class="cuando">{{ actividad.creado_en | date: 'dd/MM/yyyy HH:mm' }}</td>
-            <td>{{ actividad.usuario }}</td>
-            <td>{{ actividad.accion }}</td>
-          </tr>
+  @for (dia of diasDeLaPagina(); track dia.fecha) {
+    <section class="dia">
+      <h3>{{ textoDia(dia.fecha) }}</h3>
+      <div class="linea">
+        @for (actividad of dia.actividades; track actividad.id) {
+          <div class="registro">
+
+            <span class="icono" [class]="tipo(actividad.accion)">
+              @switch (tipo(actividad.accion)) {
+                @case ('validar') { <svg viewBox="0 0 24 24"><path d="m5 12 5 5 9-10" /></svg> }
+                @case ('candy') { <svg viewBox="0 0 24 24"><path d="M5 8h14l-1.5 13h-11zM8 8a4 4 0 0 1 8 0" /></svg> }
+                @case ('crear') { <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg> }
+                @case ('borrar') { <svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14" /></svg> }
+                @default { <svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4z" /></svg> }
+              }
+            </span>
+
+            <div class="registro-texto">
+              <p>{{ actividad.accion }}</p>
+              <span class="ayuda">
+
+                {{ actividad.creado_en | date: 'HH:mm' }} · {{ nombreDe(actividad.usuario) }}
+                <span class="rol">{{ rolDe(actividad.usuario) }}</span>
+              </span>
+            </div>
+          </div>
         }
-      </tbody>
-    </table>
-  </div>
+      </div>
+    </section>
+  }
 
   @if (totalPaginas() > 1) {
     <div class="paginado">

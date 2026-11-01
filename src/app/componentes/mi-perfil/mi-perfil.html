@@ -6,6 +6,7 @@
       <p><strong>Nombre:</strong> {{ auth.perfil()?.nombre }} {{ auth.perfil()?.apellido }}</p>
       <p><strong>Mail:</strong> {{ auth.perfil()?.email }}</p>
       <p><strong>Rol:</strong> {{ auth.perfil()?.rol }}</p>
+
       <p>
         <strong>Cupón de bienvenida:</strong>
         {{ auth.perfil()?.cupon_bienvenida_usado ? 'ya usado' : 'disponible: se aplica solo en tu primera compra' }}
@@ -16,7 +17,9 @@
       <span class="etiqueta">Mis puntos</span>
       <p class="cantidad">{{ auth.perfil()?.puntos ?? 0 }}</p>
       <p class="ayuda">Sumás 1 punto por cada peso que pagás y los canjeás al comprar.</p>
+
       <p class="credito">Crédito: <strong>{{ (auth.perfil()?.credito ?? 0) | currency: 'ARS' : 'symbol-narrow' : '1.0-2' }}</strong></p>
+
       @if (canjes().length) {
         <div class="historial">
           <p class="ayuda"><strong>Historial de canjes</strong></p>
@@ -61,6 +64,7 @@
   } @else {
     @for (compra of comprasDeLaPagina(); track compra.id) {
       <article class="panel compra" [class.cancelada]="compra.estado === 'cancelada'">
+
         <h3>{{ compra.compra_entradas[0]?.funciones?.peliculas?.nombre }}</h3>
         <p class="ayuda">
           {{ compra.compra_entradas[0]?.funciones?.inicio | date: 'dd/MM/yyyy HH:mm' }} ·
@@ -90,6 +94,7 @@
           } @else {
             <span class="etiqueta">Cancelada</span>
           }
+
           @if (puedeCancelar(compra)) {
             <button type="button" class="peligro chico" (click)="cancelar(compra)">Cancelar compra</button>
           }

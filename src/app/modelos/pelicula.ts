@@ -12,6 +12,7 @@ export interface PeliculaDatos {
   fecha_estreno: string | null;
   estado: 'cartelera' | 'proximamente' | 'archivada';
   visible_en_home: boolean;
+  es_estreno: boolean;
   precio_base: number;
   preventa_activa?: boolean;
   precio_preventa?: number | null;

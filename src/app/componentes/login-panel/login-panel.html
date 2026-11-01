@@ -1,0 +1,15 @@
+<div class="fondo-panel" (click)="cerrar()"></div>
+
+<aside class="panel-lateral">
+  <header class="panel-encabezado">
+    <span>Iniciá sesión en SignalCine</span>
+    <button type="button" class="panel-cerrar" (click)="cerrar()" aria-label="Cerrar">
+      <svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12" /></svg>
+    </button>
+  </header>
+
+  <div class="cuerpo">
+
+    <app-login [enPanel]="true" (cerrar)="cerrar()" />
+  </div>
+</aside>

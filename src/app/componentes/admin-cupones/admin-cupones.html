@@ -6,15 +6,23 @@
 }
 
 <div class="automaticos">
-  <section class="form panel">
-    <h3>Cupón de bienvenida</h3>
+
+  <section class="form panel automatico" [class.apagado]="!bienvenida()?.activo">
+
+    <div class="automatico-encabezado">
+      <span class="icono"><svg viewBox="0 0 24 24"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 21V7M12 7H7.5a2.5 2.5 0 1 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 1 0 0-5C13 2 12 7 12 7z" /></svg></span>
+      <div class="automatico-titulo">
+        <h3>Cupón de bienvenida</h3>
+        <span class="estado" [class.activo]="bienvenida()?.activo">{{ bienvenida()?.activo ? 'Activo' : 'Inactivo' }}</span>
+      </div>
+      <span class="porcentaje-grande">{{ bienvenida()?.porcentaje }}%</span>
+    </div>
     <p class="ayuda">Se aplica solo en la primera compra de cada usuario registrado.</p>
     <label for="porcentajeBienvenida">Porcentaje de descuento</label>
     <input type="number" id="porcentajeBienvenida" min="1" max="100" [formControl]="porcentajeBienvenida">
     @if (porcentajeBienvenida.invalid) {
       <p class="error">Tiene que ser un número entre 1 y 100</p>
     }
-    <p>Estado: <span class="etiqueta" [class.azul]="bienvenida()?.activo">{{ bienvenida()?.activo ? 'Activo' : 'Inactivo' }}</span></p>
     <div class="botones">
       <button type="button" [disabled]="porcentajeBienvenida.invalid" (click)="guardarBienvenida()">Guardar</button>
       @if (bienvenida()) {
@@ -25,15 +33,21 @@
     </div>
   </section>
 
-  <section class="form panel">
-    <h3>Cupón para mayores de 50</h3>
+  <section class="form panel automatico" [class.apagado]="!mayores50()?.activo">
+    <div class="automatico-encabezado">
+      <span class="icono"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></svg></span>
+      <div class="automatico-titulo">
+        <h3>Cupón para mayores de 50</h3>
+        <span class="estado" [class.activo]="mayores50()?.activo">{{ mayores50()?.activo ? 'Activo' : 'Inactivo' }}</span>
+      </div>
+      <span class="porcentaje-grande">{{ mayores50()?.porcentaje }}%</span>
+    </div>
     <p class="ayuda">Se aplica solo a los usuarios de 50 años o más.</p>
     <label for="porcentajeMayores50">Porcentaje de descuento</label>
     <input type="number" id="porcentajeMayores50" min="1" max="100" [formControl]="porcentajeMayores50">
     @if (porcentajeMayores50.invalid) {
       <p class="error">Tiene que ser un número entre 1 y 100</p>
     }
-    <p>Estado: <span class="etiqueta" [class.azul]="mayores50()?.activo">{{ mayores50()?.activo ? 'Activo' : 'Inactivo' }}</span></p>
     <div class="botones">
       <button type="button" [disabled]="porcentajeMayores50.invalid" (click)="guardarMayores50()">Guardar</button>
       @if (mayores50()) {
@@ -51,6 +65,7 @@
   <div class="fila">
     <div class="campo">
       <label for="codigo">Código</label>
+
       <input type="text" id="codigo" formControlName="codigo" placeholder="PROMO10" (input)="pasarAMayusculas()">
       @if (formCupon.controls.codigo.touched && formCupon.controls.codigo.invalid) {
         <p class="error">De 4 a 20 letras o números, sin espacios</p>
@@ -77,33 +92,24 @@
 @if (conCodigo().length === 0) {
   <p class="ayuda">Todavía no hay cupones con código.</p>
 } @else {
-  <div class="tabla-contenedor">
-    <table class="tabla">
-      <thead>
-        <tr>
-          <th>Código</th>
-          <th>Descuento</th>
-          <th>Estado</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (cupon of conCodigo(); track cupon.id) {
-          <tr>
-            <td><strong>{{ cupon.codigo }}</strong></td>
-            <td>{{ cupon.porcentaje }}%</td>
-            <td><span class="etiqueta" [class.azul]="cupon.activo">{{ cupon.activo ? 'Activo' : 'Inactivo' }}</span></td>
-            <td>
-              <div class="acciones">
-                <button type="button" class="secundario chico" (click)="cambiarActivo(cupon)">
-                  {{ cupon.activo ? 'Desactivar' : 'Activar' }}
-                </button>
-                <button type="button" class="peligro chico" (click)="borrar(cupon)">Borrar</button>
-              </div>
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
+  <div class="tickets">
+    @for (cupon of conCodigo(); track cupon.id) {
+      <div class="ticket" [class.apagado]="!cupon.activo">
+        <div class="ticket-datos">
+          <span class="ticket-codigo">{{ cupon.codigo }}</span>
+          <span class="estado" [class.activo]="cupon.activo">{{ cupon.activo ? 'Activo' : 'Inactivo' }}</span>
+        </div>
+        <div class="ticket-descuento">
+          <span class="porcentaje-grande">{{ cupon.porcentaje }}%</span>
+          <span class="ayuda">de descuento</span>
+        </div>
+        <div class="ticket-acciones">
+          <button type="button" class="secundario chico" (click)="cambiarActivo(cupon)">
+            {{ cupon.activo ? 'Desactivar' : 'Activar' }}
+          </button>
+          <button type="button" class="peligro chico" (click)="borrar(cupon)">Borrar</button>
+        </div>
+      </div>
+    }
   </div>
 }

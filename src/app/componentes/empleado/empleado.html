@@ -7,6 +7,7 @@
   <div class="form">
     <label for="codigo">Código de la compra</label>
     <input type="text" id="codigo" [formControl]="codigo" placeholder="ej. 0aee4101-1832-40ec-b275-6618fb4d4031">
+
     <div class="botones">
       <button type="button" (click)="validar()" [disabled]="codigo.invalid || cargando()">🎬 Validar entrada</button>
       <button type="button" class="secundario" (click)="entregarCandy()" [disabled]="codigo.invalid || cargando()">🍿 Entregar candy</button>

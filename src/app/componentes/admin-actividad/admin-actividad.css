@@ -1,3 +1,88 @@
-.cuando {
-  white-space: nowrap;
+.dia {
+  margin-top: 1.75rem;
+}
+
+.dia h3 {
+  margin: 0 0 0.75rem;
+  color: var(--texto-suave);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.linea {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.linea::before {
+  content: '';
+  position: absolute;
+  top: 0.5rem;
+  bottom: 0.5rem;
+  left: 19px;
+  width: 2px;
+  background: var(--borde);
+}
+
+.registro {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.icono {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 3px solid var(--fondo);
+  background: #555c6b;
+  color: white;
+}
+
+.icono.validar { background: #1f8a4c; }
+.icono.candy { background: #c27c0e; }
+.icono.crear { background: var(--acento); }
+.icono.borrar { background: var(--error); }
+
+.icono svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.registro-texto {
+  flex: 1;
+  min-width: 0;
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  background: var(--superficie);
+}
+
+.registro-texto p {
+  margin: 0 0 0.2rem;
+}
+
+.rol {
+  margin-left: 0.25rem;
+  padding: 0.05rem 0.45rem;
+  border-radius: 999px;
+  background: var(--superficie-2);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+}
+
+.paginado {
+  margin-top: 1.5rem;
 }

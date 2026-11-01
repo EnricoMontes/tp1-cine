@@ -46,6 +46,20 @@ export class Candy {
     return this.supabase.cliente.from('combos').delete().eq('id', id);
   }
 
+  async subirFoto(archivo: File, carpeta: 'productos' | 'combos') {
+    const path = `${carpeta}/${Date.now()}-${archivo.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
+
+    const { error } = await this.supabase.cliente.storage
+      .from('candy')
+      .upload(path, archivo, { cacheControl: '3600', upsert: false });
+    if (error) {
+      return { url: null, error };
+    }
+
+    const url = this.supabase.cliente.storage.from('candy').getPublicUrl(path).data.publicUrl;
+    return { url, error: null };
+  }
+
   traerPuntosEntrada() {
     return this.supabase.cliente.from('configuracion').select('puntos_entrada').eq('id', 1);
   }
