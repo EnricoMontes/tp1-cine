@@ -76,23 +76,6 @@
   </div>
 </form>
 
-<section class="form panel canje">
-  <h3>Canje de puntos: entrada gratis</h3>
-  <p class="ayuda">Los clientes registrados suman 1 punto por peso y los canjean en el checkout. Los productos se configuran arriba.</p>
-  <div class="fila">
-    <div class="campo">
-      <label for="puntosEntrada">Puntos por una entrada general gratis</label>
-      <input type="number" id="puntosEntrada" [formControl]="puntosEntrada">
-    </div>
-    <div class="campo boton-abajo">
-      <button type="button" [disabled]="puntosEntrada.invalid" (click)="guardarPuntosEntrada()">Guardar</button>
-    </div>
-  </div>
-  @if (mensajeCanje()) {
-    <p class="ok">{{ mensajeCanje() }}</p>
-  }
-</section>
-
 <div class="encabezado-seccion">
   <h2>Combos</h2>
   <span class="ayuda">Aparecen destacados arriba de todo al comprar entradas</span>

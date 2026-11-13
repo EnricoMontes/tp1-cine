@@ -128,3 +128,17 @@
   display: flex;
   gap: 0.5rem;
 }
+
+.canje h3 {
+  margin-top: 0;
+}
+
+.boton-abajo {
+  justify-content: flex-end;
+}
+
+.form.editando,
+.ticket.editando {
+  border-color: var(--acento);
+  box-shadow: 0 0 0 1px var(--acento);
+}

@@ -47,18 +47,184 @@
 
   <app-pasos-compra [actual]="3" />
 
-  <h1>Finalizar compra</h1>
+  @if (carrito.funcion()) {
+    <app-cabecera-funcion [funcion]="carrito.funcion()!" />
+  }
 
   <div class="columnas">
+    <div class="izquierda">
 
-    <section class="panel tarjeta">
-      <h2>{{ carrito.funcion()?.peliculas?.nombre }}</h2>
-      <p class="ayuda">
-        {{ carrito.funcion()?.inicio | date: 'dd/MM/yyyy HH:mm' }} · {{ carrito.funcion()?.formato }} ·
-        {{ carrito.funcion()?.idioma }} · {{ carrito.funcion()?.salas?.nombre }}
-      </p>
+      <section class="panel">
+        <h2>Descuentos y beneficios</h2>
 
-      <p>
+        @if (opcionesCupon().length) {
+          <p class="ayuda">Elegí tu descuento (no son acumulables):</p>
+          <div class="opciones-cupon">
+            @for (cupon of opcionesCupon(); track cupon.id) {
+              <label class="cupon-ticket" [class.elegido]="cuponAplicado()?.id === cupon.id">
+                <input type="radio" name="cupon" [checked]="cuponAplicado()?.id === cupon.id" (change)="cuponElegidoId.set(cupon.id)">
+                <span class="porcentaje">{{ cupon.porcentaje }}<small>%</small></span>
+                <span class="cupon-texto">
+                  <strong>{{ nombreCupon(cupon) }}</strong>
+                </span>
+              </label>
+            }
+          </div>
+        } @else if (porcentajeBienvenida() && !auth.usuario()) {
+          <div class="cupon-ticket invitacion">
+            <span class="porcentaje">{{ porcentajeBienvenida() }}<small>%</small></span>
+            <span class="cupon-texto">
+              <strong>¿Primera vez?</strong>
+              <span class="ayuda"><a routerLink="/registro">Registrate</a> y tenés {{ porcentajeBienvenida() }}% de descuento en tu primera compra.</span>
+            </span>
+          </div>
+        }
+
+        <div class="cupon">
+          <input type="text" placeholder="¿Tenés un código de descuento?" [formControl]="codigoCupon" />
+          @if (cuponIngresado()) {
+            <button type="button" class="secundario chico" (click)="quitarCupon()">Quitar</button>
+          } @else {
+            <button type="button" class="chico" (click)="aplicarCupon()">Aplicar</button>
+          }
+        </div>
+        @if (mensajeCupon()) {
+          <p class="error">{{ mensajeCupon() }}</p>
+        }
+
+        @if (creditoDisponible() > 0) {
+          <div class="canje fila-credito">
+            <span>
+              <strong>Crédito de tu cuenta</strong><br>
+              <span class="ayuda">Tenés {{ creditoDisponible() | currency: 'ARS' : 'symbol-narrow' : '1.0-2' }} de compras canceladas.</span>
+            </span>
+            <button type="button" class="secundario chico" [class.elegida]="usarCredito()" (click)="usarCredito.set(!usarCredito())">
+              {{ usarCredito() ? '✓ Usando mi crédito' : 'Usar mi crédito' }}
+            </button>
+          </div>
+        }
+
+        @if (auth.usuario() && puntosDisponibles() > 0 && (maxEntradasCanje() > 0 || canjeProductos().length || canjeCombos().length)) {
+          <div class="canje">
+            <p><strong>Canjear puntos</strong> <span class="ayuda">· tenés {{ puntosDisponibles() - puntosUsados() }} disponibles</span></p>
+            @if (maxEntradasCanje() > 0 && puntosEntrada()) {
+              <div class="fila-canje">
+                <span>Entrada general gratis <span class="ayuda">({{ puntosEntrada() }} pts)</span></span>
+                <div class="contador">
+                  <button type="button" (click)="cambiarCanjeEntradas(-1)" [disabled]="canjeEntradas() === 0">−</button>
+                  <span>{{ canjeEntradas() }}</span>
+                  <button type="button" (click)="cambiarCanjeEntradas(1)">+</button>
+                </div>
+              </div>
+            }
+            @for (item of canjeProductos(); track item.producto.id) {
+              <div class="fila-canje">
+                <span>{{ item.producto.nombre }} gratis <span class="ayuda">({{ item.producto.puntos }} pts)</span></span>
+                <div class="contador">
+                  <button type="button" (click)="cambiarCanjeProducto(item.producto.id, -1)" [disabled]="item.cantidad === 0">−</button>
+                  <span>{{ item.cantidad }}</span>
+                  <button type="button" (click)="cambiarCanjeProducto(item.producto.id, 1)">+</button>
+                </div>
+              </div>
+            }
+
+            @for (item of canjeCombos(); track item.combo.id) {
+              <div class="fila-canje">
+                <span>{{ item.combo.nombre }} gratis <span class="ayuda">({{ item.combo.puntos }} pts)</span></span>
+                <div class="contador">
+                  <button type="button" (click)="cambiarCanjeCombo(item.combo.id, -1)" [disabled]="item.cantidad === 0">−</button>
+                  <span>{{ item.cantidad }}</span>
+                  <button type="button" (click)="cambiarCanjeCombo(item.combo.id, 1)">+</button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      <section class="panel">
+        @if (menorBloqueado()) {
+          <p class="error">
+            Según tu fecha de nacimiento no tenés la edad mínima (+{{ restriccion() }}) para ver esta película.
+          </p>
+        } @else {
+          <form class="form" [formGroup]="formPago" (ngSubmit)="pagar()">
+            <h2>Pago</h2>
+            <p class="ayuda">Pago simulado: no se cobra nada.</p>
+
+            <div class="grilla-pago">
+              <div class="campo">
+                <label for="email">Mail para recibir las entradas</label>
+                <input type="email" id="email" formControlName="email">
+                @if (formPago.controls.email.touched && formPago.controls.email.invalid) {
+                  <p class="error">Ingresá un mail válido</p>
+                }
+              </div>
+
+              <div class="campo">
+                <label for="titular">Titular de la tarjeta</label>
+                <input type="text" id="titular" formControlName="titular">
+                @if (formPago.controls.titular.touched && formPago.controls.titular.invalid) {
+                  <p class="error">Ingresá el nombre como figura en la tarjeta</p>
+                }
+              </div>
+            </div>
+
+            <div class="grilla-tarjeta">
+              <div class="campo">
+                <label for="numeroTarjeta">Número de tarjeta</label>
+
+                <input type="text" id="numeroTarjeta" formControlName="numeroTarjeta" maxlength="16" placeholder="16 números" inputmode="numeric" (input)="soloNumeros($event, 'numeroTarjeta')">
+                @if (formPago.controls.numeroTarjeta.touched && formPago.controls.numeroTarjeta.invalid) {
+                  <p class="error">Tienen que ser 16 números, sin espacios</p>
+                }
+              </div>
+              <div class="campo">
+                <label for="vencimiento">Vencimiento</label>
+
+                <input type="text" id="vencimiento" formControlName="vencimiento" maxlength="5" placeholder="MM/AA" inputmode="numeric" (input)="formatearVencimiento($event)">
+                @if (formPago.controls.vencimiento.touched && formPago.controls.vencimiento.hasError('vencida')) {
+                  <p class="error">La tarjeta está vencida</p>
+                } @else if (formPago.controls.vencimiento.touched && formPago.controls.vencimiento.invalid) {
+                  <p class="error">Formato MM/AA</p>
+                }
+              </div>
+              <div class="campo">
+                <label for="cvv">CVV</label>
+                <input type="password" id="cvv" formControlName="cvv" maxlength="3" placeholder="•••" inputmode="numeric" (input)="soloNumeros($event, 'cvv')">
+                @if (formPago.controls.cvv.touched && formPago.controls.cvv.invalid) {
+                  <p class="error">3 números</p>
+                }
+              </div>
+            </div>
+
+            @if (necesitaDeclaracion()) {
+              <label class="declaracion">
+                <input type="checkbox" formControlName="declaracion">
+                <span class="caja">✓</span>
+                <span>Declaro ser mayor de {{ restriccion() }} años o asistir acompañado de un adulto.</span>
+              </label>
+            }
+
+            @if (mensajeError()) {
+              <p class="error">{{ mensajeError() }}</p>
+            }
+
+            @if (aPagarConTarjeta() === 0) {
+              <p class="ok">Tu crédito cubre toda la compra: no hace falta completar la tarjeta.</p>
+            }
+            <button type="submit" class="pagar" [disabled]="(aPagarConTarjeta() > 0 ? formPago.invalid : formPago.controls.email.invalid) || cargando()">
+              {{ cargando() ? 'Procesando...' : 'Pagar ' + (aPagarConTarjeta() | currency: 'ARS' : 'symbol-narrow' : '1.0-0') }}
+            </button>
+          </form>
+        }
+      </section>
+    </div>
+
+    <aside class="panel resumen">
+      <h2>Resumen</h2>
+
+      <p class="butacas">
         Butacas:
         @for (butaca of carrito.butacas(); track butaca.id) {
           <span class="chip" [class.vip]="butaca.tipo === 'vip'">{{ butaca.fila }}{{ butaca.numero }}{{ butaca.tipo === 'vip' ? ' VIP' : '' }}</span>
@@ -110,159 +276,11 @@
         }
       </table>
 
-      @if (creditoDisponible() > 0) {
-        <div class="canje">
-          <button type="button" class="secundario chico" [class.elegida]="usarCredito()" (click)="usarCredito.set(!usarCredito())">
-            {{ usarCredito() ? '✓ Usando mi crédito' : 'Usar mi crédito' }}
-          </button>
-          <span class="ayuda"> Tenés {{ creditoDisponible() | currency: 'ARS' : 'symbol-narrow' : '1.0-2' }} de crédito.</span>
-        </div>
-      }
-
-      @if (auth.usuario() && puntosDisponibles() > 0 && (maxEntradasCanje() > 0 || canjeProductos().length || canjeCombos().length)) {
-        <div class="canje">
-          <p><strong>Canjear puntos</strong> <span class="ayuda">· tenés {{ puntosDisponibles() - puntosUsados() }} disponibles</span></p>
-          @if (maxEntradasCanje() > 0 && puntosEntrada()) {
-            <div class="fila-canje">
-              <span>Entrada general gratis <span class="ayuda">({{ puntosEntrada() }} pts)</span></span>
-              <div class="contador">
-                <button type="button" class="secundario chico" (click)="cambiarCanjeEntradas(-1)" [disabled]="canjeEntradas() === 0">−</button>
-                <span>{{ canjeEntradas() }}</span>
-                <button type="button" class="secundario chico" (click)="cambiarCanjeEntradas(1)">+</button>
-              </div>
-            </div>
-          }
-          @for (item of canjeProductos(); track item.producto.id) {
-            <div class="fila-canje">
-              <span>{{ item.producto.nombre }} gratis <span class="ayuda">({{ item.producto.puntos }} pts)</span></span>
-              <div class="contador">
-                <button type="button" class="secundario chico" (click)="cambiarCanjeProducto(item.producto.id, -1)" [disabled]="item.cantidad === 0">−</button>
-                <span>{{ item.cantidad }}</span>
-                <button type="button" class="secundario chico" (click)="cambiarCanjeProducto(item.producto.id, 1)">+</button>
-              </div>
-            </div>
-          }
-
-          @for (item of canjeCombos(); track item.combo.id) {
-            <div class="fila-canje">
-              <span>{{ item.combo.nombre }} gratis <span class="ayuda">({{ item.combo.puntos }} pts)</span></span>
-              <div class="contador">
-                <button type="button" class="secundario chico" (click)="cambiarCanjeCombo(item.combo.id, -1)" [disabled]="item.cantidad === 0">−</button>
-                <span>{{ item.cantidad }}</span>
-                <button type="button" class="secundario chico" (click)="cambiarCanjeCombo(item.combo.id, 1)">+</button>
-              </div>
-            </div>
-          }
-        </div>
-      }
-
-      @if (opcionesCupon().length) {
-        <div class="cupones">
-          <p class="ayuda">Elegí tu descuento (no son acumulables):</p>
-          @for (cupon of opcionesCupon(); track cupon.id) {
-            <label class="check">
-              <input type="radio" name="cupon" [checked]="cuponAplicado()?.id === cupon.id" (change)="cuponElegidoId.set(cupon.id)">
-              {{ nombreCupon(cupon) }}: {{ cupon.porcentaje }}% de descuento
-            </label>
-          }
-        </div>
-      }
-
       @if (auth.usuario()) {
-        <p class="ok">Con esta compra sumás {{ puntosAGanar() }} puntos.</p>
+        <p class="puntos">⭐ Con esta compra sumás <strong>{{ puntosAGanar() }}</strong> puntos.</p>
       } @else {
         <p class="ayuda">Registrate para sumar 1 punto por cada peso que pagás.</p>
       }
-
-      @if (!opcionesCupon().length && porcentajeBienvenida() && !auth.usuario()) {
-        <p class="ayuda">¿Primera vez? Registrate y tenés {{ porcentajeBienvenida() }}% de descuento en tu primera compra.</p>
-      }
-
-      <div class="cupon">
-        <input type="text" placeholder="¿Tenés un código de descuento?" [formControl]="codigoCupon" />
-        @if (cuponIngresado()) {
-          <button type="button" class="secundario chico" (click)="quitarCupon()">Quitar</button>
-        } @else {
-          <button type="button" class="chico" (click)="aplicarCupon()">Aplicar</button>
-        }
-      </div>
-      @if (mensajeCupon()) {
-        <p class="error">{{ mensajeCupon() }}</p>
-      }
-
-      @if (restriccion()) {
-        <p class="aviso">⚠️ Película para mayores de {{ restriccion() }} años.</p>
-      }
-    </section>
-
-    <section class="panel tarjeta">
-      @if (menorBloqueado()) {
-        <p class="error">
-          Según tu fecha de nacimiento no tenés la edad mínima (+{{ restriccion() }}) para ver esta película.
-        </p>
-      } @else {
-        <form class="form" [formGroup]="formPago" (ngSubmit)="pagar()">
-          <h2>Pago</h2>
-          <p class="ayuda">Pago simulado: no se cobra nada.</p>
-
-          <label for="email">Mail para recibir las entradas</label>
-          <input type="email" id="email" formControlName="email">
-          @if (formPago.controls.email.touched && formPago.controls.email.invalid) {
-            <p class="error">Ingresá un mail válido</p>
-          }
-
-          <label for="titular">Titular de la tarjeta</label>
-          <input type="text" id="titular" formControlName="titular">
-          @if (formPago.controls.titular.touched && formPago.controls.titular.invalid) {
-            <p class="error">Ingresá el nombre como figura en la tarjeta</p>
-          }
-
-          <label for="numeroTarjeta">Número de tarjeta</label>
-
-          <input type="text" id="numeroTarjeta" formControlName="numeroTarjeta" maxlength="16" placeholder="16 números" inputmode="numeric" (input)="soloNumeros($event, 'numeroTarjeta')">
-          @if (formPago.controls.numeroTarjeta.touched && formPago.controls.numeroTarjeta.invalid) {
-            <p class="error">Tienen que ser 16 números, sin espacios</p>
-          }
-
-          <div class="fila">
-            <div class="campo">
-              <label for="vencimiento">Vencimiento</label>
-
-              <input type="text" id="vencimiento" formControlName="vencimiento" maxlength="5" placeholder="MM/AA" inputmode="numeric" (input)="formatearVencimiento($event)">
-              @if (formPago.controls.vencimiento.touched && formPago.controls.vencimiento.hasError('vencida')) {
-                <p class="error">La tarjeta está vencida</p>
-              } @else if (formPago.controls.vencimiento.touched && formPago.controls.vencimiento.invalid) {
-                <p class="error">Formato MM/AA</p>
-              }
-            </div>
-            <div class="campo">
-              <label for="cvv">CVV</label>
-              <input type="password" id="cvv" formControlName="cvv" maxlength="3" inputmode="numeric" (input)="soloNumeros($event, 'cvv')">
-              @if (formPago.controls.cvv.touched && formPago.controls.cvv.invalid) {
-                <p class="error">3 números</p>
-              }
-            </div>
-          </div>
-
-          @if (necesitaDeclaracion()) {
-            <label class="check">
-              <input type="checkbox" formControlName="declaracion">
-              Declaro ser mayor de {{ restriccion() }} años o asistir acompañado de un adulto.
-            </label>
-          }
-
-          @if (mensajeError()) {
-            <p class="error">{{ mensajeError() }}</p>
-          }
-
-          @if (aPagarConTarjeta() === 0) {
-            <p class="ok">Tu crédito cubre toda la compra: no hace falta completar la tarjeta.</p>
-          }
-          <button type="submit" [disabled]="(aPagarConTarjeta() > 0 ? formPago.invalid : formPago.controls.email.invalid) || cargando()">
-            {{ cargando() ? 'Procesando...' : 'Pagar' }}
-          </button>
-        </form>
-      }
-    </section>
+    </aside>
   </div>
 }

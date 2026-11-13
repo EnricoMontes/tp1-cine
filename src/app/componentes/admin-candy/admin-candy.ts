@@ -34,10 +34,6 @@ export class AdminCandy implements OnInit {
   archivoFoto = signal<File | null>(null);
   vistaFoto = signal('');
 
-  puntosEntrada = new FormControl<number | null>(null, { validators: [Validators.required, Validators.min(1)] });
-  puntosEntradaGuardados = signal<number | null>(null);
-  mensajeCanje = signal('');
-
   constructor(private candyService: Candy, private actividades: Actividades) {}
 
   ngOnInit() {
@@ -49,25 +45,6 @@ export class AdminCandy implements OnInit {
     const combos = await this.candyService.traerCombos(false);
     this.productos.set(productos.data ?? []);
     this.combos.set(combos.data ?? []);
-    const config = await this.candyService.traerPuntosEntrada();
-    this.puntosEntradaGuardados.set(config.data?.[0]?.puntos_entrada ?? null);
-    this.puntosEntrada.setValue(this.puntosEntradaGuardados());
-  }
-
-  async guardarPuntosEntrada() {
-    const nuevo = this.puntosEntrada.value!;
-    if (nuevo === this.puntosEntradaGuardados()) {
-      this.mensajeCanje.set('No hubo cambios.');
-      return;
-    }
-    const { error } = await this.candyService.guardarPuntosEntrada(nuevo);
-    if (error) {
-      this.mensajeCanje.set('No se pudo guardar.');
-      return;
-    }
-    await this.actividades.registrar(`Cambió los puntos de la entrada gratis de ${this.puntosEntradaGuardados()} a ${nuevo}`);
-    this.mensajeCanje.set(`✓ Guardado: la entrada gratis cuesta ${nuevo} puntos.`);
-    this.cargar();
   }
 
   private limpiarMensajes() {

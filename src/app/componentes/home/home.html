@@ -93,4 +93,41 @@
       </section>
     }
   }
+
+  @if (candy().length) {
+    <section class="seccion-peliculas">
+      <div class="fila-encabezado">
+        <div>
+          <span class="fila-etiqueta">Para acompañar</span>
+          <h2>Candy bar</h2>
+        </div>
+        <a class="fila-ver-todas" routerLink="/candy">Ver todo ({{ candy().length }}) →</a>
+      </div>
+
+      <div class="fila-peliculas">
+        @for (c of candy() | slice: 0 : 5; track c.tipo + c.item.id) {
+          <article class="tarjeta-candy" [class.combo]="c.tipo === 'combo'">
+            <div class="foto">
+
+              @if (c.item.imagen_url) {
+                <img [src]="c.item.imagen_url" [alt]="c.item.nombre" loading="lazy">
+              } @else {
+                <svg viewBox="0 0 24 24"><path d="M5 9h14l-2 12H7zM7 9a2.5 2.5 0 0 1 2-4 3 3 0 0 1 6 0 2.5 2.5 0 0 1 2 4" /></svg>
+              }
+              @if (c.tipo === 'combo') {
+                <span class="chip-foto">★ Combo</span>
+              }
+            </div>
+            <div class="cuerpo">
+              <h3>{{ c.item.nombre }}</h3>
+              <div class="pie">
+                <span class="precio-candy">{{ c.item.precio | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</span>
+                <button type="button" class="lo-quiero" (click)="quiero(c)">Lo quiero</button>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    </section>
+  }
 }

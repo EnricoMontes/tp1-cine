@@ -1,16 +1,23 @@
 import { Component, computed, OnDestroy, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { SlicePipe } from '@angular/common';
+import { CurrencyPipe, SlicePipe } from '@angular/common';
 import { Peliculas } from '../../servicios/peliculas';
 import { Pelicula } from '../../modelos/pelicula';
 import { CardPelicula } from '../card-pelicula/card-pelicula';
 import { DuracionPipe } from '../../pipes/duracion-pipe';
 import { Auth } from '../../servicios/auth';
 import { Alerta, Alertas } from '../../servicios/alertas';
-import { ventaAbierta } from '../../servicios/carrito';
+import { Carrito, ventaAbierta } from '../../servicios/carrito';
+import { Candy } from '../../servicios/candy';
+import { Combo, Producto } from '../../modelos/producto';
+
+interface ItemCandyHome {
+  tipo: 'producto' | 'combo';
+  item: Producto | Combo;
+}
 
 @Component({
-  imports: [CardPelicula, RouterLink, DuracionPipe, SlicePipe],
+  imports: [CardPelicula, RouterLink, DuracionPipe, SlicePipe, CurrencyPipe],
   selector: 'app-home',
   styleUrl: './home.css',
   templateUrl: './home.html',
@@ -36,6 +43,8 @@ export class Home implements OnInit, OnDestroy {
     { etiqueta: 'Muy pronto', titulo: 'Próximamente', seccion: 'proximamente', peliculas: this.proximas() },
   ]);
 
+  candy = signal<ItemCandyHome[]>([]);
+
   actual = signal(0);
   private intervalo?: ReturnType<typeof setInterval>;
 
@@ -44,12 +53,15 @@ export class Home implements OnInit, OnDestroy {
     private router: Router,
     private auth: Auth,
     private alertasService: Alertas,
+    private candyService: Candy,
+    private carrito: Carrito,
   ) {}
 
   ngOnInit() {
     this.cargarCartelera();
     this.cargarProximamente();
     this.cargarAvisos();
+    this.cargarCandy();
     this.intervalo = setInterval(() => this.siguiente(), 6000);
   }
 
@@ -67,6 +79,23 @@ export class Home implements OnInit, OnDestroy {
   anterior() {
     const total = this.masVendidas().length;
     this.actual.update(i => (i - 1 + total) % total);
+  }
+
+  private async cargarCandy() {
+    const [productos, combos] = await Promise.all([
+      this.candyService.traerProductos(true),
+      this.candyService.traerCombos(true),
+    ]);
+    const lista: ItemCandyHome[] = [
+      ...(combos.data ?? []).map(item => ({ tipo: 'combo' as const, item })),
+      ...(productos.data ?? []).map(item => ({ tipo: 'producto' as const, item })),
+    ];
+    this.candy.set(lista.sort((a, b) => b.item.vendidos - a.item.vendidos));
+  }
+
+  quiero(candy: ItemCandyHome) {
+    this.carrito.candyElegido.set({ tipo: candy.tipo, id: candy.item.id, nombre: candy.item.nombre });
+    this.router.navigate(['/cartelera']);
   }
 
   private async cargarAvisos() {

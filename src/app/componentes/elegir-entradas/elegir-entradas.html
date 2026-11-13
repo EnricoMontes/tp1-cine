@@ -7,129 +7,169 @@
 
   <app-pasos-compra [actual]="1" />
 
-  <section class="panel tarjeta">
-    <h1>{{ funcion()?.peliculas?.nombre }}</h1>
-    <p class="ayuda">
-      {{ funcion()?.inicio | date: 'dd/MM/yyyy HH:mm' }} · {{ funcion()?.formato }} ·
-      {{ funcion()?.idioma }} · {{ funcion()?.salas?.nombre }}
-    </p>
+  <app-cabecera-funcion [funcion]="funcion()!" />
 
-    @if (funcion()?.peliculas?.restriccion_edad) {
-      <p class="aviso">⚠️ Película para mayores de {{ funcion()?.peliculas?.restriccion_edad }} años.</p>
-    }
-
-    <div class="dos-columnas">
-    <div class="columna">
-    <h2>Elegí tus entradas</h2>
+  <section class="panel bloque">
+    <h2 class="titulo-bloque">Elegí tus entradas</h2>
 
     @if (preventa()) {
       <p class="ok">🎟 Precio de preventa hasta el estreno (después: {{ funcion()?.peliculas?.precio_base | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}).</p>
     }
 
-    @if (combos().length) {
-      <div class="combos">
-        @for (item of combos(); track item.combo.id) {
-          <div class="entrada combo">
-            <div>
-              <strong>⭐ {{ item.combo.nombre }}</strong>
-              <p class="ayuda">{{ item.combo.incluye }}</p>
-            </div>
-            <span class="precio">{{ item.combo.precio | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</span>
-            <div class="contador">
-              <button type="button" (click)="cambiarCombo(item.combo.id, -1)" [disabled]="item.cantidad === 0">−</button>
-              <span>{{ item.cantidad }}</span>
-              <button type="button" (click)="cambiarCombo(item.combo.id, 1)" [disabled]="!puedeSumar('general')">+</button>
-            </div>
+    <div class="tipos">
+      <div class="tipo" [class.elegida]="general() > 0">
+        <div class="tipo-texto">
+          <strong>General</strong>
+          <p class="ayuda">Butacas comunes</p>
+
+          <p class="quedan" [class.pocas]="libres().general > 0 && libres().general <= 10" [class.agotadas]="libres().general === 0">
+            {{ libres().general === 0 ? 'Agotadas' : 'Quedan ' + libres().general }}
+          </p>
+        </div>
+        <div class="tipo-compra">
+          <span class="precio-grande">{{ precioGeneral() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</span>
+          <div class="contador">
+            <button type="button" (click)="restar('general')" [disabled]="general() === 0">−</button>
+            <span>{{ general() }}</span>
+            <button type="button" (click)="sumar('general')" [disabled]="!puedeSumar('general')">+</button>
           </div>
-        }
+        </div>
       </div>
-    }
 
-    <div class="entrada">
-      <div>
-        <strong>General</strong>
-        <p class="ayuda">Butacas comunes</p>
-
-        <p class="quedan" [class.pocas]="libres().general > 0 && libres().general <= 10" [class.agotadas]="libres().general === 0">
-          {{ libres().general === 0 ? 'Agotadas' : 'Quedan ' + libres().general }}
-        </p>
+      <div class="tipo" [class.elegida]="accesible() > 0">
+        <div class="tipo-texto">
+          <strong class="accesible">Accesible</strong>
+          <p class="ayuda">Discapacidad · filas J y K</p>
+          <p class="quedan" [class.pocas]="libres().accesible > 0 && libres().accesible <= 10" [class.agotadas]="libres().accesible === 0">
+            {{ libres().accesible === 0 ? 'Agotadas' : 'Quedan ' + libres().accesible }}
+          </p>
+        </div>
+        <div class="tipo-compra">
+          <span class="precio-grande">{{ precioGeneral() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</span>
+          <div class="contador">
+            <button type="button" (click)="restar('accesible')" [disabled]="accesible() === 0">−</button>
+            <span>{{ accesible() }}</span>
+            <button type="button" (click)="sumar('accesible')" [disabled]="!puedeSumar('accesible')">+</button>
+          </div>
+        </div>
       </div>
-      <span class="precio">{{ precioGeneral() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</span>
-      <div class="contador">
-        <button type="button" (click)="restar('general')" [disabled]="general() === 0">−</button>
-        <span>{{ general() }}</span>
-        <button type="button" (click)="sumar('general')" [disabled]="!puedeSumar('general')">+</button>
-      </div>
-    </div>
 
-    <div class="entrada">
-      <div>
-        <strong class="accesible">Accesible</strong>
-        <p class="ayuda">Para personas con discapacidad · filas J y K</p>
-
-        <p class="quedan" [class.pocas]="libres().accesible > 0 && libres().accesible <= 10" [class.agotadas]="libres().accesible === 0">
-          {{ libres().accesible === 0 ? 'Agotadas' : 'Quedan ' + libres().accesible }}
-        </p>
-      </div>
-      <span class="precio">{{ precioGeneral() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</span>
-      <div class="contador">
-        <button type="button" (click)="restar('accesible')" [disabled]="accesible() === 0">−</button>
-        <span>{{ accesible() }}</span>
-        <button type="button" (click)="sumar('accesible')" [disabled]="!puedeSumar('accesible')">+</button>
-      </div>
-    </div>
-
-    <div class="entrada">
-      <div>
-        <strong class="vip">VIP</strong>
-        <p class="ayuda">Filas R, S y T · +50%</p>
-
-        <p class="quedan" [class.pocas]="libres().vip > 0 && libres().vip <= 10" [class.agotadas]="libres().vip === 0">
-          {{ libres().vip === 0 ? 'Agotadas' : 'Quedan ' + libres().vip }}
-        </p>
-      </div>
-      <span class="precio">{{ precioVip() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</span>
-      <div class="contador">
-        <button type="button" (click)="restar('vip')" [disabled]="vip() === 0">−</button>
-        <span>{{ vip() }}</span>
-        <button type="button" (click)="sumar('vip')" [disabled]="!puedeSumar('vip')">+</button>
+      <div class="tipo" [class.elegida]="vip() > 0">
+        <div class="tipo-texto">
+          <strong class="vip">VIP</strong>
+          <p class="ayuda">Filas R, S y T · +50%</p>
+          <p class="quedan" [class.pocas]="libres().vip > 0 && libres().vip <= 10" [class.agotadas]="libres().vip === 0">
+            {{ libres().vip === 0 ? 'Agotadas' : 'Quedan ' + libres().vip }}
+          </p>
+        </div>
+        <div class="tipo-compra">
+          <span class="precio-grande">{{ precioVip() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</span>
+          <div class="contador">
+            <button type="button" (click)="restar('vip')" [disabled]="vip() === 0">−</button>
+            <span>{{ vip() }}</span>
+            <button type="button" (click)="sumar('vip')" [disabled]="!puedeSumar('vip')">+</button>
+          </div>
+        </div>
       </div>
     </div>
-
     <p class="ayuda">Máximo {{ maximo }} entradas por compra (los combos cuentan como entrada).</p>
-    </div>
+  </section>
 
-    <div class="columna">
-    @if (productos().length) {
-      <h2>Candy</h2>
+  @if (combos().length || productos().length) {
+    <section class="panel bloque">
+      <h2 class="titulo-bloque">Sumá candy</h2>
       <p class="ayuda">Lo retirás en el candy bar con el mismo QR de tu entrada.</p>
+
+      @if (combos().length) {
+        <h3 class="categoria">Combos</h3>
+        <div class="grilla-candy">
+          @for (item of combos(); track item.combo.id) {
+            <article class="tarjeta-candy destacada" [class.elegida]="item.cantidad > 0">
+              <div class="foto">
+
+                @if (item.combo.imagen_url) {
+                  <img [src]="item.combo.imagen_url" [alt]="item.combo.nombre" loading="lazy">
+                } @else {
+                  <svg viewBox="0 0 24 24"><path d="M3 9a3 3 0 0 0 0 6v4h18v-4a3 3 0 0 1 0-6V5H3zM13 5v14" /></svg>
+                }
+                <div class="chips-foto">
+                  <span class="chip-foto">★ Combo</span>
+                  <span class="chip-foto azul">Incluye entrada</span>
+                </div>
+              </div>
+              <div class="cuerpo">
+                <h4>{{ item.combo.nombre }}</h4>
+                <p class="ayuda">{{ item.combo.incluye }}</p>
+                <div class="pie">
+                  <span class="precio-candy">{{ item.combo.precio | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</span>
+                  <div class="contador">
+                    <button type="button" (click)="cambiarCombo(item.combo.id, -1)" [disabled]="item.cantidad === 0">−</button>
+                    <span>{{ item.cantidad }}</span>
+
+                    <button type="button" (click)="cambiarCombo(item.combo.id, 1)" [disabled]="!puedeSumar('general')">+</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+      }
+
       @for (categoria of categorias; track categoria) {
         @if (productosDe(categoria).length) {
           <h3 class="categoria">{{ categoria }}</h3>
-          @for (item of productosDe(categoria); track item.producto.id) {
-            <div class="entrada">
-              <div><strong>{{ item.producto.nombre }}</strong></div>
-              <span class="precio">{{ item.producto.precio | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</span>
-              <div class="contador">
-                <button type="button" (click)="cambiarProducto(item.producto.id, -1)" [disabled]="item.cantidad === 0">−</button>
-                <span>{{ item.cantidad }}</span>
-                <button type="button" (click)="cambiarProducto(item.producto.id, 1)">+</button>
-              </div>
-            </div>
-          }
+          <div class="grilla-candy">
+            @for (item of productosDe(categoria); track item.producto.id) {
+              <article class="tarjeta-candy" [class.elegida]="item.cantidad > 0">
+                <div class="foto">
+
+                  @if (item.producto.imagen_url) {
+                    <img [src]="item.producto.imagen_url" [alt]="item.producto.nombre" loading="lazy">
+                  } @else {
+                    @switch (categoria) {
+                      @case ('Pochoclos') {
+                        <svg viewBox="0 0 24 24"><path d="M5 9h14l-2 12H7zM7 9a2.5 2.5 0 0 1 2-4 3 3 0 0 1 6 0 2.5 2.5 0 0 1 2 4" /></svg>
+                      }
+                      @case ('Bebidas') {
+                        <svg viewBox="0 0 24 24"><path d="M6 7h12l-1.5 14h-9zM5 7h14M12 7l2-5h3" /></svg>
+                      }
+                      @default {
+                        <svg viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="2" /><path d="M7 12 3 9v6zM17 12l4-3v6z" /></svg>
+                      }
+                    }
+                  }
+                </div>
+                <div class="cuerpo">
+                  <h4>{{ item.producto.nombre }}</h4>
+                  <div class="pie">
+                    <span class="precio-candy">{{ item.producto.precio | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</span>
+                    <div class="contador">
+                      <button type="button" (click)="cambiarProducto(item.producto.id, -1)" [disabled]="item.cantidad === 0">−</button>
+                      <span>{{ item.cantidad }}</span>
+                      <button type="button" (click)="cambiarProducto(item.producto.id, 1)">+</button>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            }
+          </div>
         }
       }
-    }
-    </div>
-    </div>
+    </section>
+  }
 
-    <div class="total">
-      <span>Total</span>
+  <div class="barra-total">
+    <div>
+      <span class="ayuda">
+        {{ cantidad() }} {{ cantidad() === 1 ? 'entrada' : 'entradas' }}
+        @if (totalCandy() > 0) {
+          · candy {{ totalCandy() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}
+        }
+      </span>
       <strong>{{ total() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong>
     </div>
-
     <button type="button" class="continuar" [disabled]="cantidad() === 0" (click)="continuar()">
       Elegir butacas
     </button>
-  </section>
+  </div>
 }

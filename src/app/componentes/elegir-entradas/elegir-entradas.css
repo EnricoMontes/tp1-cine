@@ -1,24 +1,18 @@
-.tarjeta {
+.bloque {
   max-width: 1100px;
-  margin: 0 auto;
+  margin: 0 auto 1.5rem;
 }
 
-.dos-columnas {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2.5rem;
-  align-items: start;
-}
-
-@media (max-width: 800px) {
-  .dos-columnas {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-}
-
-.tarjeta h1 {
+.bloque h1 {
   margin: 0;
+}
+
+.titulo-bloque {
+  margin: 1.5rem 0 0.75rem;
+}
+
+.bloque > .titulo-bloque:first-child {
+  margin-top: 0;
 }
 
 .ayuda {
@@ -27,20 +21,70 @@
   font-size: 0.9rem;
 }
 
-.entrada {
+.tipos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin: 0.75rem 0 0.5rem;
+}
+
+@media (max-width: 900px) {
+  .tipos {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tipo {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem 0;
-  border-bottom: 1px solid var(--borde);
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  background: var(--superficie-2);
+  transition: border-color 0.2s;
 }
 
-.entrada > div:first-child {
-  flex: 1;
+.tipo.elegida {
+  border-color: var(--acento);
 }
 
-.precio {
-  font-weight: 700;
+.tipo-texto {
+  min-width: 0;
+}
+
+.tipo-texto strong {
+  font-size: 1rem;
+}
+
+.tipo-texto .ayuda {
+  margin: 0.1rem 0;
+  font-size: 0.8rem;
+}
+
+.tipo-compra {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  flex: none;
+}
+
+.precio-grande {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.tipo .contador {
+  gap: 0.4rem;
+}
+
+.tipo .contador button {
+  width: 1.8rem;
+  height: 1.8rem;
+  font-size: 1rem;
 }
 
 .vip {
@@ -51,51 +95,8 @@
   color: #3b82f6;
 }
 
-.contador button {
-  border-radius: 50%;
-  background: transparent;
-  border: 1px solid var(--borde);
-  color: var(--texto);
-}
-
-.contador button:hover:not(:disabled) {
-  border-color: var(--acento);
-  background: var(--superficie-2);
-}
-
-.contador {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.contador button {
-  width: 2.2rem;
-  height: 2.2rem;
-  padding: 0;
-  font-size: 1.2rem;
-}
-
-.contador span {
-  min-width: 1.5rem;
-  text-align: center;
-  font-weight: 700;
-}
-
-.total {
-  display: flex;
-  justify-content: space-between;
-  margin: 1rem 0;
-  font-size: 1.2rem;
-}
-
-.continuar {
-  width: 100%;
-  padding: 0.8rem;
-}
-
 .quedan {
-  margin: 0.15rem 0 0;
+  margin: 0;
   color: var(--texto-suave);
   font-size: 0.75rem;
   font-weight: 600;
@@ -109,22 +110,189 @@
   color: var(--error);
 }
 
-.combos {
+.contador {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 0.6rem;
-  margin-bottom: 1rem;
 }
 
-.entrada.combo {
-  border: 1px solid var(--acento);
-  border-radius: 8px;
-  padding: 0.6rem 0.8rem;
-  background: var(--superficie-2);
+.contador button {
+  width: 2.1rem;
+  height: 2.1rem;
+  padding: 0;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid var(--borde);
+  color: var(--texto);
+  font-size: 1.2rem;
+}
+
+.contador button:hover:not(:disabled) {
+  border-color: var(--acento);
+  background: var(--acento);
+}
+
+.contador span {
+  min-width: 1.5rem;
+  text-align: center;
+  font-weight: 700;
 }
 
 .categoria {
-  margin: 1rem 0 0.3rem;
-  font-size: 1rem;
+  margin: 1.5rem 0 0.75rem;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  font-weight: normal;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.grilla-candy {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.tarjeta-candy {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  background: var(--superficie-2);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.tarjeta-candy.destacada {
+  border-color: var(--acento);
+}
+
+.tarjeta-candy.elegida {
+  border-color: var(--amarillo);
+  box-shadow: 0 0 0 1px var(--amarillo);
+}
+
+.foto {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 50% 40%, var(--superficie), var(--fondo));
   color: var(--texto-suave);
+}
+
+.foto img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.foto svg {
+  width: 56px;
+  height: 56px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.chips-foto {
+  position: absolute;
+  top: 0.6rem;
+  left: 0.6rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.chip-foto {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: var(--texto);
+  color: var(--fondo);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.chip-foto.azul {
+  background: var(--acento);
+  color: white;
+}
+
+.cuerpo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.85rem 1rem 1rem;
+}
+
+.cuerpo h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.pie {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-top: 0.4rem;
+}
+
+.precio-candy {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--acento);
+}
+
+.barra-total {
+  position: sticky;
+  bottom: 1rem;
+  z-index: 5;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1.25rem;
+  border: 1px solid var(--acento);
+  border-radius: 14px;
+  background: var(--superficie);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.45);
+}
+
+.barra-total > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.barra-total strong {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.continuar {
+  width: auto;
+  padding: 0.8rem 2rem;
+}
+
+@media (max-width: 600px) {
+  .barra-total {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .continuar {
+    width: 100%;
+  }
 }

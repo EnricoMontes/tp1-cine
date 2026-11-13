@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { DatePipe } from '@angular/common';
+import { CurrencyPipe } from '@angular/common';
 import { RealtimeChannel } from '@supabase/supabase-js';
 import { Funciones } from '../../servicios/funciones';
 import { Salas } from '../../servicios/salas';
@@ -10,9 +10,10 @@ import { Funcion } from '../../modelos/funcion';
 import { Butaca } from '../../modelos/sala';
 import { MapaButacas } from '../mapa-butacas/mapa-butacas';
 import { PasosCompra } from '../pasos-compra/pasos-compra';
+import { CabeceraFuncion } from '../cabecera-funcion/cabecera-funcion';
 
 @Component({
-  imports: [RouterLink, DatePipe, MapaButacas, PasosCompra],
+  imports: [RouterLink, CurrencyPipe, MapaButacas, PasosCompra, CabeceraFuncion],
   selector: 'app-elegir-butacas',
   styleUrl: './elegir-butacas.css',
   templateUrl: './elegir-butacas.html',
@@ -48,10 +49,10 @@ export class ElegirButacas implements OnInit, OnDestroy {
     this.cargar(id);
   }
 
-  tipos: { tipo: Butaca['tipo']; nombre: string }[] = [
-    { tipo: 'normal', nombre: 'generales' },
-    { tipo: 'accesible', nombre: 'accesibles' },
-    { tipo: 'vip', nombre: 'VIP' },
+  tipos: { tipo: Butaca['tipo']; titulo: string; nombre: string }[] = [
+    { tipo: 'normal', titulo: 'General', nombre: 'generales' },
+    { tipo: 'accesible', titulo: 'Accesible', nombre: 'accesibles' },
+    { tipo: 'vip', titulo: 'VIP', nombre: 'VIP' },
   ];
 
   elegidas(tipo: Butaca['tipo']) {
@@ -63,6 +64,14 @@ export class ElegirButacas implements OnInit, OnDestroy {
       return this.carrito.cantidadAccesible();
     }
     return tipo === 'vip' ? this.carrito.cantidadVip() : this.carrito.cantidadGeneral() + this.carrito.cantidadCombos();
+  }
+
+  faltan() {
+    let suma = 0;
+    for (const t of this.tipos) {
+      suma += this.cupo(t.tipo) - this.elegidas(t.tipo);
+    }
+    return suma;
   }
 
   completo() {
