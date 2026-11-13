@@ -1,17 +1,18 @@
 import { Component, computed, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { CurrencyPipe } from '@angular/common';
 import { Funciones } from '../../servicios/funciones';
 import { Salas } from '../../servicios/salas';
 import { Compras } from '../../servicios/compras';
 import { Carrito, enPreventa, MAXIMO_ENTRADAS, precioDeLaPelicula, RECARGO_VIP } from '../../servicios/carrito';
 import { Funcion } from '../../modelos/funcion';
 import { PasosCompra } from '../pasos-compra/pasos-compra';
+import { CabeceraFuncion } from '../cabecera-funcion/cabecera-funcion';
 import { Candy } from '../../servicios/candy';
 import { Categoria, ItemCombo, ItemProducto } from '../../modelos/producto';
 
 @Component({
-  imports: [RouterLink, CurrencyPipe, DatePipe, PasosCompra],
+  imports: [RouterLink, CurrencyPipe, PasosCompra, CabeceraFuncion],
   selector: 'app-elegir-entradas',
   styleUrl: './elegir-entradas.css',
   templateUrl: './elegir-entradas.html',

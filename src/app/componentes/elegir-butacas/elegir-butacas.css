@@ -1,75 +1,187 @@
-.encabezado h1 {
-  margin: 0;
+.sala-y-resumen {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
-.datos,
+@media (max-width: 900px) {
+  .sala-y-resumen {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sala h2 {
+  margin: 0 0 0.3rem;
+}
+
 .ayuda {
+  margin: 0.2rem 0;
   color: var(--texto-suave);
-}
-
-.resumen {
-  max-width: 600px;
-  margin: 1.5rem auto 0;
-}
-
-.resumen h2 {
-  margin-top: 0;
-}
-
-.elegidas {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.elegidas li {
-  padding: 0.3rem 0.7rem;
-  border-radius: 6px;
-  background: var(--superficie-2);
-}
-
-.elegidas li.vip {
-  background: var(--amarillo);
-  color: #000;
-  font-weight: 700;
-}
-
-.consigna {
-  font-size: 1.05rem;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.cupo {
-  padding: 0.15rem 0.65rem;
-  border-radius: 999px;
-  background: var(--superficie-2);
   font-size: 0.9rem;
-  font-weight: 600;
-}
-
-.cupo.vip {
-  color: var(--amarillo);
-}
-
-.cupo.accesible {
-  color: #3b82f6;
-}
-
-.resumen button {
-  width: 100%;
-  padding: 0.8rem;
 }
 
 app-mapa-butacas {
   display: block;
   margin-top: 1rem;
   padding: 1rem;
-  background: var(--superficie);
+  background: var(--fondo);
   border: 1px solid var(--borde);
   border-radius: 12px;
+}
+
+.resumen {
+  position: sticky;
+  top: 6rem;
+}
+
+.resumen h3 {
+  margin: 0 0 0.75rem;
+  font-size: 1.05rem;
+}
+
+.resumen h3:not(:first-child) {
+  margin-top: 1.25rem;
+}
+
+.lista-entradas {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.renglon {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+}
+
+.contador-tipo {
+  color: var(--texto-suave);
+}
+
+.completo .contador-tipo {
+  color: var(--verde, #22c55e);
+}
+
+.barra {
+  height: 6px;
+  margin-top: 0.35rem;
+  border-radius: 999px;
+  background: var(--superficie-2);
+  overflow: hidden;
+}
+
+.barra div {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--acento);
+  transition: width 0.2s;
+}
+
+.completo .barra div {
+  background: var(--verde, #22c55e);
+}
+
+.vip {
+  color: var(--amarillo);
+}
+
+.accesible {
+  color: #3b82f6;
+}
+
+.candy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin: 1rem 0 0;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  background: var(--superficie-2);
+  color: var(--texto-suave);
+  font-size: 0.85rem;
+}
+
+.elegidas {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.elegidas li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.4rem 0.3rem 0.7rem;
+  border: 1px solid var(--acento);
+  border-radius: 999px;
+  background: var(--superficie-2);
+  color: var(--texto);
+  font-size: 0.85rem;
+}
+
+.elegidas li span {
+  color: var(--texto-suave);
+}
+
+.elegidas li.vip {
+  border-color: var(--amarillo);
+}
+
+.elegidas li.vip span {
+  color: var(--amarillo);
+}
+
+.elegidas li.accesible {
+  border-color: #3b82f6;
+}
+
+.elegidas li.accesible span {
+  color: #3b82f6;
+}
+
+.quitar {
+  width: 1.4rem;
+  height: 1.4rem;
+  padding: 0;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  color: var(--texto-suave);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.quitar:hover {
+  background: var(--error);
+  color: white;
+}
+
+.total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 1.25rem 0 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--borde);
+}
+
+.total strong {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.continuar {
+  width: 100%;
+  padding: 0.8rem;
 }

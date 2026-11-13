@@ -7,6 +7,7 @@ import { Compras } from '../../servicios/compras';
 import { Auth } from '../../servicios/auth';
 import { vencimientoValidator } from '../../validadores/pago.validadores';
 import { PasosCompra } from '../pasos-compra/pasos-compra';
+import { CabeceraFuncion } from '../cabecera-funcion/cabecera-funcion';
 import { Cupones } from '../../servicios/cupones';
 import { Cupon } from '../../modelos/cupon';
 import { EntradaPdf } from '../../servicios/entrada-pdf';
@@ -14,7 +15,7 @@ import { Candy } from '../../servicios/candy';
 import { ItemCombo, ItemProducto } from '../../modelos/producto';
 
 @Component({
-  imports: [ReactiveFormsModule, RouterLink, CurrencyPipe, DatePipe, PasosCompra],
+  imports: [ReactiveFormsModule, RouterLink, CurrencyPipe, DatePipe, PasosCompra, CabeceraFuncion],
   selector: 'app-checkout',
   styleUrl: './checkout.css',
   templateUrl: './checkout.html',

@@ -7,57 +7,81 @@
 
   <app-pasos-compra [actual]="2" />
 
-  <header class="encabezado">
-    <h1>{{ funcion()?.peliculas?.nombre }}</h1>
-    <p class="datos">
-      {{ funcion()?.inicio | date: 'dd/MM/yyyy HH:mm' }} ·
-      {{ funcion()?.formato }} · {{ funcion()?.idioma }} · {{ funcion()?.salas?.nombre }}
-    </p>
-  </header>
+  <app-cabecera-funcion [funcion]="funcion()!" />
 
-  @if (funcion()?.peliculas?.restriccion_edad) {
-    <p class="aviso">⚠️ Película para mayores de {{ funcion()?.peliculas?.restriccion_edad }} años.</p>
-  }
+  <div class="sala-y-resumen">
+    <section class="panel sala">
+      <h2>Elegí tus butacas</h2>
+      <p class="ayuda">Tocá una butaca libre para marcarla; tocala de nuevo para desmarcarla. Las ocupadas se actualizan en tiempo real.</p>
 
-  <p class="consigna">
-    Marcá tus butacas:
-    @for (t of tipos; track t.tipo) {
-      @if (cupo(t.tipo)) {
-        <span class="cupo" [class.vip]="t.tipo === 'vip'" [class.accesible]="t.tipo === 'accesible'">
-          {{ elegidas(t.tipo) }}/{{ cupo(t.tipo) }} {{ t.nombre }}
-        </span>
-      }
-    }
-  </p>
-  <p class="ayuda">Las butacas ocupadas se actualizan en tiempo real.</p>
+      <app-mapa-butacas
+        [butacas]="butacas()"
+        [ocupadas]="ocupadas()"
+        [seleccionadas]="idsSeleccionadas()"
+        [seleccionable]="true"
+        (elegida)="alternar($event)"
+      />
+    </section>
 
-  <app-mapa-butacas
-    [butacas]="butacas()"
-    [ocupadas]="ocupadas()"
-    [seleccionadas]="idsSeleccionadas()"
-    [seleccionable]="true"
-    (elegida)="alternar($event)"
-  />
+    <aside class="panel resumen">
 
-  @if (aviso()) {
-    <p class="aviso">{{ aviso() }}</p>
-  }
+      <h3>Tus entradas</h3>
+      <ul class="lista-entradas">
+        @for (t of tipos; track t.tipo) {
+          @if (cupo(t.tipo)) {
+            <li [class.completo]="elegidas(t.tipo) === cupo(t.tipo)">
+              <div class="renglon">
+                <span [class.vip]="t.tipo === 'vip'" [class.accesible]="t.tipo === 'accesible'">
+                  {{ cupo(t.tipo) }} × {{ t.titulo }}
+                </span>
+                <span class="contador-tipo">{{ elegidas(t.tipo) }}/{{ cupo(t.tipo) }}</span>
+              </div>
 
-  <section class="panel resumen">
-    <h2>Tus butacas</h2>
-    @if (seleccionadas().length === 0) {
-      <p class="ayuda">Todavía no elegiste ninguna.</p>
-    } @else {
-      <ul class="elegidas">
-        @for (butaca of seleccionadas(); track butaca.id) {
-          <li [class.vip]="butaca.tipo === 'vip'">
-            {{ butaca.fila }}{{ butaca.numero }}
-            @if (butaca.tipo === 'vip') { · VIP }
-            @if (butaca.tipo === 'accesible') { · Accesible }
-          </li>
+              <div class="barra"><div [style.width.%]="elegidas(t.tipo) / cupo(t.tipo) * 100"></div></div>
+            </li>
+          }
         }
       </ul>
-    }
-    <button type="button" [disabled]="!completo()" (click)="continuar()">Continuar</button>
-  </section>
+
+      @if (carrito.combos().length || carrito.productos().length) {
+        <p class="candy">
+          🍿
+          @for (item of carrito.combos(); track item.combo.id) {
+            <span>{{ item.cantidad }} × {{ item.combo.nombre }} (incluye entrada general)</span>
+          }
+          @for (item of carrito.productos(); track item.producto.id) {
+            <span>{{ item.cantidad }} × {{ item.producto.nombre }}</span>
+          }
+        </p>
+      }
+
+      <h3>Tus butacas</h3>
+      @if (seleccionadas().length === 0) {
+        <p class="ayuda">Todavía no elegiste ninguna: tocá una butaca en la sala.</p>
+      } @else {
+        <ul class="elegidas">
+          @for (butaca of seleccionadas(); track butaca.id) {
+            <li [class.vip]="butaca.tipo === 'vip'" [class.accesible]="butaca.tipo === 'accesible'">
+              <strong>{{ butaca.fila }}{{ butaca.numero }}</strong>
+              <span>{{ butaca.tipo === 'vip' ? 'VIP' : butaca.tipo === 'accesible' ? 'Accesible' : 'General' }}</span>
+              <button type="button" class="quitar" (click)="alternar(butaca)" [attr.aria-label]="'Quitar ' + butaca.fila + butaca.numero">×</button>
+            </li>
+          }
+        </ul>
+      }
+
+      @if (aviso()) {
+        <p class="aviso">{{ aviso() }}</p>
+      }
+
+      <div class="total">
+        <span>Total</span>
+        <strong>{{ carrito.total() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong>
+      </div>
+
+      <button type="button" class="continuar" [disabled]="!completo()" (click)="continuar()">
+        {{ completo() ? 'Continuar al pago' : faltan() === 1 ? 'Falta 1 butaca' : 'Faltan ' + faltan() + ' butacas' }}
+      </button>
+    </aside>
+  </div>
 }

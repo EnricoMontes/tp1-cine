@@ -1,0 +1,21 @@
+<header class="cabecera">
+
+  <div class="fondo" [style.background-image]="'url(' + funcion().peliculas?.imagen_url + ')'"></div>
+
+  <img class="poster" [src]="funcion().peliculas?.imagen_url" [alt]="funcion().peliculas?.nombre" />
+
+  <div class="info">
+    <h1>{{ funcion().peliculas?.nombre }}</h1>
+    <p class="datos">
+
+      <span class="etiqueta amarilla">
+        {{ funcion().peliculas?.restriccion_edad ? '+' + funcion().peliculas?.restriccion_edad : 'ATP' }}
+      </span>
+      <span class="etiqueta">{{ funcion().formato }}</span>
+      <span class="etiqueta">{{ funcion().idioma }}</span>
+    </p>
+    <p class="cuando">
+      {{ diaSemana() }} {{ funcion().inicio | date: "dd/MM · HH:mm 'h'" }} · {{ funcion().salas?.nombre }}
+    </p>
+  </div>
+</header>

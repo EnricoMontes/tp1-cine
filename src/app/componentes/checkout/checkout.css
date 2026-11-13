@@ -1,23 +1,287 @@
 .columnas {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+  .columnas {
+    grid-template-columns: 1fr;
+  }
+}
+
+.izquierda {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.panel h2 {
+  margin: 0 0 0.75rem;
+}
+
+.ayuda {
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+}
+
+.opciones-cupon {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.5rem;
-  align-items: flex-start;
+  gap: 0.6rem;
+  margin: 0.5rem 0 1rem;
 }
 
-.tarjeta {
+.cupon-ticket {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  background: var(--superficie-2);
+  color: var(--texto);
+  font-weight: normal;
+  text-transform: none;
+  letter-spacing: normal;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.cupon-ticket:hover {
+  border-color: var(--texto-suave);
+}
+
+.cupon-ticket.elegido {
+  border-color: var(--acento);
+  background: rgb(31 111 235 / 0.15);
+}
+
+.cupon-ticket input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.porcentaje {
+  flex: none;
+  padding-right: 0.75rem;
+  border-right: 2px dashed var(--borde);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.7rem;
+  line-height: 1;
+  color: var(--acento);
+}
+
+.porcentaje small {
+  font-size: 1rem;
+}
+
+.cupon-texto {
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap;
+}
+
+.cupon-texto strong {
+  font-size: 0.9rem;
+}
+
+.cupon-texto .ayuda {
+  font-size: 0.75rem;
+}
+
+.cupon-ticket.invitacion {
+  display: flex;
+  margin: 0.5rem 0 1rem;
+  cursor: default;
+  border-style: dashed;
+  border-color: var(--amarillo);
+}
+
+.invitacion .cupon-texto {
+  white-space: normal;
+}
+
+.cupon {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.cupon input {
   flex: 1;
-  min-width: 280px;
 }
 
-.tarjeta h2 {
-  margin-top: 0;
+.canje {
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  background: var(--superficie-2);
+}
+
+.canje p {
+  margin: 0 0 0.5rem;
+}
+
+.fila-credito {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.fila-canje {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.3rem 0;
+}
+
+.contador {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.contador button {
+  width: 1.9rem;
+  height: 1.9rem;
+  padding: 0;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid var(--borde);
+  color: var(--texto);
+  font-size: 1.1rem;
+}
+
+.contador button:hover:not(:disabled) {
+  border-color: var(--acento);
+  background: var(--acento);
+}
+
+.contador span {
+  min-width: 1.4rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+.form h2 {
+  margin: 0;
+}
+
+.grilla-pago,
+.grilla-tarjeta {
+  display: grid;
+  gap: 0 1rem;
+}
+
+.grilla-pago {
+  grid-template-columns: 1fr 1fr;
+}
+
+.grilla-tarjeta {
+  grid-template-columns: 2fr 1fr 1fr;
+}
+
+@media (max-width: 600px) {
+  .grilla-pago,
+  .grilla-tarjeta {
+    grid-template-columns: 1fr;
+  }
+}
+
+.campo {
+  min-width: 0;
+}
+
+.campo input {
+  width: 100%;
+}
+
+.declaracion {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-top: 1.25rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  background: var(--superficie-2);
+  color: var(--texto);
+  font-size: 0.9rem;
+  font-weight: normal;
+  text-transform: none;
+  letter-spacing: normal;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.declaracion:hover {
+  border-color: var(--texto-suave);
+}
+
+.declaracion input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.caja {
+  flex: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--texto-suave);
+  border-radius: 6px;
+  color: transparent;
+  font-weight: 700;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.declaracion:has(input:checked) {
+  border-color: var(--acento);
+  background: rgb(31 111 235 / 0.15);
+}
+
+.declaracion:has(input:checked) .caja {
+  border-color: var(--acento);
+  background: var(--acento);
+  color: white;
+}
+
+.pagar {
+  width: 100%;
+  margin-top: 1.25rem;
+  padding: 0.9rem;
+  font-size: 1.05rem;
+}
+
+.resumen {
+  position: sticky;
+  top: 6rem;
+}
+
+.butacas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0 0 0.5rem;
+  color: var(--texto-suave);
 }
 
 .detalle {
   width: 100%;
   border-collapse: collapse;
-  margin: 1rem 0;
+  margin: 0.5rem 0 1rem;
+  font-size: 0.9rem;
 }
 
 .detalle td {
@@ -27,25 +291,35 @@
 
 .detalle .precio {
   text-align: right;
+  white-space: nowrap;
+  padding-left: 0.75rem;
+}
+
+.detalle .descuento td {
+  color: #3fb950;
 }
 
 .detalle .total td {
-  font-weight: 700;
-  font-size: 1.1rem;
+  padding-top: 0.75rem;
   border-bottom: none;
+  font-weight: 700;
+  font-size: 1.05rem;
 }
 
-.form h2 {
+.detalle .total .precio {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  font-weight: normal;
+  line-height: 1;
+}
+
+.puntos {
   margin: 0;
-}
-
-.form button {
-  margin-top: 1.25rem;
-  padding: 0.8rem;
-}
-
-h1 {
-  margin-top: 0;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  background: rgb(245 197 24 / 0.1);
+  color: var(--amarillo);
+  font-size: 0.9rem;
 }
 
 .confirmacion {
@@ -58,6 +332,18 @@ h1 {
   margin-top: 0;
 }
 
+.confirmacion .ok a,
+.invitacion a {
+  color: var(--acento);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.confirmacion .ok a:hover,
+.invitacion a:hover {
+  color: var(--texto);
+}
+
 .codigo {
   font-family: monospace;
   font-size: 1.1rem;
@@ -67,27 +353,6 @@ h1 {
   word-break: break-all;
 }
 
-.detalle .descuento td {
-  color: #3fb950;
-}
-
-.cupon {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.75rem;
-}
-
-.cupon input {
-  flex: 1;
-}
-
-.cupones {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  margin-top: 0.5rem;
-}
-
 .qr {
   display: block;
   width: 200px;
@@ -95,29 +360,4 @@ h1 {
   padding: 0.5rem;
   background: #fff;
   border-radius: 8px;
-}
-
-.canje {
-  margin: 1rem 0;
-  padding: 0.8rem;
-  border: 1px solid var(--borde);
-  border-radius: 8px;
-}
-
-.canje p {
-  margin: 0 0 0.5rem;
-}
-
-.fila-canje {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.3rem 0;
-}
-
-.fila-canje .contador {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
 }

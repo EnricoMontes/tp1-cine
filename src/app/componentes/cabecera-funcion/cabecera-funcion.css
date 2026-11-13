@@ -1,0 +1,54 @@
+.cabecera {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto 1.5rem;
+  padding: 1.5rem;
+  border-radius: 16px;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid var(--borde);
+}
+
+.fondo {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-size: cover;
+  background-position: center;
+  filter: blur(28px) brightness(0.35);
+  transform: scale(1.2);
+}
+
+.poster {
+  width: 110px;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 12px 30px rgb(0 0 0 / 0.5);
+}
+
+.info h1 {
+  margin: 0 0 0.6rem;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+}
+
+.datos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0 0 0.6rem;
+}
+
+.cuando {
+  margin: 0;
+  color: var(--texto-suave);
+}
+
+@media (max-width: 600px) {
+  .poster {
+    width: 80px;
+  }
+}

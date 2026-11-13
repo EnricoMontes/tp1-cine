@@ -36,7 +36,7 @@ export class Cupones {
       .insert([{ tipo: tipo, codigo: codigo, porcentaje: porcentaje }]);
   }
 
-  modificar(id: number, cambios: { porcentaje?: number; activo?: boolean }) {
+  modificar(id: number, cambios: { porcentaje?: number; activo?: boolean; codigo?: string }) {
     return this.supabase.cliente
       .from('cupones')
       .update(cambios)

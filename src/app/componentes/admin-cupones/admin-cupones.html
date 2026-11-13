@@ -59,8 +59,25 @@
   </section>
 </div>
 
-<form class="form panel" [formGroup]="formCupon" (ngSubmit)="crear()">
-  <h3>Nuevo cupón con código</h3>
+<section class="form panel canje">
+  <h3>Canje de puntos: entrada gratis</h3>
+  <p class="ayuda">Los clientes registrados suman 1 punto por peso y los canjean en el checkout. Los puntos de cada producto y combo se configuran en Candy.</p>
+  <div class="fila">
+    <div class="campo">
+      <label for="puntosEntrada">Puntos por una entrada general gratis</label>
+      <input type="number" id="puntosEntrada" min="1" [formControl]="puntosEntrada">
+    </div>
+    <div class="campo boton-abajo">
+      <button type="button" [disabled]="puntosEntrada.invalid" (click)="guardarPuntosEntrada()">Guardar</button>
+    </div>
+  </div>
+  @if (mensajeCanje()) {
+    <p class="ok">{{ mensajeCanje() }}</p>
+  }
+</section>
+
+<form class="form panel" id="form-cupon" [formGroup]="formCupon" (ngSubmit)="guardar()" [class.editando]="editandoId()">
+  <h3>{{ editandoId() ? 'Editar cupón ' + editandoCodigo() : 'Nuevo cupón con código' }}</h3>
   <p class="ayuda">Lo puede usar cualquiera que escriba el código. En una compra se usa un solo cupón (el cliente elige).</p>
   <div class="fila">
     <div class="campo">
@@ -80,7 +97,10 @@
     </div>
   </div>
   <div class="botones">
-    <button type="submit" [disabled]="formCupon.invalid">Crear cupón</button>
+    <button type="submit" [disabled]="formCupon.invalid">Guardar</button>
+    @if (editandoId()) {
+      <button type="button" class="secundario" (click)="cancelarEdicion()">Cancelar</button>
+    }
   </div>
 </form>
 
@@ -94,7 +114,7 @@
 } @else {
   <div class="tickets">
     @for (cupon of conCodigo(); track cupon.id) {
-      <div class="ticket" [class.apagado]="!cupon.activo">
+      <div class="ticket" [class.apagado]="!cupon.activo" [class.editando]="editandoId() === cupon.id">
         <div class="ticket-datos">
           <span class="ticket-codigo">{{ cupon.codigo }}</span>
           <span class="estado" [class.activo]="cupon.activo">{{ cupon.activo ? 'Activo' : 'Inactivo' }}</span>
@@ -108,6 +128,7 @@
             {{ cupon.activo ? 'Desactivar' : 'Activar' }}
           </button>
           <button type="button" class="peligro chico" (click)="borrar(cupon)">Borrar</button>
+          <button type="button" class="chico" (click)="editar(cupon)">Editar</button>
         </div>
       </div>
     }
