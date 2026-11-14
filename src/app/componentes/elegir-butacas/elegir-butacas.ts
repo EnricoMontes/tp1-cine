@@ -119,7 +119,7 @@ export class ElegirButacas implements OnInit, OnDestroy {
     this.butacas.set(butacas.data ?? []);
     this.ocupadas.set((ocupadas.data ?? []).map(e => e.butaca_id));
 
-    this.canal = this.comprasService.escucharVentas(id, butacaId => this.marcarVendida(butacaId));
+    this.canal = this.comprasService.escucharVentas(id, butacaId => this.marcarVendida(butacaId), butacaId => this.marcarLibre(butacaId));
     this.cargando.set(false);
   }
 
@@ -131,6 +131,10 @@ export class ElegirButacas implements OnInit, OnDestroy {
       this.seleccionadas.update(lista => lista.filter(b => b.id !== butacaId));
       this.aviso.set(`La butaca ${perdida.fila}${perdida.numero} la acaba de comprar otra persona.`);
     }
+  }
+
+  private marcarLibre(butacaId: number) {
+    this.ocupadas.update(lista => lista.filter(id => id !== butacaId));
   }
 
   alternar(butaca: Butaca) {
