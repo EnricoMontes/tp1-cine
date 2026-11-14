@@ -353,7 +353,8 @@ export class AdminFunciones implements OnInit {
     let texto = `Función cancelada: ${data.compras} compras (${data.entradas} entradas) anuladas, `
       + `$${Number(data.credito).toLocaleString('es-AR')} acreditados y compradores notificados.`;
     if (data.sin_cuenta > 0) {
-      texto += ` ${data.sin_cuenta} de esas compras eran sin cuenta: hay que avisarles por mail.`;
+      texto += ` ${data.sin_cuenta} eran sin cuenta: sus $${Number(data.pendiente).toLocaleString('es-AR')} quedan guardados `
+        + `y se acreditan cuando se registren con el mail de la compra.`;
     }
     this.mensajeOk.set(texto);
     this.aCancelar.set(null);

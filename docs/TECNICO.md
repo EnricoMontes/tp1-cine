@@ -124,6 +124,7 @@ Los guards esperan a que se cargue la sesión (`auth.sesionCargada`). Sin eso, a
 | `propuestas` | películas propuestas por los clientes y su estado |
 | `roles` | roles del panel: nombre y secciones (`text[]`) |
 | `lista_espera` | quién espera en cada función y su estado (`esperando → avisado → compro / vencido`) |
+| `creditos_pendientes` | crédito de compras sin cuenta canceladas por el cine, guardado por mail hasta que alguien se registra con ese mail (RLS sin policies: solo la usa la base) |
 
 ### 3.2 Funciones SQL
 
@@ -142,6 +143,7 @@ Se llaman con `supabase.rpc`. Corren con `security definer` y controlan todo en 
 | `anotarme_espera` / `estado_espera` / `mis_esperas` / `espera_por_funcion` | lista de espera |
 | `procesar_lista_espera` | el "motor" de la lista de espera: vence turnos y da turnos nuevos. No se puede llamar desde el navegador |
 | `lugares_disponibles` | butacas libres de una función, sin contar las reservadas por turnos de otros |
+| `reclamar_creditos_pendientes` | **trigger** `after insert` en `perfiles`: al registrarse, suma el crédito guardado para su mail y le deja una notificación |
 
 ### 3.3 Storage, Realtime, RLS y tareas programadas
 
@@ -216,6 +218,7 @@ Se llaman con `supabase.rpc`. Corren con `security definer` y controlan todo en 
   6. Devuelve un resumen en `jsonb`.
 - **Concurrencia:** `comprar_entradas` lee la función con `for share`. Si justo se está cancelando, la compra **espera** a que termine y después ve la función cancelada y la rechaza. Así nadie compra "en el medio".
 - **La función no se borra:** se marca con `cancelada_en` y el motivo. La cartelera filtra con `.is('cancelada_en', null)`.
+- **Compras sin cuenta:** el crédito se le da a la cuenta cuyo mail coincide con `compras.email_contacto` (`lower()` para no depender de mayúsculas). Si no hay ninguna, se inserta en `creditos_pendientes`, dentro de la misma transacción. Cuando alguien se registra, un **trigger** (`after insert on perfiles`, `for each row`) suma lo pendiente de su mail. El registro en Angular no cambió: lo hace la base sola.
 
 ### 5.2 Notificaciones
 

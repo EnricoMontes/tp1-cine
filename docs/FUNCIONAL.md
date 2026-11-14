@@ -43,6 +43,7 @@ Cómo está construido (arquitectura, stack y decisiones técnicas) está en [TE
   3. Pagar (pago simulado) y recibir la entrada con **QR** y en **PDF**.
 
 **Cliente registrado**
+- Si antes había comprado **sin cuenta** con el mismo mail y el cine canceló esa función, al registrarse ya tiene ese crédito.
 - **Cupones automáticos:** bienvenida en la primera compra y mayores de 50, además de cupones con código.
 - **Puntos:** 1 por cada peso pagado. Se **canjean** por entradas, productos o combos, con historial de canjes.
 - **Cancelar** una compra hasta 2 horas antes. El total pasa a **crédito**, que se usa junto con la tarjeta.
@@ -244,7 +245,6 @@ Mail del recuperatorio del primer parcial ("Por el retraso del proyecto, agrego 
 | Mapa del cine que indique la sala | El mail del 30/01 dice: *"estamos pensando en agregar una pantalla con un mapa… pero **no tenemos luz verde aún**"*. No es un pedido aprobado. |
 | Pago real | Nunca se pide un medio de pago real: el pago es simulado. |
 | Push con la app cerrada | Ver A-17: el aviso llega con la app abierta (campanita + notificación del sistema). Con la app cerrada haría falta un servidor de push aparte. |
-| Avisar por mail a las compras sin cuenta | Ver A-18: el sistema las cancela y le dice al admin cuántas son. |
 
 ---
 
@@ -354,7 +354,10 @@ El mail dice que al aceptar *"debería llevarnos a la pantalla de crear una pel�
 **Decisión:**
 - **Cuándo:** mientras la función no terminó (también si ya empezó, por una falla en el medio). Se pide un **motivo**.
 - **Crédito:** a cada comprador con cuenta se le acredita **el total de su compra** (entradas + candy, también lo pagado con crédito). Los puntos se ajustan igual que en A-08.
-- **Compras sin cuenta:** no hay cuenta donde acreditar ni a quién notificar. Se cancelan igual y al admin se le dice **cuántas eran**, para avisarles por mail.
+- **Compras sin cuenta:** el crédito va al **mail que se escribió en el checkout**.
+  - Si ya hay una cuenta con ese mail, se le acredita en el momento, con su notificación.
+  - Si no hay, el crédito queda **guardado a nombre de ese mail**. Cuando alguien se registra con ese mail, se le suma solo a su crédito y le llega una notificación.
+  - Límite declarado: al registrarse no se confirma el mail, así que lo reclama quien se registre con esa dirección. Es el mismo nivel que la compra anónima, cuyo mail tampoco se verifica.
 - **Reubicación:** la notificación y la compra cancelada tienen el botón **"Elegir otra función"**, que lleva a los otros horarios de la película. Ahí se compra pagando con el crédito.
 - **La función no se borra:** queda marcada como cancelada con su motivo (así no se pierde el historial). No se vende más, desaparece de la cartelera y su horario de sala queda libre para programar otra.
 - **Atómico:** se acredita a todos o a nadie.
@@ -384,3 +387,4 @@ El mail dice que al aceptar *"debería llevarnos a la pantalla de crear una pel�
 | RN-16 | El turno vencido pasa al siguiente aunque nadie toque nada | `procesar_lista_espera`, que corre cada minuto con `pg_cron` |
 | RN-17 | La cancelación de una función es atómica | función `cancelar_funcion` (una sola transacción) |
 | RN-18 | No se vende una función cancelada | `comprar_entradas` |
+| RN-19 | El crédito de una compra sin cuenta cancelada por el cine queda guardado por mail y se acredita al registrarse con ese mail | `cancelar_funcion` + trigger en `perfiles` |
