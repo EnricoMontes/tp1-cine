@@ -27,7 +27,7 @@ export class EntradaPdf {
     doc.text(`Fecha y hora: ${new Date(datos.inicio).toLocaleString('es-AR')}`, 20, 62);
     doc.text(`${datos.sala} · ${datos.formato} · ${datos.idioma}`, 20, 70);
     doc.text(`Butacas: ${datos.butacas}`, 20, 78);
-    doc.text(`Total pagado: $${datos.total}`, 20, 86);
+    doc.text(`Total pagado: $${Number(datos.total).toLocaleString('es-AR')}`, 20, 86);
 
     if (datos.candy) {
       doc.text(doc.splitTextToSize(`Candy: ${datos.candy}`, 170), 20, 94);
