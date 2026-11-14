@@ -1,0 +1,60 @@
+<div class="encabezado-seccion">
+  <h2>Roles del panel</h2>
+  <span class="ayuda">{{ roles().length }} roles</span>
+</div>
+<p class="ayuda">Un rol deja entrar al panel solo a las secciones que elijas (ej. "Solo reportes"). Después se lo das a una persona en la pestaña Usuarios. Usuarios y Roles quedan siempre solo para el admin.</p>
+
+<form class="form panel formulario-rol" [class.modo-edicion]="editandoId() !== null" (ngSubmit)="guardar()">
+  <h3>{{ editandoId() === null ? 'Nuevo rol' : 'Modificar rol' }}</h3>
+
+  <label for="nombre-rol">Nombre</label>
+
+  <input id="nombre-rol" name="nombre" type="text" maxlength="40" placeholder="Ej. Solo reportes" [(ngModel)]="nombre">
+
+  <label>Secciones a las que entra</label>
+  <div class="pildoras">
+    @for (seccion of secciones; track seccion.valor) {
+      <button type="button" class="pildora" [class.elegida]="elegidas().includes(seccion.valor)" (click)="alternar(seccion.valor)">
+        {{ seccion.texto }}
+      </button>
+    }
+  </div>
+
+  @if (mensajeError()) {
+    <p class="error">{{ mensajeError() }}</p>
+  }
+  <div class="botones">
+    @if (editandoId() !== null) {
+      <button type="button" class="secundario" (click)="limpiar()">Cancelar</button>
+    }
+    <button type="submit" [disabled]="!nombre().trim() || elegidas().length === 0">
+      {{ editandoId() === null ? 'Crear rol' : 'Guardar cambios' }}
+    </button>
+  </div>
+</form>
+
+@if (mensajeOk()) {
+  <p class="ok">{{ mensajeOk() }}</p>
+}
+
+<div class="roles">
+  @for (rol of roles(); track rol.id) {
+    <article class="rol" [class.editando]="editandoId() === rol.id">
+      <div class="rol-encabezado">
+        <h3>{{ rol.nombre }}</h3>
+        <span class="ayuda">{{ cantidadUsuarios(rol) }} {{ cantidadUsuarios(rol) === 1 ? 'usuario' : 'usuarios' }}</span>
+      </div>
+      <div class="rol-secciones">
+        @for (seccion of rol.secciones; track seccion) {
+          <span class="etiqueta azul">{{ textoSeccion(seccion) }}</span>
+        }
+      </div>
+      <div class="botones">
+        <button type="button" class="peligro chico" (click)="borrar(rol)">Borrar</button>
+        <button type="button" class="secundario chico" (click)="editar(rol)">Editar</button>
+      </div>
+    </article>
+  } @empty {
+    <p class="ayuda">Todavía no hay roles.</p>
+  }
+</div>

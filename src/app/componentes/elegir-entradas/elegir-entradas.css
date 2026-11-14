@@ -296,3 +296,16 @@
     width: 100%;
   }
 }
+
+.agotada {
+  margin-top: 1.5rem;
+  border-left: 4px solid var(--amarillo);
+}
+
+.agotada p {
+  margin: 0.5rem 0;
+}
+
+.turno {
+  margin-top: 1.25rem;
+}

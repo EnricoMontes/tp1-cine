@@ -1,0 +1,66 @@
+<div class="encabezado-seccion">
+  <h2>Propuestas de películas</h2>
+  <span class="ayuda">{{ pendientes().length }} pendientes</span>
+</div>
+<p class="ayuda">Películas que piden los clientes. Al aceptar una, se abre el alta de película con sus datos: queda aceptada cuando la guardás.</p>
+
+<div class="chips-filtro">
+  <button type="button" class="chip-filtro" [class.activo]="filtro() === 'pendiente'" (click)="filtro.set('pendiente')">
+    Pendientes <span>{{ pendientes().length }}</span>
+  </button>
+  <button type="button" class="chip-filtro" [class.activo]="filtro() === 'resueltas'" (click)="filtro.set('resueltas')">
+    Resueltas <span>{{ resueltas().length }}</span>
+  </button>
+</div>
+
+@if (mensajeOk()) {
+  <p class="ok">{{ mensajeOk() }}</p>
+}
+@if (mensajeError()) {
+  <p class="error">{{ mensajeError() }}</p>
+}
+
+@if (cargando()) {
+  <p>Cargando...</p>
+} @else {
+  <div class="propuestas">
+    @for (propuesta of filtradas(); track propuesta.id) {
+      <article class="propuesta" [class.aceptada]="propuesta.estado === 'aceptada'" [class.rechazada]="propuesta.estado === 'rechazada'">
+        <div class="propuesta-encabezado">
+          <h3>{{ propuesta.titulo }}</h3>
+          @if (propuesta.estado !== 'pendiente') {
+            <span class="etiqueta" [class.verde]="propuesta.estado === 'aceptada'" [class.roja]="propuesta.estado === 'rechazada'">
+              {{ propuesta.estado === 'aceptada' ? 'Aceptada' : 'Rechazada' }}
+            </span>
+          }
+        </div>
+        <p class="ayuda">Propuesta por {{ propuesta.usuario }} · {{ propuesta.creado_en | date: 'dd/MM/yyyy HH:mm' }}</p>
+
+        <p class="dato"><span>Descripción</span>{{ propuesta.descripcion }}</p>
+        <p class="dato"><span>¿Por qué la quiere?</span>{{ propuesta.motivo }}</p>
+        @if (propuesta.respuesta) {
+          <p class="dato"><span>Motivo del rechazo</span>{{ propuesta.respuesta }}</p>
+        }
+
+        @if (propuesta.estado === 'pendiente') {
+          @if (rechazandoId() === propuesta.id) {
+            <div class="rechazo">
+              <input type="text" maxlength="200" placeholder="Motivo (opcional), ej. no conseguimos la copia" [(ngModel)]="respuesta">
+              <div class="botones">
+                <button type="button" class="secundario chico" (click)="rechazandoId.set(null)">Volver</button>
+                <button type="button" class="peligro chico" (click)="confirmarRechazo(propuesta)">Confirmar rechazo</button>
+              </div>
+            </div>
+          } @else {
+            <div class="botones">
+              <button type="button" class="peligro chico" (click)="abrirRechazo(propuesta)">Rechazar</button>
+              <button type="button" class="chico" (click)="aceptar(propuesta)">Aceptar y crear película</button>
+            </div>
+          }
+        }
+      </article>
+    } @empty {
+      <p class="ayuda">{{ filtro() === 'pendiente' ? 'No hay propuestas pendientes.' : 'Todavía no resolviste ninguna propuesta.' }}</p>
+    }
+  </div>
+}

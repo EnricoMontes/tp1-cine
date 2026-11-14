@@ -145,12 +145,50 @@
       </div>
     </div>
 
+    @if (aCancelar(); as funcion) {
+      <div class="panel-cancelar" id="panel-cancelar">
+        <h4>Cancelar la función del {{ funcion.inicio | date: 'dd/MM HH:mm' }} · {{ funcion.salas?.nombre }}</h4>
+        @if (vendidasACancelar() === null) {
+          <p class="ayuda">Contando entradas vendidas...</p>
+        } @else {
+          <p>
+            Tiene <strong>{{ vendidasACancelar() }}</strong> {{ vendidasACancelar() === 1 ? 'entrada vendida' : 'entradas vendidas' }}.
+            Todo lo pagado (entradas y candy) pasa a <strong>crédito</strong> de cada comprador, las butacas se liberan
+            y a cada uno le llega una notificación para elegir otra función. Es todo o nada.
+          </p>
+        }
+        <label for="motivo">Motivo</label>
+        <input id="motivo" type="text" maxlength="100" placeholder="Ej. falla técnica en la sala" [(ngModel)]="motivo">
+        <div class="pildoras">
+          @for (texto of motivosRapidos; track texto) {
+            <button type="button" class="pildora chica" [class.elegida]="motivo() === texto" (click)="motivo.set(texto)">{{ texto }}</button>
+          }
+        </div>
+        <div class="botones">
+          <button type="button" class="secundario chico" (click)="aCancelar.set(null)">Volver</button>
+          <button type="button" class="peligro-lleno chico" [disabled]="!motivo().trim() || cancelando() || vendidasACancelar() === null"
+                  (click)="confirmarCancelacion()">
+            {{ cancelando() ? 'Cancelando...' : 'Cancelar función' }}
+          </button>
+        </div>
+      </div>
+    }
+
     @for (dia of diasDeLaElegida(); track dia.fecha) {
-      <div class="dia-funciones">
-        <h4>{{ textoDia(dia.fecha) }}</h4>
+      <div class="dia-funciones" [class.abierto]="estaAbierto(dia.fecha)" [class.dia-pasado]="esDiaPasado(dia.fecha)">
+
+        <button type="button" class="dia-fila" (click)="abrirCerrarDia(dia.fecha)" [attr.aria-expanded]="estaAbierto(dia.fecha)">
+          <span class="dia-nombre">{{ textoDia(dia.fecha) }}</span>
+          <span class="dia-resumen">
+            {{ dia.funciones.length }} {{ dia.funciones.length === 1 ? 'función' : 'funciones' }} · {{ horasDelDia(dia.funciones) }}
+          </span>
+
+          <svg class="dia-flecha" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" /></svg>
+        </button>
+        @if (estaAbierto(dia.fecha)) {
         <div class="funciones-del-dia">
           @for (funcion of dia.funciones; track funcion.id) {
-            <div class="funcion" [class.pasada]="esPasada(funcion)">
+            <div class="funcion" [class.pasada]="esPasada(funcion) && !funcion.cancelada_en" [class.cancelada]="!!funcion.cancelada_en">
 
               <span class="funcion-hora">{{ funcion.inicio | date: 'HH:mm' }}</span>
               <span class="ayuda">hasta {{ funcion.fin | date: 'HH:mm' }}</span>
@@ -158,13 +196,23 @@
                 <span class="etiqueta azul">{{ funcion.formato }}</span>
                 <span class="etiqueta">{{ funcion.salas?.nombre }}</span>
                 <span class="etiqueta">{{ funcion.idioma === 'castellano' ? 'Castellano' : 'Subtitulada' }}</span>
+
+                @if (esperando(funcion)) {
+                  <span class="etiqueta amarilla">{{ esperando(funcion) }} en espera</span>
+                }
               </div>
-              <button type="button" class="borrar-funcion" (click)="borrar(funcion)" aria-label="Borrar función" title="Borrar función">
-                <svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14" /></svg>
-              </button>
+
+              @if (funcion.cancelada_en) {
+                <span class="etiqueta-cancelada" [title]="funcion.motivo_cancelacion">Cancelada · {{ funcion.motivo_cancelacion }}</span>
+              }
+
+              @if (puedeCancelar(funcion)) {
+                <button type="button" class="peligro chico cancelar-funcion" (click)="abrirCancelacion(funcion)">Cancelar función</button>
+              }
             </div>
           }
         </div>
+        }
       </div>
     } @empty {
       <p class="ayuda">Esta película todavía no tiene funciones.</p>

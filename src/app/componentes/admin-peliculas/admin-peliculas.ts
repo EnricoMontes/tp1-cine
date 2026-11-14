@@ -1,4 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Propuestas } from '../../servicios/propuestas';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
 import { FiltroPeliculasPipe } from '../../pipes/filtro-peliculas-pipe';
@@ -52,11 +54,43 @@ export class AdminPeliculas implements OnInit {
     private peliculasService: Peliculas,
     private actividades: Actividades,
     private funcionesService: Funciones,
+    private route: ActivatedRoute,
+    private router: Router,
+    private propuestasService: Propuestas,
   ) {}
+
+  propuestaId = signal<number | null>(null);
+  propuestaTitulo = signal('');
 
   ngOnInit() {
     this.cargarPeliculas();
     this.cargarGeneros();
+    this.route.queryParamMap.subscribe(parametros => {
+      const id = Number(parametros.get('propuesta'));
+      if (id) {
+        this.cargarPropuesta(id);
+      }
+    });
+  }
+
+  private async cargarPropuesta(id: number) {
+    const { data } = await this.propuestasService.traerPorId(id);
+    const propuesta = data?.[0];
+    if (!propuesta || propuesta.estado !== 'pendiente') {
+      this.mensajeError.set('Esa propuesta ya no está pendiente.');
+      return;
+    }
+    this.limpiarFormulario();
+    this.formPelicula.patchValue({ nombre: propuesta.titulo, sinopsis: propuesta.descripcion });
+    this.propuestaId.set(propuesta.id);
+    this.propuestaTitulo.set(propuesta.titulo);
+    setTimeout(() => document.getElementById('formulario-pelicula')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  }
+
+  private olvidarPropuesta() {
+    this.propuestaId.set(null);
+    this.propuestaTitulo.set('');
+    this.router.navigate([], { queryParams: {}, replaceUrl: true });
   }
 
   private async cargarPeliculas() {
@@ -130,6 +164,9 @@ export class AdminPeliculas implements OnInit {
   }
 
   limpiarFormulario() {
+    if (this.propuestaId() !== null) {
+      this.olvidarPropuesta();
+    }
     this.editandoId.set(null);
     this.formPelicula.reset({ estado: 'cartelera', visibleEnHome: true, esEstreno: false, preventaActiva: false });
     this.generosElegidos.set([]);
@@ -225,8 +262,17 @@ export class AdminPeliculas implements OnInit {
       return;
     }
 
+    const propuestaId = this.propuestaId();
+    let textoOk = this.editandoId() === null ? 'Película creada.' : 'Película modificada.';
+    if (propuestaId !== null && this.editandoId() === null) {
+      const { error } = await this.propuestasService.aceptar(propuestaId, id!);
+      textoOk = error
+        ? 'Película creada, pero no se pudo marcar la propuesta como aceptada.'
+        : 'Película creada y propuesta aceptada: al cliente le llegó una notificación.';
+    }
+
     this.cargando.set(false);
-    this.mensajeOk.set(this.editandoId() === null ? 'Película creada.' : 'Película modificada.');
+    this.mensajeOk.set(textoOk);
     this.limpiarFormulario();
     this.cargarPeliculas();
   }

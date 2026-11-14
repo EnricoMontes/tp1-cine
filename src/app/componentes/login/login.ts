@@ -1,4 +1,4 @@
-import { Component, input, output, signal } from '@angular/core';
+import { Component, output, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Auth } from '../../servicios/auth';
@@ -10,7 +10,6 @@ import { Auth } from '../../servicios/auth';
   templateUrl: './login.html',
 })
 export class Login {
-  enPanel = input(false);
   cerrar = output();
 
   formLogin = new FormGroup({
@@ -36,10 +35,10 @@ export class Login {
       this.mensajeError.set(this.traducirError(error.code));
       return;
     }
-    if (this.enPanel()) {
-      this.cerrar.emit();
-    } else {
-      this.router.navigate(['/']);
+    const destino = this.auth.destinoDespuesDelLogin();
+    this.cerrar.emit();
+    if (destino) {
+      this.router.navigateByUrl(destino);
     }
   }
 

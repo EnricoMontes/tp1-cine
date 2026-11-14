@@ -4,13 +4,11 @@
 </header>
 
 <nav class="pestanias">
-  <a routerLink="peliculas" routerLinkActive="activa">Películas</a>
-  <a routerLink="funciones" routerLinkActive="activa">Funciones</a>
-  <a routerLink="candy" routerLinkActive="activa">Candy</a>
-  <a routerLink="cupones" routerLinkActive="activa">Cupones</a>
-  <a routerLink="reportes" routerLinkActive="activa">Reportes</a>
-  <a routerLink="usuarios" routerLinkActive="activa">Usuarios</a>
-  <a routerLink="actividad" routerLinkActive="activa">Actividad</a>
+  @for (pestania of pestanias; track pestania.ruta) {
+    @if (auth.puede(pestania.ruta)) {
+      <a [routerLink]="pestania.ruta" routerLinkActive="activa">{{ pestania.texto }}</a>
+    }
+  }
 </nav>
 
 <section class="contenido">

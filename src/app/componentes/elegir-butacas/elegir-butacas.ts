@@ -100,6 +100,10 @@ export class ElegirButacas implements OnInit, OnDestroy {
       return;
     }
     const funcion: Funcion = data[0];
+    if (funcion.cancelada_en) {
+      this.terminarConError('Esta función fue cancelada por el cine. Elegí otro horario de la película.');
+      return;
+    }
     if (new Date(funcion.inicio) <= new Date()) {
       this.terminarConError('Esta función ya empezó: no se pueden comprar entradas.');
       return;

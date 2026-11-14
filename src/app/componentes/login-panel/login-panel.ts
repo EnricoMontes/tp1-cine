@@ -13,5 +13,6 @@ export class LoginPanel {
 
   cerrar() {
     this.auth.loginAbierto.set(false);
+    this.auth.destinoDespuesDelLogin.set(null);
   }
 }

@@ -140,22 +140,81 @@
   margin-top: 0.25rem;
 }
 
-.dia-funciones + .dia-funciones {
-  margin-top: 1.25rem;
+.dia-funciones {
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  background: var(--superficie-2);
+  overflow: hidden;
 }
 
-.dia-funciones h4 {
-  margin: 0 0 0.6rem;
+.dia-funciones + .dia-funciones {
+  margin-top: 0.6rem;
+}
+
+.dia-funciones.abierto {
+  border-color: var(--acento);
+}
+
+.dia-funciones.dia-pasado {
+  opacity: 0.55;
+}
+
+.dia-fila {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 1.1rem;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--texto);
+  text-align: left;
+  text-transform: none;
+}
+
+.dia-fila:hover {
+  background: rgb(255 255 255 / 0.04);
+}
+
+.dia-nombre {
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.dia-resumen {
+  flex: 1;
   color: var(--texto-suave);
   font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  font-weight: 400;
+}
+
+.dia-flecha {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.2s;
+}
+
+.dia-funciones.abierto .dia-flecha {
+  transform: rotate(180deg);
 }
 
 .funciones-del-dia {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.75rem;
+  padding: 0 1.1rem 1.1rem;
+}
+
+@media (max-width: 600px) {
+  .funciones-del-dia {
+    grid-template-columns: 1fr;
+  }
 }
 
 .funcion {
@@ -166,7 +225,7 @@
   padding: 0.85rem 1rem;
   border: 1px solid var(--borde);
   border-radius: 12px;
-  background: var(--superficie-2);
+  background: var(--superficie);
 }
 
 .funcion.pasada {
@@ -184,37 +243,6 @@
   flex-wrap: wrap;
   gap: 0.3rem;
   margin-top: 0.4rem;
-}
-
-.borrar-funcion {
-  position: absolute;
-  top: 0.6rem;
-  right: 0.6rem;
-  width: 32px;
-  height: 32px;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  border: 1px solid var(--borde);
-  border-radius: 8px;
-  background: transparent;
-  color: var(--texto-suave);
-}
-
-.borrar-funcion:hover {
-  background: var(--error);
-  border-color: var(--error);
-  color: white;
-}
-
-.borrar-funcion svg {
-  width: 16px;
-  height: 16px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
 }
 
 .contador {
@@ -243,4 +271,59 @@
   .columna-poster {
     max-width: 200px;
   }
+}
+
+.cancelar-funcion {
+  align-self: flex-start;
+  margin-top: 0.6rem;
+}
+
+.funcion.cancelada {
+  border-color: var(--error);
+  opacity: 0.75;
+}
+
+.funcion.cancelada .funcion-hora {
+  text-decoration: line-through;
+}
+
+.etiqueta-cancelada {
+  margin-top: 0.5rem;
+  color: var(--error);
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.panel-cancelar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--error);
+  border-radius: 12px;
+  background: rgb(255 107 107 / 0.08);
+}
+
+.panel-cancelar h4 {
+  margin: 0;
+  color: var(--error);
+}
+
+.panel-cancelar p {
+  margin: 0;
+}
+
+button.peligro-lleno {
+  background: var(--error);
+  border: 1px solid var(--error);
+  color: white;
+}
+
+button.peligro-lleno:disabled {
+  opacity: 0.5;
 }

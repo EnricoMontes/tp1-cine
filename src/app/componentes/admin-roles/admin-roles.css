@@ -1,0 +1,80 @@
+.formulario-rol {
+  margin: 1rem 0 1.5rem;
+}
+
+.formulario-rol.modo-edicion {
+  border-color: var(--acento);
+}
+
+.roles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.rol {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1rem 1.15rem;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  background: var(--superficie);
+}
+
+.rol.editando {
+  border-color: var(--acento);
+}
+
+.rol-encabezado {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.rol h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.rol-secciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.rol .botones {
+  justify-content: flex-end;
+  margin-top: auto;
+}
+
+.pildoras {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.2rem;
+}
+
+.pildora {
+  width: auto;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  background: var(--superficie-2);
+  color: var(--texto);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: none;
+}
+
+.pildora:hover {
+  background: var(--superficie-2);
+  border-color: var(--texto-suave);
+}
+
+.pildora.elegida {
+  background: var(--acento);
+  border-color: var(--acento);
+}

@@ -1,31 +1,7 @@
-.etiqueta-login {
-  display: block;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.5rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  text-align: center;
-  color: var(--acento);
-}
-
-h1 {
-  margin-top: 0.25rem;
-  text-align: center;
-}
-
 .form-login {
   display: flex;
   flex-direction: column;
   gap: 1.1rem;
-}
-
-.form-login.tarjeta {
-  max-width: 420px;
-  margin: 0 auto;
-  padding: 2rem;
-  background: var(--superficie);
-  border: 1px solid var(--borde);
-  border-radius: 14px;
 }
 
 .saludo {

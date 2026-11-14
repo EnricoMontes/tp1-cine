@@ -1,5 +1,5 @@
 import { Component, computed, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Peliculas } from '../../servicios/peliculas';
 import { Genero, Pelicula } from '../../modelos/pelicula';
@@ -11,7 +11,7 @@ type Seccion = 'todas' | 'estrenos' | 'cartelera' | 'proximamente';
 type Edad = 'todas' | 'atp' | '13' | '18';
 
 @Component({
-  imports: [CardPelicula, FormsModule, FiltroPeliculasPipe],
+  imports: [CardPelicula, FormsModule, FiltroPeliculasPipe, RouterLink],
   selector: 'app-cartelera',
   styleUrl: './cartelera.css',
   templateUrl: './cartelera.html',

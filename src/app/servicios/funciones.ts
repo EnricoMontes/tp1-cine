@@ -19,6 +19,7 @@ export class Funciones {
       .select('*, salas(nombre)')
       .eq('pelicula_id', peliculaId)
       .gte('inicio', desde)
+      .is('cancelada_en', null)
       .order('inicio');
   }
 
@@ -28,7 +29,8 @@ export class Funciones {
       .select('sala_id')
       .in('sala_id', salaIds)
       .lt('inicio', finMas30)
-      .gt('fin', inicioMenos30);
+      .gt('fin', inicioMenos30)
+      .is('cancelada_en', null);
   }
 
   traerPorId(id: number) {
@@ -53,10 +55,15 @@ export class Funciones {
       .insert([funcion]);
   }
 
-  borrar(id: number) {
+  contarVendidas(id: number) {
     return this.supabase.cliente
-      .from('funciones')
-      .delete()
-      .eq('id', id);
+      .from('compra_entradas')
+      .select('id', { count: 'exact', head: true })
+      .eq('funcion_id', id)
+      .eq('cancelada', false);
+  }
+
+  cancelar(id: number, motivo: string) {
+    return this.supabase.cliente.rpc('cancelar_funcion', { p_funcion_id: id, p_motivo: motivo });
   }
 }

@@ -7,7 +7,9 @@ import { EntradaPdf } from '../../servicios/entrada-pdf';
 import { Resenias } from '../../servicios/resenias';
 import { Resenia } from '../../modelos/resenia';
 import { Canje } from '../../modelos/producto';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { Notificaciones } from '../../servicios/notificaciones';
+import { ListaEspera, MiEspera } from '../../servicios/lista-espera';
 
 @Component({
   imports: [CurrencyPipe, DatePipe, RouterLink],
@@ -37,10 +39,50 @@ export class MiPerfil implements OnInit {
     private comprasService: Compras,
     private entradaPdf: EntradaPdf,
     private reseniasService: Resenias,
+    protected notificaciones: Notificaciones,
+    private route: ActivatedRoute,
+    private listaEspera: ListaEspera,
   ) {}
+
+  esperas = signal<MiEspera[]>([]);
+
+  private async cargarEsperas() {
+    const { data } = await this.listaEspera.mias();
+    this.esperas.set(data ?? []);
+  }
+
+  async salirDeLaLista(espera: MiEspera) {
+    if (!confirm(`¿Salir de la lista de espera de ${espera.pelicula}?`)) {
+      return;
+    }
+    await this.listaEspera.salir(espera.id);
+    await this.cargarEsperas();
+  }
+
+  nuevas = signal<number[]>([]);
 
   ngOnInit() {
     this.cargar();
+    this.cargarEsperas();
+    this.route.fragment.subscribe(fragment => {
+      if (fragment === 'notificaciones') {
+        this.verNotificaciones();
+      }
+    });
+  }
+
+  private verNotificaciones() {
+    const usuario = this.auth.usuario();
+    if (!usuario) {
+      return;
+    }
+    this.nuevas.set(this.notificaciones.lista().filter(n => !n.leida).map(n => n.id));
+    this.notificaciones.marcarLeidas(usuario.id);
+    setTimeout(() => document.getElementById('notificaciones')?.scrollIntoView({ behavior: 'smooth' }), 100);
+  }
+
+  canceladaPorCine(compra: Compra) {
+    return compra.estado === 'cancelada' && !!compra.compra_entradas[0]?.funciones?.cancelada_en;
   }
 
   private async cargar() {

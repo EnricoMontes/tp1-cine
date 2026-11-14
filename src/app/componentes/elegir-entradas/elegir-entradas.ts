@@ -1,6 +1,6 @@
 import { Component, computed, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Funciones } from '../../servicios/funciones';
 import { Salas } from '../../servicios/salas';
 import { Compras } from '../../servicios/compras';
@@ -10,9 +10,12 @@ import { PasosCompra } from '../pasos-compra/pasos-compra';
 import { CabeceraFuncion } from '../cabecera-funcion/cabecera-funcion';
 import { Candy } from '../../servicios/candy';
 import { Categoria, ItemCombo, ItemProducto } from '../../modelos/producto';
+import { EstadoEspera, ListaEspera } from '../../servicios/lista-espera';
+import { Notificaciones } from '../../servicios/notificaciones';
+import { Auth } from '../../servicios/auth';
 
 @Component({
-  imports: [RouterLink, CurrencyPipe, PasosCompra, CabeceraFuncion],
+  imports: [RouterLink, CurrencyPipe, DatePipe, PasosCompra, CabeceraFuncion],
   selector: 'app-elegir-entradas',
   styleUrl: './elegir-entradas.css',
   templateUrl: './elegir-entradas.html',
@@ -65,7 +68,47 @@ export class ElegirEntradas implements OnInit {
     private comprasService: Compras,
     private carrito: Carrito,
     private candyService: Candy,
+    private listaEspera: ListaEspera,
+    private notificaciones: Notificaciones,
+    protected auth: Auth,
   ) {}
+
+  espera = signal<EstadoEspera | null>(null);
+  mensajeEspera = signal('');
+  agotada = computed(() => (this.espera()?.lugares ?? 1) <= 0);
+  miTurno = computed(() => this.espera()?.mi_estado === 'avisado');
+
+  private async cargarEspera(funcionId: number) {
+    const { data } = await this.listaEspera.estado(funcionId);
+    this.espera.set(data);
+  }
+
+  async anotarme() {
+    const funcion = this.funcion();
+    if (!funcion) {
+      return;
+    }
+    this.mensajeEspera.set('');
+    const { data, error } = await this.listaEspera.anotarme(funcion.id);
+    if (error) {
+      this.mensajeEspera.set(error.code === 'P0001' ? error.message : 'No se pudo anotarte. Probá de nuevo.');
+      return;
+    }
+    this.mensajeEspera.set(`¡Listo! Quedaste en el puesto ${data} de la lista de espera.`);
+    await this.notificaciones.pedirPermiso();
+    await this.cargarEspera(funcion.id);
+  }
+
+  async salirDeLaLista() {
+    const espera = this.espera();
+    const funcion = this.funcion();
+    if (!espera?.mi_id || !funcion) {
+      return;
+    }
+    await this.listaEspera.salir(espera.mi_id);
+    this.mensajeEspera.set('Saliste de la lista de espera.');
+    await this.cargarEspera(funcion.id);
+  }
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -87,6 +130,10 @@ export class ElegirEntradas implements OnInit {
       return;
     }
     const funcion: Funcion = data[0];
+    if (funcion.cancelada_en) {
+      this.terminarConError('Esta función fue cancelada por el cine. Elegí otro horario de la película.');
+      return;
+    }
     if (new Date(funcion.inicio) <= new Date()) {
       this.terminarConError('Esta función ya empezó: no se pueden comprar entradas.');
       return;
@@ -119,6 +166,7 @@ export class ElegirEntradas implements OnInit {
       accesible: libres.filter(b => b.tipo === 'accesible').length,
       vip: libres.filter(b => b.tipo === 'vip').length,
     });
+    await this.cargarEspera(id);
     this.cargando.set(false);
   }
 

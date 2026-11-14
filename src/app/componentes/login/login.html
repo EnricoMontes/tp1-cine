@@ -1,9 +1,4 @@
-@if (!enPanel()) {
-  <span class="etiqueta-login">Ingresar</span>
-  <h1>Iniciá sesión</h1>
-}
-
-<form class="form-login" [class.tarjeta]="!enPanel()" [formGroup]="formLogin" (ngSubmit)="ingresar()">
+<form class="form-login" [formGroup]="formLogin" (ngSubmit)="ingresar()">
   <p class="saludo">¡Hola! Qué bueno verte por acá</p>
 
   <div class="campo">

@@ -164,7 +164,8 @@ button.peligro:hover {
   color: white;
 }
 
-button.chico {
+button.chico,
+.boton.chico {
   padding: 0.35rem 0.75rem;
   font-size: 0.75rem;
 }

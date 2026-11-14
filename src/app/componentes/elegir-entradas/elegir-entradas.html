@@ -9,6 +9,40 @@
 
   <app-cabecera-funcion [funcion]="funcion()!" />
 
+  @if (miTurno()) {
+    <p class="aviso turno">
+      🎉 <strong>¡Es tu turno!</strong> Se liberó un lugar y lo tenés reservado hasta las
+      <strong>{{ espera()?.mi_vence_en | date: 'HH:mm' }}</strong>. Después pasa al siguiente de la lista.
+    </p>
+  }
+
+  @if (agotada()) {
+    <section class="panel agotada">
+      <h2 class="titulo-bloque">Función agotada</h2>
+      @if (espera()?.mi_estado === 'esperando') {
+        <p>Estás en la lista de espera: <strong>puesto {{ espera()?.mi_posicion }}</strong> de {{ espera()?.en_espera }}.
+           Si alguien cancela, te avisamos y vas a tener 15 minutos para comprar.</p>
+        <div class="botones">
+          <button type="button" class="secundario" (click)="salirDeLaLista()">Salir de la lista</button>
+        </div>
+      } @else if (auth.usuario()) {
+        <p>No quedan butacas, pero podés anotarte en la lista de espera
+           @if (espera()?.en_espera) { ({{ espera()?.en_espera }} {{ espera()?.en_espera === 1 ? 'persona' : 'personas' }} esperando) }.
+           Si alguien cancela, le avisamos al primero de la lista y tiene 15 minutos para comprar.</p>
+        <div class="botones">
+          <button type="button" (click)="anotarme()">Anotarme en la lista de espera</button>
+        </div>
+      } @else {
+        <p>No quedan butacas. Iniciá sesión para anotarte en la lista de espera.</p>
+        <div class="botones">
+          <button type="button" (click)="auth.loginAbierto.set(true)">Iniciar sesión</button>
+        </div>
+      }
+      @if (mensajeEspera()) {
+        <p class="ok">{{ mensajeEspera() }}</p>
+      }
+    </section>
+  } @else {
   <section class="panel bloque">
     <h2 class="titulo-bloque">Elegí tus entradas</h2>
 
@@ -172,4 +206,5 @@
       Elegir butacas
     </button>
   </div>
+  }
 }
