@@ -12,6 +12,8 @@ export interface FuncionDatos {
 
 export interface Funcion extends FuncionDatos {
   id: number;
+  cancelada_en?: string | null;
+  motivo_cancelacion?: string | null;
   peliculas?: Pelicula;
   salas?: Sala;
 }

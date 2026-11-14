@@ -7,6 +7,7 @@ export interface Usuario {
   nombre: string;
   apellido: string;
   rol: 'cliente' | 'empleado' | 'admin';
+  rol_id: number | null;
 }
 
 @Service()

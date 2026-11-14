@@ -50,6 +50,19 @@
             </button>
           }
         </div>
+
+        @if (usuario.rol !== 'admin') {
+          <div class="rol-panel">
+            <label [for]="'panel-' + usuario.id">Panel</label>
+
+            <select [id]="'panel-' + usuario.id" [ngModel]="usuario.rol_id" (ngModelChange)="asignarRolPanel(usuario, $event)">
+              <option [ngValue]="null">Sin acceso al panel</option>
+              @for (rol of rolesPanel(); track rol.id) {
+                <option [ngValue]="rol.id">{{ rol.nombre }}</option>
+              }
+            </select>
+          </div>
+        }
       </div>
     }
   </div>

@@ -41,13 +41,14 @@ export const routes: Routes = [
     loadComponent: () => import('./componentes/checkout/checkout').then(m => m.Checkout)
   },
   {
-    path: 'login',
-    loadComponent: () => import('./componentes/login/login').then(m => m.Login)
-  },
-  {
     path: 'registro',
     loadComponent: () => import('./componentes/registro/registro').then(m => m.Registro),
     canDeactivate: [formGuard]
+  },
+  {
+    path: 'proponer',
+    loadComponent: () => import('./componentes/proponer/proponer').then(m => m.Proponer),
+    canActivate: [authGuard]
   },
   {
     path: 'perfil',
@@ -88,6 +89,14 @@ export const routes: Routes = [
       {
         path: 'usuarios',
         loadComponent: () => import('./componentes/admin-usuarios/admin-usuarios').then(m => m.AdminUsuarios)
+      },
+      {
+        path: 'propuestas',
+        loadComponent: () => import('./componentes/admin-propuestas/admin-propuestas').then(m => m.AdminPropuestas)
+      },
+      {
+        path: 'roles',
+        loadComponent: () => import('./componentes/admin-roles/admin-roles').then(m => m.AdminRoles)
       },
       {
         path: 'actividad',

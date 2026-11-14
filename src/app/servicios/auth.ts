@@ -1,7 +1,8 @@
-import { inject, Service, signal } from '@angular/core';
+import { computed, inject, Service, signal } from '@angular/core';
 import { User } from '@supabase/supabase-js';
 import { Supabase } from './supabase';
 import { Perfil } from '../modelos/perfil';
+import { SECCIONES } from '../modelos/rol';
 
 @Service()
 export class Auth {
@@ -12,6 +13,21 @@ export class Auth {
   perfil = signal<Perfil | null>(null);
 
   loginAbierto = signal(false);
+  destinoDespuesDelLogin = signal<string | null>(null);
+
+  seccionesPanel = computed<string[]>(() => {
+    const perfil = this.perfil();
+    if (perfil?.rol === 'admin') {
+      return [...SECCIONES.map(s => s.valor), 'usuarios', 'roles'];
+    }
+    return perfil?.roles?.secciones ?? [];
+  });
+
+  entraAlPanel = computed(() => this.seccionesPanel().length > 0);
+
+  puede(seccion: string) {
+    return this.seccionesPanel().includes(seccion);
+  }
 
   sesionCargada: Promise<void>;
 
@@ -62,7 +78,7 @@ export class Auth {
   }
 
   private async cargarPerfil(id: string) {
-    const { data } = await this.supabase.cliente.from('perfiles').select('*').eq('id', id);
+    const { data } = await this.supabase.cliente.from('perfiles').select('*, roles(*)').eq('id', id);
     this.perfil.set(data?.[0] ?? null);
   }
 }

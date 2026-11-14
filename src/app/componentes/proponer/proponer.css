@@ -1,0 +1,57 @@
+.cabecera {
+  margin-bottom: 1.5rem;
+}
+
+.cabecera h1 {
+  margin-bottom: 0.4rem;
+}
+
+.columnas {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 800px) {
+  .columnas {
+    grid-template-columns: 1fr;
+  }
+}
+
+.columnas h2 {
+  margin-top: 0;
+  font-size: 1.2rem;
+}
+
+.pendiente {
+  border-left: 4px solid var(--amarillo);
+}
+
+.pendiente h3 {
+  margin: 0.6rem 0 0.2rem;
+}
+
+.propuesta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+  padding: 1rem 1.25rem;
+}
+
+.propuesta p {
+  margin: 0;
+}
+
+.propuesta-titulo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.etiqueta.roja {
+  background: rgb(255 107 107 / 0.15);
+  color: var(--error);
+}

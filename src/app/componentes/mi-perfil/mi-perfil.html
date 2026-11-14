@@ -31,6 +31,64 @@
     </section>
   </div>
 
+  <h2 id="notificaciones">Notificaciones</h2>
+  <div class="notificaciones">
+    @for (notificacion of notificaciones.lista(); track notificacion.id) {
+      <article class="panel notificacion" [class.nueva]="nuevas().includes(notificacion.id)">
+        <div class="notificacion-texto">
+          <strong>
+            {{ notificacion.titulo }}
+            @if (nuevas().includes(notificacion.id)) {
+              <span class="etiqueta-nueva">Nueva</span>
+            }
+          </strong>
+          <p>{{ notificacion.mensaje }}</p>
+          <span class="ayuda">{{ notificacion.creado_en | date: 'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+
+        @if (notificacion.tipo === 'funcion_cancelada' && notificacion.pelicula_id) {
+          <a class="boton chico" [routerLink]="['/peliculas', notificacion.pelicula_id]">Elegir otra función</a>
+        } @else if (notificacion.tipo === 'propuesta_aceptada' && notificacion.pelicula_id) {
+          <a class="boton chico" [routerLink]="['/peliculas', notificacion.pelicula_id]">Ver película</a>
+        } @else if (notificacion.tipo === 'lugar_liberado' && notificacion.funcion_id) {
+          <a class="boton chico" [routerLink]="['/funciones', notificacion.funcion_id, 'entradas']">Comprar ahora</a>
+        } @else if (notificacion.tipo === 'propuesta_rechazada') {
+          <a class="boton chico" routerLink="/proponer">Proponer otra</a>
+        }
+      </article>
+    } @empty {
+      <p class="ayuda">No tenés notificaciones.</p>
+    }
+  </div>
+
+  @if (esperas().length) {
+    <h2>Listas de espera</h2>
+    <div class="esperas">
+      @for (espera of esperas(); track espera.id) {
+        <article class="panel espera" [class.turno]="espera.estado === 'avisado'">
+          @if (espera.imagen_url) {
+            <img [src]="espera.imagen_url" [alt]="espera.pelicula">
+          }
+          <div class="espera-datos">
+            <strong>{{ espera.pelicula }}</strong>
+            <span class="ayuda">{{ espera.inicio | date: 'dd/MM HH:mm' }} · {{ espera.sala }}</span>
+            @if (espera.estado === 'avisado') {
+              <span class="etiqueta verde">¡Es tu turno! Comprá antes de las {{ espera.vence_en | date: 'HH:mm' }}</span>
+            } @else {
+              <span class="etiqueta amarilla">Puesto {{ espera.posicion }} en la lista</span>
+            }
+          </div>
+          <div class="espera-botones">
+            @if (espera.estado === 'avisado') {
+              <a class="boton chico" [routerLink]="['/funciones', espera.funcion_id, 'entradas']">Comprar ahora</a>
+            }
+            <button type="button" class="secundario chico" (click)="salirDeLaLista(espera)">Salir</button>
+          </div>
+        </article>
+      }
+    </div>
+  }
+
   <h2>Mis películas</h2>
   @if (!cargandoCompras()) {
     <div class="vistas">
@@ -91,6 +149,10 @@
         <div class="acciones-compra">
           @if (compra.estado === 'pagada') {
             <button type="button" class="secundario chico" (click)="descargarPdf(compra)">Descargar PDF</button>
+          } @else if (canceladaPorCine(compra)) {
+            <span class="etiqueta">Cancelada por el cine</span>
+            <span class="ayuda">{{ compra.compra_entradas[0].funciones.motivo_cancelacion }}</span>
+            <a class="boton chico" [routerLink]="['/peliculas', compra.compra_entradas[0].funciones.pelicula_id]">Reubicarme</a>
           } @else {
             <span class="etiqueta">Cancelada</span>
           }

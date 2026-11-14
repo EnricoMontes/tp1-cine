@@ -1,0 +1,115 @@
+.chips-filtro {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.chip-filtro {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1rem;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--texto);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: none;
+}
+
+.chip-filtro:hover {
+  background: transparent;
+  border-color: var(--texto);
+}
+
+.chip-filtro.activo {
+  background: var(--acento);
+  border-color: var(--acento);
+}
+
+.chip-filtro span {
+  padding: 0.05rem 0.5rem;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.15);
+  font-size: 0.75rem;
+}
+
+.propuestas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 1rem;
+}
+
+@media (max-width: 480px) {
+  .propuestas {
+    grid-template-columns: 1fr;
+  }
+}
+
+.propuesta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--borde);
+  border-left: 4px solid var(--amarillo);
+  border-radius: 12px;
+  background: var(--superficie);
+}
+
+.propuesta.aceptada {
+  border-left-color: #4ade80;
+}
+
+.propuesta.rechazada {
+  border-left-color: var(--error);
+  opacity: 0.8;
+}
+
+.propuesta-encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.propuesta h3 {
+  margin: 0;
+}
+
+.dato {
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.dato span {
+  display: block;
+  margin-bottom: 0.15rem;
+  color: var(--texto-suave);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.propuesta > .botones,
+.rechazo {
+  margin-top: auto;
+}
+
+.propuesta .botones {
+  justify-content: flex-end;
+}
+
+.rechazo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.etiqueta.roja {
+  background: rgb(255 107 107 / 0.15);
+  color: var(--error);
+}

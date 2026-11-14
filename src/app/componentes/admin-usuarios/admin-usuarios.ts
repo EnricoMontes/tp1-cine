@@ -3,6 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { Usuario, Usuarios } from '../../servicios/usuarios';
 import { Actividades } from '../../servicios/actividades';
 import { Auth } from '../../servicios/auth';
+import { Roles } from '../../servicios/roles';
+import { RolPanel } from '../../modelos/rol';
 
 @Component({
   imports: [FormsModule],
@@ -45,11 +47,30 @@ export class AdminUsuarios implements OnInit {
   constructor(
     private usuariosService: Usuarios,
     private actividades: Actividades,
-    public auth: Auth
+    public auth: Auth,
+    private rolesService: Roles,
   ) {}
+
+  rolesPanel = signal<RolPanel[]>([]);
+
+  async asignarRolPanel(usuario: Usuario, rolId: number | null) {
+    this.mensaje.set('');
+    this.mensajeError.set('');
+    const { error } = await this.rolesService.asignar(usuario.id, rolId);
+    if (error) {
+      this.mensajeError.set(error.message);
+      return;
+    }
+    const rol = this.rolesPanel().find(r => r.id === rolId);
+    const texto = rol ? `le dio el rol "${rol.nombre}"` : 'le sacó el rol del panel';
+    this.actividades.registrar(`A ${usuario.nombre} ${usuario.apellido} ${texto}`);
+    this.mensaje.set(rol ? `${usuario.nombre} ${usuario.apellido} ahora tiene el rol "${rol.nombre}".` : `${usuario.nombre} ${usuario.apellido} ya no entra al panel.`);
+    this.cargar();
+  }
 
   ngOnInit() {
     this.cargar();
+    this.rolesService.traerTodos().then(({ data }) => this.rolesPanel.set(data ?? []));
   }
 
   private async cargar() {

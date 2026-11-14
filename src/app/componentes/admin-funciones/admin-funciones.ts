@@ -6,6 +6,7 @@ import { Peliculas } from '../../servicios/peliculas';
 import { Salas } from '../../servicios/salas';
 import { Funcion } from '../../modelos/funcion';
 import { Actividades } from '../../servicios/actividades';
+import { ListaEspera } from '../../servicios/lista-espera';
 import { Pelicula } from '../../modelos/pelicula';
 import { Formato } from '../../modelos/sala';
 import { aFechaBase, fechaValidator, horaValidator, ponerBarras, ponerDosPuntos } from '../../validadores/fecha.validadores';
@@ -38,11 +39,34 @@ export class AdminFunciones implements OnInit {
     }
     return dias;
   });
+
+  diasAbiertos = signal<string[]>([]);
+
+  estaAbierto(fecha: string) {
+    return this.diasAbiertos().includes(fecha);
+  }
+
+  abrirCerrarDia(fecha: string) {
+    this.diasAbiertos.update(lista => lista.includes(fecha) ? lista.filter(f => f !== fecha) : [...lista, fecha]);
+  }
+
+  private hoy() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+
+  esDiaPasado(fecha: string) {
+    return fecha < this.hoy();
+  }
+
+  horasDelDia(funciones: Funcion[]) {
+    return funciones.map(f => f.inicio.slice(11, 16)).join(' · ');
+  }
   proximasPorPelicula = computed(() => {
     const ahora = new Date();
     const cantidades = new Map<number, number>();
     for (const funcion of this.funciones()) {
-      if (new Date(funcion.inicio) > ahora) {
+      if (new Date(funcion.inicio) > ahora && !funcion.cancelada_en) {
         cantidades.set(funcion.pelicula_id, (cantidades.get(funcion.pelicula_id) ?? 0) + 1);
       }
     }
@@ -84,10 +108,23 @@ export class AdminFunciones implements OnInit {
     private peliculasService: Peliculas,
     private salasService: Salas,
     private actividades: Actividades,
+    private listaEspera: ListaEspera,
   ) {}
+
+  enEspera = signal(new Map<number, number>());
+
+  private async cargarEspera() {
+    const { data } = await this.listaEspera.porFuncion();
+    this.enEspera.set(new Map((data ?? []).map((fila: { funcion_id: number; cantidad: number }) => [fila.funcion_id, Number(fila.cantidad)])));
+  }
+
+  esperando(funcion: Funcion) {
+    return this.enEspera().get(funcion.id) ?? 0;
+  }
 
   ngOnInit() {
     this.cargarFunciones();
+    this.cargarEspera();
     this.cargarPeliculas();
   }
 
@@ -119,6 +156,8 @@ export class AdminFunciones implements OnInit {
       return;
     }
     this.elegidaId.set(pelicula.id);
+    const primero = this.diasDeLaElegida().find(dia => !this.esDiaPasado(dia.fecha));
+    this.diasAbiertos.set(primero ? [primero.fecha] : []);
     setTimeout(() => document.getElementById('funciones-elegida')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   }
 
@@ -278,18 +317,46 @@ export class AdminFunciones implements OnInit {
     return `${fecha.slice(8, 10)}/${fecha.slice(5, 7)}/${fecha.slice(0, 4)} ${fecha.slice(11, 16)}`;
   }
 
-  async borrar(funcion: Funcion) {
-    if (!confirm(`¿Borrar la función de ${funcion.peliculas?.nombre}?`)) {
+  aCancelar = signal<Funcion | null>(null);
+  vendidasACancelar = signal<number | null>(null);
+  motivo = signal('');
+  cancelando = signal(false);
+  motivosRapidos = ['Falla técnica en la sala', 'Falla del proyector', 'Corte de luz'];
+
+  puedeCancelar(funcion: Funcion) {
+    return !funcion.cancelada_en && new Date(funcion.fin) > new Date();
+  }
+
+  async abrirCancelacion(funcion: Funcion) {
+    this.mensajeError.set('');
+    this.mensajeOk.set('');
+    this.aCancelar.set(funcion);
+    this.motivo.set('');
+    this.vendidasACancelar.set(null);
+    setTimeout(() => document.getElementById('panel-cancelar')?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+    const { count } = await this.funcionesService.contarVendidas(funcion.id);
+    this.vendidasACancelar.set(count ?? 0);
+  }
+
+  async confirmarCancelacion() {
+    const funcion = this.aCancelar();
+    if (!funcion || !this.motivo().trim()) {
       return;
     }
-    const { error } = await this.funcionesService.borrar(funcion.id);
+    this.cancelando.set(true);
+    const { data, error } = await this.funcionesService.cancelar(funcion.id, this.motivo().trim());
+    this.cancelando.set(false);
     if (error) {
-      this.mensajeError.set('No se pudo borrar la función.');
+      this.mensajeError.set(error.code === 'P0001' ? error.message : 'No se pudo cancelar la función. No se cambió nada.');
       return;
     }
-    await this.actividades.registrar(
-      `Borró la función de ${funcion.peliculas?.nombre} del ${this.textoFecha(funcion.inicio)} (${funcion.salas?.nombre})`
-    );
+    let texto = `Función cancelada: ${data.compras} compras (${data.entradas} entradas) anuladas, `
+      + `$${Number(data.credito).toLocaleString('es-AR')} acreditados y compradores notificados.`;
+    if (data.sin_cuenta > 0) {
+      texto += ` ${data.sin_cuenta} de esas compras eran sin cuenta: hay que avisarles por mail.`;
+    }
+    this.mensajeOk.set(texto);
+    this.aCancelar.set(null);
     await this.cargarFunciones();
   }
 

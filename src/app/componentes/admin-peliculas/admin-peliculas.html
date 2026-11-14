@@ -1,6 +1,13 @@
 <form class="form panel" id="formulario-pelicula" [class.modo-edicion]="editandoId() !== null" [formGroup]="formPelicula" (ngSubmit)="guardar()">
   <h3>{{ editandoId() === null ? 'Nueva película' : 'Modificar película' }}</h3>
 
+  @if (propuestaId() !== null) {
+    <p class="aviso">
+      Creando la película propuesta por un cliente: <strong>{{ propuestaTitulo() }}</strong>.
+      Completá lo que falta (duración, precio, géneros, póster). La propuesta queda aceptada cuando la guardes.
+    </p>
+  }
+
   <div class="form-cuerpo">
 
     <div class="columna-poster">

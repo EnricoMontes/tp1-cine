@@ -1,0 +1,82 @@
+<header class="cabecera">
+  <h1>Proponé una película</h1>
+  <p class="ayuda">¿Hay una película que te gustaría ver y no está en nuestra cartelera? Contanos cuál y por qué: leemos todas las propuestas.</p>
+</header>
+
+@if (cargando()) {
+  <p>Cargando...</p>
+} @else {
+  <div class="columnas">
+
+    @if (pendiente(); as propuesta) {
+      <section class="panel pendiente">
+        <span class="etiqueta amarilla">En revisión</span>
+        <h3>{{ propuesta.titulo }}</h3>
+        <p class="ayuda">Enviada el {{ propuesta.creado_en | date: 'dd/MM/yyyy' }}</p>
+        <p>Ya tenés una propuesta en revisión. Cuando la aceptemos o la rechacemos te llega una notificación
+           y vas a poder mandar otra.</p>
+      </section>
+    } @else {
+      <form class="form panel" [formGroup]="formPropuesta" (ngSubmit)="enviar()">
+        <h3>Tu propuesta</h3>
+
+        <label for="titulo">Título de la película</label>
+        <input id="titulo" type="text" formControlName="titulo" maxlength="100" placeholder="Ej. Interstellar">
+        @if (formPropuesta.controls.titulo.touched && formPropuesta.controls.titulo.invalid) {
+          <p class="error">Escribí el título.</p>
+        }
+
+        <label for="descripcion">Descripción</label>
+        <textarea id="descripcion" formControlName="descripcion" rows="3" maxlength="500"
+                  placeholder="¿De qué trata? Director, año, actores..."></textarea>
+        @if (formPropuesta.controls.descripcion.touched && formPropuesta.controls.descripcion.invalid) {
+          <p class="error">Entre 10 y 500 caracteres.</p>
+        }
+
+        <label for="motivo">¿Por qué la querés ver en el cine?</label>
+        <textarea id="motivo" formControlName="motivo" rows="3" maxlength="500"
+                  placeholder="Contanos por qué valdría la pena en pantalla grande"></textarea>
+        @if (formPropuesta.controls.motivo.touched && formPropuesta.controls.motivo.invalid) {
+          <p class="error">Entre 10 y 500 caracteres.</p>
+        }
+
+        @if (mensajeError()) {
+          <p class="error">{{ mensajeError() }}</p>
+        }
+        <div class="botones">
+          <button type="submit" [disabled]="formPropuesta.invalid || enviando()">
+            {{ enviando() ? 'Enviando...' : 'Enviar propuesta' }}
+          </button>
+        </div>
+      </form>
+    }
+
+    <section>
+      @if (mensajeOk()) {
+        <p class="ok">{{ mensajeOk() }}</p>
+      }
+      <h2>Mis propuestas</h2>
+      @for (propuesta of propuestas(); track propuesta.id) {
+        <article class="panel propuesta">
+          <div class="propuesta-titulo">
+            <strong>{{ propuesta.titulo }}</strong>
+
+            <span class="etiqueta" [class.amarilla]="propuesta.estado === 'pendiente'"
+                  [class.verde]="propuesta.estado === 'aceptada'" [class.roja]="propuesta.estado === 'rechazada'">
+              {{ textoEstado(propuesta.estado) }}
+            </span>
+          </div>
+          <p class="ayuda">{{ propuesta.creado_en | date: 'dd/MM/yyyy' }}</p>
+          @if (propuesta.respuesta) {
+            <p class="ayuda">Respuesta: {{ propuesta.respuesta }}</p>
+          }
+          @if (propuesta.estado === 'aceptada' && propuesta.pelicula_id) {
+            <a class="boton chico" [routerLink]="['/peliculas', propuesta.pelicula_id]">Ver película</a>
+          }
+        </article>
+      } @empty {
+        <p class="ayuda">Todavía no propusiste ninguna película.</p>
+      }
+    </section>
+  </div>
+}
