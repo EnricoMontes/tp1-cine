@@ -236,7 +236,7 @@ export class AdminPeliculas implements OnInit {
         return;
       }
       id = data[0].id;
-      await this.actividades.registrar(`Creó la película ${datos.nombre} (precio $${datos.precio_base})`);
+      await this.actividades.registrar(`Creó la película ${datos.nombre} (precio $${Number(datos.precio_base).toLocaleString('es-AR')})`);
     } else {
       const { error } = await this.peliculasService.modificar(id, datos);
       if (error) {
@@ -245,13 +245,13 @@ export class AdminPeliculas implements OnInit {
       }
       const antes = this.peliculas().find(p => p.id === id);
       if (antes && antes.precio_base !== datos.precio_base) {
-        await this.actividades.registrar(`Cambió el precio de ${datos.nombre} de $${antes.precio_base} a $${datos.precio_base}`);
+        await this.actividades.registrar(`Cambió el precio de ${datos.nombre} de $${Number(antes.precio_base).toLocaleString('es-AR')} a $${Number(datos.precio_base).toLocaleString('es-AR')}`);
       } else {
         await this.actividades.registrar(`Modificó la película ${datos.nombre}`);
       }
       if (antes && (antes.preventa_activa !== datos.preventa_activa || antes.precio_preventa !== datos.precio_preventa)) {
         await this.actividades.registrar(datos.preventa_activa
-          ? `Activó la preventa de ${datos.nombre} a $${datos.precio_preventa}`
+          ? `Activó la preventa de ${datos.nombre} a $${Number(datos.precio_preventa).toLocaleString('es-AR')}`
           : `Desactivó la preventa de ${datos.nombre}`);
       }
     }

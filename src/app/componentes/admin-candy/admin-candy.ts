@@ -165,7 +165,7 @@ export class AdminCandy implements OnInit {
         this.mensajeError.set('No se pudo crear el producto.');
         return false;
       }
-      await this.actividades.registrar(`Creó el producto ${datos.nombre} (${datos.categoria}, $${datos.precio})`);
+      await this.actividades.registrar(`Creó el producto ${datos.nombre} (${datos.categoria}, $${Number(datos.precio).toLocaleString('es-AR')})`);
       return true;
     }
     const antes = this.productos().find(p => p.id === id);
@@ -175,7 +175,7 @@ export class AdminCandy implements OnInit {
       return false;
     }
     if (antes && antes.precio !== datos.precio) {
-      await this.actividades.registrar(`Cambió el precio de ${datos.nombre} de $${antes.precio} a $${datos.precio}`);
+      await this.actividades.registrar(`Cambió el precio de ${datos.nombre} de $${Number(antes.precio).toLocaleString('es-AR')} a $${Number(datos.precio).toLocaleString('es-AR')}`);
     } else {
       await this.actividades.registrar(`Modificó el producto ${datos.nombre}`);
     }
@@ -215,7 +215,7 @@ export class AdminCandy implements OnInit {
         this.mensajeError.set('No se pudo crear el combo.');
         return false;
       }
-      await this.actividades.registrar(`Creó el combo ${datos.nombre} ($${datos.precio})`);
+      await this.actividades.registrar(`Creó el combo ${datos.nombre} ($${Number(datos.precio).toLocaleString('es-AR')})`);
       return true;
     }
     const antes = this.combos().find(c => c.id === id);
@@ -225,7 +225,7 @@ export class AdminCandy implements OnInit {
       return false;
     }
     if (antes && antes.precio !== datos.precio) {
-      await this.actividades.registrar(`Cambió el precio del ${datos.nombre} de $${antes.precio} a $${datos.precio}`);
+      await this.actividades.registrar(`Cambió el precio del ${datos.nombre} de $${Number(antes.precio).toLocaleString('es-AR')} a $${Number(datos.precio).toLocaleString('es-AR')}`);
     } else {
       await this.actividades.registrar(`Modificó el combo ${datos.nombre}`);
     }

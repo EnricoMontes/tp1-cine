@@ -122,10 +122,10 @@ export class AdminReportes implements OnInit {
       }
       doc.text(aFechaPantalla(dia.fecha), 20, y);
       doc.text(String(dia.entradas), 80, y);
-      doc.text(`$${dia.total.toFixed(2)}`, 130, y);
+      doc.text(`$${dia.total.toLocaleString('es-AR', { minimumFractionDigits: 2 })}`, 130, y);
       y += 8;
     }
-    doc.text(`Total: ${this.totalEntradas()} entradas · $${this.totalFacturado().toFixed(2)}`, 20, y + 6);
+    doc.text(`Total: ${this.totalEntradas()} entradas · $${this.totalFacturado().toLocaleString('es-AR', { minimumFractionDigits: 2 })}`, 20, y + 6);
     doc.save('facturacion-signalcine.pdf');
   }
 }

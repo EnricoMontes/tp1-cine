@@ -198,7 +198,7 @@ Se llaman con `supabase.rpc`. Corren con `security definer` y controlan todo en 
 **Directiva y pipes.**
 - `appResaltar`: directiva de atributo con `ElementRef`, `Renderer2` y `@HostListener`, que resalta la tarjeta de la película.
 - Pipes custom: `filtroPeliculas` (un solo buscador por nombre o género, en el home y en el admin) y `duracion` (128 → "2 h 8 min").
-- Pipes nativas: `date`, `currency` y `number`.
+- Pipes nativas: `date`, `currency` y `number`, con **formato argentino**: `registerLocaleData(localeEsAr)` + `LOCALE_ID = 'es-AR'` en `app.config.ts` ($ 15.850, 4,5 estrellas, días en castellano). Los textos armados a mano (PDF, log) usan `toLocaleString('es-AR')`.
 
 ---
 

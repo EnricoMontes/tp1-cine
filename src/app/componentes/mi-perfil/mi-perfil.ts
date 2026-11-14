@@ -117,7 +117,7 @@ export class MiPerfil implements OnInit {
       this.mensajeCancelar.set(error.code === 'P0001' ? error.message : 'No se pudo cancelar la compra.');
       return;
     }
-    this.mensajeCancelar.set(`Compra cancelada: se acreditaron $${data} a tu crédito.`);
+    this.mensajeCancelar.set(`Compra cancelada: se acreditaron $${Number(data).toLocaleString('es-AR')} a tu crédito.`);
     await this.cargar();
   }
 
