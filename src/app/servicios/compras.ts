@@ -59,13 +59,23 @@ export class Compras {
     return this.supabase.cliente.rpc('entregar_candy', { p_codigo: codigo });
   }
 
-  escucharVentas(funcionId: number, alVender: (butacaId: number) => void): RealtimeChannel {
+  escucharVentas(funcionId: number, alVender: (butacaId: number) => void,
+                 alLiberar: (butacaId: number) => void): RealtimeChannel {
     return this.supabase.cliente
       .channel(`ventas-funcion-${funcionId}`)
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'compra_entradas', filter: `funcion_id=eq.${funcionId}` },
         payload => alVender(payload.new['butaca_id']),
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'compra_entradas', filter: `funcion_id=eq.${funcionId}` },
+        payload => {
+          if (payload.new['cancelada']) {
+            alLiberar(payload.new['butaca_id']);
+          }
+        },
       )
       .subscribe();
   }

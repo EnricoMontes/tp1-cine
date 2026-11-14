@@ -148,7 +148,7 @@ Se llaman con `supabase.rpc`. Corren con `security definer` y controlan todo en 
 ### 3.3 Storage, Realtime, RLS y tareas programadas
 
 - **Storage:** bucket `peliculas` para los pósters y `candy` para las fotos de productos y combos.
-- **Realtime:** `compra_entradas` publica sus inserts y el mapa de butacas escucha los de su función. `notificaciones` publica sus inserts y la campanita escucha los del usuario.
+- **Realtime:** el mapa de butacas escucha `compra_entradas` de su función: los **inserts** (una venta: la butaca se ocupa) y los **updates** con `cancelada = true` (una cancelación: la butaca se libera), en el mismo canal. `notificaciones` publica sus inserts y la campanita escucha los del usuario.
 - **RLS (Row Level Security):**
   - Lo público (películas, salas, funciones, candy, reseñas, roles) se lee sin cuenta o con cualquier cuenta.
   - Cada usuario ve solo sus compras, canjes, alertas, notificaciones, propuestas y listas de espera.
