@@ -114,7 +114,7 @@ Los guards esperan a que se cargue la sesión (`auth.sesionCargada`). Sin eso, a
 |---|---|
 | `perfiles` | datos del registro + rol, rol del panel (`rol_id`), puntos y crédito; unida a `auth.users` |
 | `peliculas`, `generos`, `peliculas_generos` | películas (con preventa y entradas vendidas) y sus géneros (N a N) |
-| `salas`, `butacas` | 8 salas con formato fijo y 532 butacas cada una |
+| `salas`, `butacas` | 8 salas con formato fijo y 518 butacas cada una (19 filas A–S: J accesible, Q–S VIP) |
 | `funciones` | película + sala + inicio/fin + formato + idioma; `cancelada_en` y `motivo_cancelacion` si el cine la canceló |
 | `compras`, `compra_entradas` | cada compra (cupón, puntos, crédito usado, validación, entrega del candy) y sus butacas |
 | `productos`, `combos`, `compra_productos`, `compra_combos` | candy, combos y lo comprado de cada uno |

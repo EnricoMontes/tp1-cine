@@ -9,6 +9,10 @@
 
   <app-cabecera-funcion [funcion]="funcion()!" />
 
+  @if (avisoCombo()) {
+    <p class="aviso">{{ avisoCombo() }}</p>
+  }
+
   @if (miTurno()) {
     <p class="aviso turno">
       🎉 <strong>¡Es tu turno!</strong> Se liberó un lugar y lo tenés reservado hasta las
@@ -73,7 +77,7 @@
       <div class="tipo" [class.elegida]="accesible() > 0">
         <div class="tipo-texto">
           <strong class="accesible">Accesible</strong>
-          <p class="ayuda">Discapacidad · filas J y K</p>
+          <p class="ayuda">Discapacidad · fila J</p>
           <p class="quedan" [class.pocas]="libres().accesible > 0 && libres().accesible <= 10" [class.agotadas]="libres().accesible === 0">
             {{ libres().accesible === 0 ? 'Agotadas' : 'Quedan ' + libres().accesible }}
           </p>
@@ -91,7 +95,7 @@
       <div class="tipo" [class.elegida]="vip() > 0">
         <div class="tipo-texto">
           <strong class="vip">VIP</strong>
-          <p class="ayuda">Filas R, S y T · +50%</p>
+          <p class="ayuda">Filas Q, R y S · +50%</p>
           <p class="quedan" [class.pocas]="libres().vip > 0 && libres().vip <= 10" [class.agotadas]="libres().vip === 0">
             {{ libres().vip === 0 ? 'Agotadas' : 'Quedan ' + libres().vip }}
           </p>
@@ -202,7 +206,7 @@
       </span>
       <strong>{{ total() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong>
     </div>
-    <button type="button" class="continuar" [disabled]="cantidad() === 0" (click)="continuar()">
+    <button type="button" class="continuar" [disabled]="cantidad() === 0 || !alcanzan()" (click)="continuar()">
       Elegir butacas
     </button>
   </div>

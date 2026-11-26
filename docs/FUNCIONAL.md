@@ -92,9 +92,9 @@ Cada requerimiento tiene un ID (`RF-nn`) y la fecha del mail que lo pide.
 | ID | Requerimiento | Mail |
 |---|---|---|
 | RF-10 | Varias salas, todas con la misma forma | 01/01 |
-| RF-11 | 20 filas con letras y 3 columnas de 4, 20 y 4 butacas | 01/01 |
-| RF-12 | Filas J y K accesibles, con 2, 10 y 2 butacas | 12/02 |
-| RF-13 | Filas R, S y T VIP: más caras y marcadas distinto | 10/03 |
+| RF-11 | Filas con letras y 3 columnas de 4, 20 y 4 butacas (20 filas al principio; 19 desde el 12/02, ver A-01) | 01/01 |
+| RF-12 | Una sola fila accesible (la J), con 2, 10 y 2 butacas | 12/02 |
+| RF-13 | Las últimas 3 filas (Q, R y S) VIP: más caras y marcadas distinto | 10/03 |
 | RF-14 | Formato de la función: 2D, 3D, 4D o 5D | 01/01 |
 | RF-15 | Idioma: castellano o subtitulada | 01/01 |
 | RF-16 | El admin define los horarios de cada película | 01/01 |
@@ -250,16 +250,18 @@ Mail del recuperatorio del primer parcial ("Por el retraso del proyecto, agrego 
 
 ## 6. Ambigüedades y cómo se resolvieron
 
-### A-01 · Las filas J y K
-El mail del 12/02 dice primero que las filas J y K *"se quitaron para dar espacio a una fila"* accesible, y en el mismo mail habla de *"las filas J y K adaptadas para discapacidad"*.
-**Decisión:** J y K siguen existiendo como **filas accesibles de 2 + 10 + 2 butacas**. Así la sala mantiene 20 filas (A–T, sin Ñ) y R, S y T siguen siendo las tres últimas (VIP).
+### A-01 · Una sola fila accesible
+El mail del 12/02 dice: *"Las dos filas de butacas del medio se quitaron (filas J y K) para dar espacio a **una** fila de butacas para personas con discapacidad. En cada columna quedaron 2, 10 y 2 butacas de ese estilo"*. Dos párrafos después nombra *"las filas J y K adaptadas para discapacidad"*.
+**Decisión (corregida por el profesor):** vale lo explícito: las dos filas del medio se reemplazan por **una sola fila accesible de 2 + 10 + 2 = 14 butacas**. La sala queda con **19 filas seguidas, sin saltear letras (A–S, sin Ñ)**: la accesible es la **J** y las que venían después corren una letra. El mail del 10/03 pide VIP en *"las últimas 3 filas de cada sala (filas R, S y T)"*: se respeta la regla, las **3 últimas**, que con 19 filas son **Q, R y S**.
 
 | Tipo | Filas | Butacas |
 |---|---|---|
-| Normal | A–I, L–Q | 420 |
-| Accesible | J, K | 28 |
-| VIP | R, S, T | 84 |
-| **Total por sala** | 20 filas | **532** |
+| Normal | A–I, K–P (15 filas) | 420 |
+| Accesible | J (1 fila) | 14 |
+| VIP | Q, R, S (3 filas) | 84 |
+| **Total por sala** | 19 filas | **518** |
+
+Las ventas que ya existían se migraron sin perderse, en una sola transacción: cada butaca conservó su id y su tipo, solo cambió la letra, y las entradas de la vieja segunda fila accesible se pasaron a una butaca libre de la misma función.
 
 ### A-02 · ¿Cuántas salas?
 La consigna dice "varias". **Decisión:** 8 salas, 2 de cada formato (2D, 3D, 4D, 5D). El formato de la sala es fijo y una función solo puede ir en una sala de su formato.
