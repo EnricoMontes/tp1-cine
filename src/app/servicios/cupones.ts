@@ -22,12 +22,7 @@ export class Cupones {
   }
 
   traerPorCodigo(codigo: string) {
-    return this.supabase.cliente
-      .from('cupones')
-      .select('*')
-      .ilike('codigo', codigo)
-      .eq('tipo', 'codigo')
-      .eq('activo', true);
+    return this.supabase.cliente.rpc('buscar_cupon', { p_codigo: codigo });
   }
 
   crear(tipo: 'mayores_50' | 'codigo', codigo: string | null, porcentaje: number) {

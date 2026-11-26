@@ -8,7 +8,7 @@ export class Compras {
 
   traerOcupadas(funcionId: number) {
     return this.supabase.cliente
-      .from('compra_entradas')
+      .from('butacas_ocupadas')
       .select('butaca_id')
       .eq('funcion_id', funcionId)
       .eq('cancelada', false);
@@ -65,12 +65,12 @@ export class Compras {
       .channel(`ventas-funcion-${funcionId}`)
       .on(
         'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'compra_entradas', filter: `funcion_id=eq.${funcionId}` },
+        { event: 'INSERT', schema: 'public', table: 'butacas_ocupadas', filter: `funcion_id=eq.${funcionId}` },
         payload => alVender(payload.new['butaca_id']),
       )
       .on(
         'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'compra_entradas', filter: `funcion_id=eq.${funcionId}` },
+        { event: 'UPDATE', schema: 'public', table: 'butacas_ocupadas', filter: `funcion_id=eq.${funcionId}` },
         payload => {
           if (payload.new['cancelada']) {
             alLiberar(payload.new['butaca_id']);
